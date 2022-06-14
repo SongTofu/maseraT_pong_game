@@ -7,6 +7,7 @@ export class NicknameController {
 
   @Get("/:nickname")
   isExistNickname(@Param("nickname") nickname: string): Promise<Boolean> {
+    console.log("nick", nickname);
     return this.nicknameService.isExistNickname(nickname);
   }
 }

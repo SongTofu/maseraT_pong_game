@@ -18,6 +18,6 @@ export class Record extends BaseEntity {
   @Column()
   gameWin: boolean;
 
-  @ManyToOne((type) => User, (user) => user.record, { eager: false })
-  user: User;
+  // @ManyToOne((type) => User, (user) => user.record, { eager: false })
+  // user: User;
 }

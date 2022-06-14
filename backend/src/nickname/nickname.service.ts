@@ -11,6 +11,7 @@ export class NicknameService {
   ) {}
   async isExistNickname(nickname: string) {
     const found: User = await this.userRepository.findOne({ nickname });
+    console.log("usess", User);
     if (!found) return true;
     return false;
   }

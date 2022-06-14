@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, Body } from "@nestjs/common";
+import { UserService } from "./user.service";
 
-@Controller('user')
-export class UserController {}
+@Controller("user")
+export class UserController {
+  constructor(private userService: UserService) {}
+
+  @Post("/signup")
+  signUp(@Body() nickname: string) {
+    return this.userService.signUp(nickname);
+  }
+}
