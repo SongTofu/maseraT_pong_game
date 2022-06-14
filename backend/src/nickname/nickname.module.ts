@@ -1,4 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
+import { NicknameController } from "./nickname.controller";
+import { NicknameService } from "./nickname.service";
+import { UserModule } from "src/user/user.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { UserRepository } from "src/user/user.repository";
 
-@Module({})
+@Module({
+  imports: [UserModule, UserRepository],
+  controllers: [NicknameController],
+  providers: [NicknameService],
+})
 export class NicknameModule {}
