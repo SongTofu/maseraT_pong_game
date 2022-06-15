@@ -7,9 +7,9 @@ export class NicknameController {
   constructor(private nicknameService: NicknameService) {}
 
   @Get("/:nickname")
-  isExistNickname(
+  isValidNickname(
     @Param(ValidationPipe) nicknameCredentialsDto: NicknameCredentialsDto,
-  ): Promise<{ isExistNickname: boolean }> {
-    return this.nicknameService.isExistNickname(nicknameCredentialsDto);
+  ): Promise<{ isValidNickname: boolean }> {
+    return this.nicknameService.isValidNickname(nicknameCredentialsDto);
   }
 }

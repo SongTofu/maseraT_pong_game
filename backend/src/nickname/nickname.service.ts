@@ -10,12 +10,12 @@ export class NicknameService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
   ) {}
-  async isExistNickname(
+  async isValidNickname(
     nicknameCredentialsDto: NicknameCredentialsDto,
-  ): Promise<{ isExistNickname: boolean }> {
+  ): Promise<{ isValidNickname: boolean }> {
     const { nickname } = nicknameCredentialsDto;
     const found: User = await this.userRepository.findOne({ nickname });
-    if (!found) return { isExistNickname: true };
-    return { isExistNickname: false };
+    if (!found) return { isValidNickname: true };
+    return { isValidNickname: false };
   }
 }
