@@ -9,6 +9,7 @@ import { typeORMConfig } from "./configs/typeorm.configs";
 import { NicknameModule } from "./nickname/nickname.module";
 import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
         from: "'neest-modules' <modules@nestjs.com>",
       },
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
