@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from "typeorm";
 import { SecondAuthCode } from "./second-auth-code.entity";
-import { User } from "src/user/user.entity";
+import { User } from "src/userinfo/user.entity";
 
 @EntityRepository(SecondAuthCode)
 export class SecondAuthRepository extends Repository<SecondAuthCode> {

@@ -46,8 +46,8 @@ export class User extends BaseEntity {
   @Column()
   level: number;
 
-  // @OneToMany((type) => Record, (record) => record.user, { eager: true })
-  // record: Record;
+  @OneToMany((type) => Record, (record) => record.user, { eager: true })
+  record: Record;
 
   @OneToMany(
     (type) => SecondAuthCode,
