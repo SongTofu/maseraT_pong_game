@@ -14,7 +14,7 @@ export class UserRepository extends Repository<User> {
       id: 12,
       nickname: nickname,
       secondAuth: false,
-      email: "hello",
+      email: "hello123",
       pWin: 1,
       pLose: 1,
       rWin: 1,

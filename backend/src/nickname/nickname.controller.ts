@@ -6,8 +6,9 @@ export class NicknameController {
   constructor(private nicknameService: NicknameService) {}
 
   @Get("/:nickname")
-  isExistNickname(@Param("nickname") nickname: string): Promise<Boolean> {
-    console.log("nick", nickname);
+  isExistNickname(
+    @Param("nickname") nickname: string,
+  ): Promise<{ isExistNickname: boolean }> {
     return this.nicknameService.isExistNickname(nickname);
   }
 }

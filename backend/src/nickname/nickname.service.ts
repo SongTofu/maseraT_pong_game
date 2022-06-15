@@ -9,10 +9,11 @@ export class NicknameService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
   ) {}
-  async isExistNickname(nickname: string) {
+  async isExistNickname(
+    nickname: string,
+  ): Promise<{ isExistNickname: boolean }> {
     const found: User = await this.userRepository.findOne({ nickname });
-    console.log("usess", User);
-    if (!found) return true;
-    return false;
+    if (!found) return { isExistNickname: true };
+    return { isExistNickname: false };
   }
 }

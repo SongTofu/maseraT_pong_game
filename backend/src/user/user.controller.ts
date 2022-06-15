@@ -6,7 +6,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post("/signup")
-  signUp(@Body() nickname: string) {
+  signUp(@Body("nickname") nickname: string) {
     return this.userService.signUp(nickname);
   }
 }
