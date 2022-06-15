@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Record } from "src/record/record.entity";
 import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
+import { Friends } from "./friends.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -57,4 +58,12 @@ export class User extends BaseEntity {
     },
   )
   secondAuthCode: SecondAuthCode;
+
+  @OneToMany((type) => Friends, (ownId) => ownId.ownId, { eager: false })
+  ownId: Friends;
+
+  @OneToMany((type) => Friends, (friends) => friends.friendsId, {
+    eager: false,
+  })
+  friendsId: Friends;
 }
