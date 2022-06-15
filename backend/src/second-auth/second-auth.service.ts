@@ -13,10 +13,8 @@ export class SecondAuthService {
     private mailerService: MailerService,
   ) {}
 
-  async requestAuth(apiId: string): Promise<void> {
-    const user: User = await this.userRepository.findOne({
-      where: { apiId },
-    });
+  async requestAuth(id: number): Promise<void> {
+    const user: User = await this.userRepository.findOne(id);
 
     this.secondAuthRepository.deleteCode(user);
 
@@ -37,13 +35,8 @@ export class SecondAuthService {
       .catch(() => {});
   }
 
-  async checkAuth(
-    apiId: string,
-    code: string,
-  ): Promise<{ matchCode: boolean }> {
-    const user: User = await this.userRepository.findOne({
-      where: { apiId },
-    });
+  async checkAuth(id: number, code: string): Promise<{ matchCode: boolean }> {
+    const user: User = await this.userRepository.findOne(id);
 
     const secondAuthCode: SecondAuthCode =
       await this.secondAuthRepository.findOne({
