@@ -5,4 +5,4 @@ import { UserRepository } from "./user.repository";
 @Module({
   imports: [TypeOrmModule.forFeature([UserRepository])],
 })
-export class UserinfoModule {}
+export class UserInfoModule {}

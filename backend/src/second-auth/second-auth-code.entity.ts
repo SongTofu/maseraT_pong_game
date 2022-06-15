@@ -5,7 +5,7 @@ import {
   Column,
   ManyToOne,
 } from "typeorm";
-import { User } from "../userinfo/user.entity";
+import { User } from "../user-info/user.entity";
 
 @Entity()
 export class SecondAuthCode extends BaseEntity {
