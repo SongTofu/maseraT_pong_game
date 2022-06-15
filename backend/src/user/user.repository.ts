@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { Record } from "src/record/record.entity";
+import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -12,9 +13,11 @@ export class UserRepository extends Repository<User> {
     // const user = this.create({ nickname });
     const user = this.create({
       id: 12,
+
+      apiId: "aa",
       nickname: nickname,
       secondAuth: false,
-      email: "hello123",
+      email: "yejsong@student.42seoul.kr",
       pWin: 1,
       pLose: 1,
       rWin: 1,
@@ -22,7 +25,6 @@ export class UserRepository extends Repository<User> {
       profileImg: "a",
       state: 1,
       level: 1,
-      //   record: Record,
     });
     console.log("user", user);
     this.save(user);
