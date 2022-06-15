@@ -7,11 +7,11 @@ export class SecondAuthController {
 
   @Get()
   requestAuth(): void {
-    this.secondAuthServie.requestAuth("sehan123");
+    this.secondAuthServie.requestAuth("aa");
   }
 
   @Get("/:code")
   checkAuth(@Param("code") code: string): Promise<{ matchCode: boolean }> {
-    return this.secondAuthServie.checkAuth("sehan123", code);
+    return this.secondAuthServie.checkAuth("aa", code);
   }
 }
