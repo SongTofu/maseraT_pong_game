@@ -8,13 +8,13 @@ import {
 import { User } from "./user.entity";
 
 @Entity()
-export class Friends extends BaseEntity {
+export class Block extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User, (user) => user.friends, { eager: false })
+  @ManyToOne((type) => User, (user) => user.block, { eager: false })
   ownId: User;
 
-  @ManyToOne((type) => User, (user) => user.friends, { eager: false })
-  friendsId: User;
+  @ManyToOne((type) => User, (user) => user.block, { eager: false })
+  blockId: User;
 }

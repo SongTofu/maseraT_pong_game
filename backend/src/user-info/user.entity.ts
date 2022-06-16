@@ -4,10 +4,12 @@ import {
   Column,
   Entity,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { Record } from "src/record/record.entity";
 import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friends } from "./friends.entity";
+import { Block } from "./block.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -47,7 +49,7 @@ export class User extends BaseEntity {
   @Column()
   level: number;
 
-  @OneToMany((type) => Record, (record) => record.user, { eager: true })
+  @OneToOne((type) => Record, (record) => record.user, { eager: true })
   record: Record;
 
   @OneToMany(
@@ -59,11 +61,20 @@ export class User extends BaseEntity {
   )
   secondAuthCode: SecondAuthCode;
 
-  @OneToMany((type) => Friends, (ownId) => ownId.ownId, { eager: false })
-  ownId: Friends;
+  @OneToMany(
+    (type) => Friends,
+    (friends) => {
+      friends.ownId, friends.friendsId;
+    },
+    { eager: false },
+  )
+  friends: Friends;
 
-  @OneToMany((type) => Friends, (friends) => friends.friendsId, {
-    eager: false,
-  })
-  friendsId: Friends;
+  @OneToMany(
+    (type) => Block,
+    (block) => {
+      block.ownId, block.blockId;
+    },
+  )
+  block: Block;
 }

@@ -6,7 +6,7 @@ export class UserInfoController {
   constructor(private userInfoService: UserInfoService) {}
 
   @Get("/:userId")
-  targetInfo(@Param("userId") userId: number) {
-    this.userInfoService.targetInfo(userId, 1);
+  targetInfo(@Param("userId") targetId: number) {
+    return this.userInfoService.targetInfo(1, targetId);
   }
 }

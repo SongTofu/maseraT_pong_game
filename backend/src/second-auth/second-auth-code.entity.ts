@@ -15,6 +15,6 @@ export class SecondAuthCode extends BaseEntity {
   @Column()
   authCode: string;
 
-  @ManyToOne((type) => User, (user) => user.secondAuth, { eager: false })
+  @ManyToOne((type) => User, (user) => user.secondAuthCode, { eager: false })
   user: User;
 }
