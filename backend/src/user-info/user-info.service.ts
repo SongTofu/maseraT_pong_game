@@ -30,7 +30,6 @@ export class UserInfoService {
       rLose: user.rLose,
       level: user.level,
     };
-    console.log("info", myUserInfoDto);
     return myUserInfoDto;
   }
 

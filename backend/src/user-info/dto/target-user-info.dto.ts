@@ -1,3 +1,5 @@
+import { UserState } from "../user-state.enum";
+
 export class TargetUserInfoDto {
   nickname: string;
   pWin: number;
@@ -5,7 +7,7 @@ export class TargetUserInfoDto {
   rWin: number;
   rLose: number;
   profileImg: string;
-  state: number;
+  state: UserState;
   level: number;
   isFriend: boolean;
   isBlocked: boolean;
