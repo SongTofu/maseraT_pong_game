@@ -7,9 +7,9 @@ import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { User } from "./user.entity";
 import { FriendsRepository } from "./friends.repository";
-import { Friends } from "./friends.entity";
 import { BlockRepository } from "./block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
+import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 
 @Injectable()
 export class UserInfoService {
@@ -61,7 +61,44 @@ export class UserInfoService {
     return targetUserInfoDto;
   }
 
-  async isFriend(user: User, target: User): Promise<boolean> {
+  async updateUser(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
+    const user: User = await this.userRepository.findOne(userId);
+
+    // const { nickname, profileImg, secondAuth } = updateUserInfoDto;
+
+    if (updateUserInfoDto.nickname) {
+      user.nickname = updateUserInfoDto.nickname;
+    }
+    if (updateUserInfoDto.profileImg) {
+      user.profileImg = updateUserInfoDto.profileImg;
+    }
+    if (updateUserInfoDto.secondAuth) {
+      user.secondAuth = updateUserInfoDto.secondAuth;
+    }
+    console.log(user);
+    // console.log(nickname, profileImg, secondAuth);
+    await user.save().catch((error) => {
+      if (error.code == "23505") {
+        console.log(error.code);
+      }
+      return { success: false };
+    });
+    // try {
+    //   await this.userRepository.update(
+    //     { id: userId },
+    //     { nickname, profileImg, secondAuth },
+    //   );
+    // } catch (error) {
+    //   console.log(error);
+    //   console.log("error code", error.code);
+    //   if (error.code === "23505") {
+    //     return { success: false };
+    //   }
+    // }
+    return { success: true };
+  }
+
+  private async isFriend(user: User, target: User): Promise<boolean> {
     if (
       await this.friendsRepository.findOne({
         where: {
@@ -76,7 +113,7 @@ export class UserInfoService {
     }
   }
 
-  async isBlocked(user: User, target: User): Promise<boolean> {
+  private async isBlocked(user: User, target: User): Promise<boolean> {
     if (
       await this.blockRepository.findOne({
         where: {

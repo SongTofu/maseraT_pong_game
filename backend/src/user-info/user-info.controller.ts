@@ -1,6 +1,8 @@
-import { Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller, Get, Param, Patch, Body, Post } from "@nestjs/common";
 import { UserInfoService } from "./user-info.service";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
+import { TargetUserInfoDto } from "./dto/target-user-info.dto";
+import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { User } from "./user.entity";
 
 @Controller("user-info")
@@ -13,8 +15,13 @@ export class UserInfoController {
   }
 
   @Get("/:userId")
-  targetInfo(@Param("userId") targetId: number) {
+  targetInfo(@Param("userId") targetId: number): Promise<TargetUserInfoDto> {
     return this.userInfoService.targetInfo(1, targetId);
+  }
+
+  @Patch()
+  updateUser(@Body() updateUserInfoDto: UpdateUserInfoDto) {
+    return this.userInfoService.updateUser(2, updateUserInfoDto);
   }
 
   @Post()

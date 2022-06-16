@@ -22,7 +22,7 @@ export class User extends BaseEntity {
   @Column()
   apiId: string;
 
-  @Column()
+  @Column({ unique: true })
   nickname: string;
 
   @Column()
