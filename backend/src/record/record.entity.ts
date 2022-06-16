@@ -3,7 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Entity,
-  ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { User } from "src/user-info/user.entity";
 
@@ -18,6 +19,7 @@ export class Record extends BaseEntity {
   @Column()
   gameWin: boolean;
 
-  @ManyToOne((type) => User, (user) => user.record, { eager: false })
+  @OneToOne((type) => User, (user) => user.record, { eager: false })
+  @JoinColumn()
   user: User;
 }
