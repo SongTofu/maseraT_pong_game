@@ -11,7 +11,7 @@ import { Record } from "src/record/record.entity";
 import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friends } from "./friends.entity";
 import { Block } from "./block.entity";
-import { UserState } from "./user-state.enum";
+import { UserState } from "../user-state.enum";
 
 @Entity()
 @Unique(["nickname"])

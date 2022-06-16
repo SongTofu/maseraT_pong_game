@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { UserRepository } from "src/user-info/user.repository";
-import { User } from "src/user-info/user.entity";
+import { UserRepository } from "src/user-info/repository/user.repository";
+import { User } from "src/user-info/entity/user.entity";
 import { SecondAuthRepository } from "./second-auth.repository";
 import { SecondAuthCode } from "./second-auth-code.entity";
 import { MailerService } from "@nestjs-modules/mailer";
