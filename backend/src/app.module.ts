@@ -7,9 +7,8 @@ import { RecordModule } from "./record/record.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeORMConfig } from "./configs/typeorm.configs";
 import { NicknameModule } from "./nickname/nickname.module";
-import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -18,7 +17,7 @@ import { AuthModule } from './auth/auth.module';
     RecordModule,
     TypeOrmModule.forRoot(typeORMConfig),
     NicknameModule,
-    LoginModule,
+    AuthModule,
     MailerModule.forRoot({
       transport:
         "smtps://a01083167716@gmail.com:rqzulibmccndnalz@smtp.gmail.com",
