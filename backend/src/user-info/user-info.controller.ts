@@ -3,7 +3,7 @@ import { UserInfoService } from "./user-info.service";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
-import { User } from "./user.entity";
+import { User } from "./entity/user.entity";
 
 @Controller("user-info")
 export class UserInfoController {
