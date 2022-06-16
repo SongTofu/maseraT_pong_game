@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
@@ -76,12 +77,24 @@ export class UserInfoService {
     try {
       await user.save();
     } catch (error) {
-      if (error.code === "23505") {
-        return { success: false };
-      } else {
-        return { success: false };
+      if (error.code === "23505") return { success: false };
+      // throw new ConflictException("Existing username");
+      else {
+        throw new InternalServerErrorException();
       }
     }
+    // try {
+    //   await this.userRepository.update(
+    //     { id: userId },
+    //     { nickname, profileImg, secondAuth },
+    //   );
+    // } catch (error) {
+    //   console.log(error);
+    //   console.log("error code", error.code);
+    //   if (error.code === "23505") {
+    //     return { success: false };
+    //   }
+    // }
     return { success: true };
   }
 
@@ -117,20 +130,28 @@ export class UserInfoService {
 
   async initUserInfo(
     id: number,
-    nickname: string,
-    profileImg: string,
+    updateUserInfoDto: UpdateUserInfoDto,
   ): Promise<User> {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
-    user.nickname = nickname;
-    user.profileImg = profileImg;
+
+    if (updateUserInfoDto.nickname) {
+      user.nickname = updateUserInfoDto.nickname;
+    }
+    if (updateUserInfoDto.profileImg) {
+      user.profileImg = updateUserInfoDto.profileImg;
+    }
+
     try {
       await user.save();
     } catch (error) {
       if (error.code === "23505")
         throw new ConflictException("Existing username");
+      else {
+        throw new InternalServerErrorException();
+      }
     }
     return user; //return 값 미정
   }
