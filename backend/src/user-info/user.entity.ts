@@ -5,13 +5,16 @@ import {
   Entity,
   OneToMany,
   OneToOne,
+  Unique,
 } from "typeorm";
 import { Record } from "src/record/record.entity";
 import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friends } from "./friends.entity";
 import { Block } from "./block.entity";
+import { UserState } from "./user-state.enum";
 
 @Entity()
+@Unique(["nickname"])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -19,7 +22,7 @@ export class User extends BaseEntity {
   @Column()
   apiId: string;
 
-  @Column()
+  @Column({ unique: true })
   nickname: string;
 
   @Column()
@@ -44,7 +47,7 @@ export class User extends BaseEntity {
   profileImg: string;
 
   @Column()
-  state: number;
+  state: UserState;
 
   @Column()
   level: number;
