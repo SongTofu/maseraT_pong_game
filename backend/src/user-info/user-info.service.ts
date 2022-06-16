@@ -64,8 +64,6 @@ export class UserInfoService {
   async updateUser(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
     const user: User = await this.userRepository.findOne(userId);
 
-    // const { nickname, profileImg, secondAuth } = updateUserInfoDto;
-
     if (updateUserInfoDto.nickname) {
       user.nickname = updateUserInfoDto.nickname;
     }
@@ -75,26 +73,15 @@ export class UserInfoService {
     if (updateUserInfoDto.secondAuth) {
       user.secondAuth = updateUserInfoDto.secondAuth;
     }
-    console.log(user);
-    // console.log(nickname, profileImg, secondAuth);
-    await user.save().catch((error) => {
-      if (error.code == "23505") {
-        console.log(error.code);
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.code === "23505") {
+        return { success: false };
+      } else {
+        return { success: false };
       }
-      return { success: false };
-    });
-    // try {
-    //   await this.userRepository.update(
-    //     { id: userId },
-    //     { nickname, profileImg, secondAuth },
-    //   );
-    // } catch (error) {
-    //   console.log(error);
-    //   console.log("error code", error.code);
-    //   if (error.code === "23505") {
-    //     return { success: false };
-    //   }
-    // }
+    }
     return { success: true };
   }
 
