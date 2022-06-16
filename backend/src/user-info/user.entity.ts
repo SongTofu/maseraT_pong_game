@@ -5,6 +5,7 @@ import {
   Entity,
   OneToMany,
   OneToOne,
+  Unique,
 } from "typeorm";
 import { Record } from "src/record/record.entity";
 import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
@@ -13,6 +14,7 @@ import { Block } from "./block.entity";
 import { UserState } from "./user-state.enum";
 
 @Entity()
+@Unique(["nickname"])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

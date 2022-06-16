@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from "@nestjs/common";
 import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { User } from "./user.entity";
@@ -19,7 +23,7 @@ export class UserInfoService {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
-    }
+    } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
       nickname: user.nickname,
       secondAuth: user.secondAuth,
@@ -85,5 +89,25 @@ export class UserInfoService {
     } else {
       return false;
     }
+  }
+
+  async initUserInfo(
+    id: number,
+    nickname: string,
+    profileImg: string,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    } //나중에 접속한 사람 확인되면 삭제가능
+    user.nickname = nickname;
+    user.profileImg = profileImg;
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.code === "23505")
+        throw new ConflictException("Existing username");
+    }
+    return user; //return 값 미정
   }
 }
