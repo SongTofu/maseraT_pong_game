@@ -25,8 +25,8 @@ export class UserInfoController {
   }
 
   @Post()
-  initUserInfo(): Promise<User> {
-    return this.userInfoService.initUserInfo(1, "korea", "profile"); //본인아이디, 바꿀 닉네임, 바꿀 프로필
+  initUserInfo(@Body() updateUserInfoDto: UpdateUserInfoDto): Promise<User> {
+    return this.userInfoService.initUserInfo(1, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
     //리턴값 미정
   }
 }
