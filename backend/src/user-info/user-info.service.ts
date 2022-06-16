@@ -78,23 +78,10 @@ export class UserInfoService {
       await user.save();
     } catch (error) {
       if (error.code === "23505") return { success: false };
-      // throw new ConflictException("Existing username");
       else {
         throw new InternalServerErrorException();
       }
     }
-    // try {
-    //   await this.userRepository.update(
-    //     { id: userId },
-    //     { nickname, profileImg, secondAuth },
-    //   );
-    // } catch (error) {
-    //   console.log(error);
-    //   console.log("error code", error.code);
-    //   if (error.code === "23505") {
-    //     return { success: false };
-    //   }
-    // }
     return { success: true };
   }
 
