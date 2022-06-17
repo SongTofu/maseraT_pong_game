@@ -17,7 +17,6 @@ import { AuthModule } from "./auth/auth.module";
     RecordModule,
     TypeOrmModule.forRoot(typeORMConfig),
     NicknameModule,
-    AuthModule,
     MailerModule.forRoot({
       transport:
         "smtps://a01083167716@gmail.com:rqzulibmccndnalz@smtp.gmail.com",
