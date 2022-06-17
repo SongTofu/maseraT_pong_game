@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserRepository } from "src/userinfo/user.repository";
 import { AuthController } from "./auth.controller";
@@ -10,10 +10,11 @@ import { UserinfoModule } from "src/userinfo/userinfo.module";
 
 @Module({
   imports: [
-    UserinfoModule,
-    PassportModule,
+    forwardRef(() => UserinfoModule),
+    forwardRef(() => PassportModule),
     JwtModule.register({
-      secret: CLIENT_SECRET,
+      secret: "1234",
+      // secret: CLIENT_SECRET,
       signOptions: { expiresIn: 3600 },
     }),
     TypeOrmModule.forFeature([UserRepository]),
