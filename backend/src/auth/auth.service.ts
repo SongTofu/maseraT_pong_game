@@ -1,47 +1,24 @@
 import { Injectable } from "@nestjs/common";
-import passport from "passport";
-import env from "../auth.env";
-
-app.get('/auth/42',
-  passport.authenticate('42'));
-
-app.get('/auth/42/callback',
-  passport.authenticate('42', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
+import { JwtService } from "@nestjs/jwt";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/userinfo/user.entity";
+import { UserRepository } from "src/userinfo/user.repository";
 
 @Injectable()
 export class AuthService {
-  app.get('/auth/42',
-    passport.authenticate('42'));
+  constructor(
+    @InjectRepository(User)
+    private userRepository: UserRepository,
+    private jwtService: JwtService,
+  ) {}
 
-  app.get('/auth/42/callback',
-    passport.authenticate('42', { failureRedirect: '/login' }),
-    function(req, res) {
-      // Successful authentication, redirect home.
-      res.redirect('/');
-  });
-  // asnc getToken(): Promise<string>
-  // {
-  //   const FortyTwoStrategy = require("passport-42").Strategy;
+  async logIn(user: any) {
+    const payload = {
+      email: user.email,
+    };
 
-  //   passport.use(
-  //     new FortyTwoStrategy(
-  //       {
-  //         clientID: env.UID,
-  //         clientSecret: env.SECRET,
-  //         callbackURL: "http://127.0.0.1:3000/auth/42/callback",
-  //       },
-  //       function (accessToken, refreshToken, profile, cb) {
-  //         User.findOrCreate({ fortytwoId: profile.id }, function (err, user) {
-  //           return cb(err, user);
-  //         });
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // async logIn(token): Promise<void> {}
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
+  }
 }
