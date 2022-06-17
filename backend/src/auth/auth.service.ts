@@ -7,8 +7,7 @@ import { UserRepository } from "src/userinfo/user.repository";
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: UserRepository,
+    // private userRepository: UserRepository,
     private jwtService: JwtService,
   ) {}
 
