@@ -3,8 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Entity,
-  OneToOne,
-  JoinColumn,
+  ManyToOne,
 } from "typeorm";
 import { User } from "src/user-info/entity/user.entity";
 
@@ -14,12 +13,17 @@ export class Record extends BaseEntity {
   id: number;
 
   @Column()
+  date: string;
+
+  @Column()
   isLadder: boolean;
 
   @Column()
   gameWin: boolean;
 
-  @OneToOne((type) => User, (user) => user.record, { eager: false })
-  @JoinColumn()
+  @ManyToOne((type) => User, (user) => user.record)
   user: User;
+
+  @ManyToOne((type) => User, (user) => user.record)
+  enemy: User;
 }
