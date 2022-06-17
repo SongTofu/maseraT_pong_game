@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get("/login")
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard("jwt"))
   async logIn(@Req() req) {
     return this.authService.logIn(req.user);
   }
