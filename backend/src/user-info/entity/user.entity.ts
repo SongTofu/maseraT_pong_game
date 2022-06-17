@@ -52,16 +52,15 @@ export class User extends BaseEntity {
   @Column()
   level: number;
 
-  @OneToOne((type) => Record, (record) => record.user, { eager: true })
-  record: Record;
-
   @OneToMany(
-    (type) => SecondAuthCode,
-    (secondAuthCode) => secondAuthCode.user,
-    {
-      eager: false,
+    (type) => Record,
+    (record) => {
+      record.user, record.enemy;
     },
   )
+  record: Record[];
+
+  @OneToOne((type) => SecondAuthCode, (secondAuthCode) => secondAuthCode.user)
   secondAuthCode: SecondAuthCode;
 
   @OneToMany(
@@ -69,9 +68,8 @@ export class User extends BaseEntity {
     (friends) => {
       friends.ownId, friends.friendsId;
     },
-    { eager: false },
   )
-  friends: Friends;
+  friends: Friends[];
 
   @OneToMany(
     (type) => Block,
