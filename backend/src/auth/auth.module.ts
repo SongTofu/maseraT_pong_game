@@ -10,8 +10,7 @@ import { UserinfoModule } from "src/userinfo/userinfo.module";
 
 @Module({
   imports: [
-    forwardRef(() => UserinfoModule),
-    forwardRef(() => PassportModule),
+    UserinfoModule,
     JwtModule.register({
       secret: "1234",
       // secret: CLIENT_SECRET,
