@@ -8,6 +8,7 @@ import { typeORMConfig } from "./configs/typeorm.configs";
 import { NicknameModule } from "./nickname/nickname.module";
 import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
+import { ChatModule } from "./chat/chat.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
         from: "'neest-modules' <modules@nestjs.com>",
       },
     }),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

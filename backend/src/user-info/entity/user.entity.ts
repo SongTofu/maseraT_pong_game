@@ -12,6 +12,7 @@ import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friends } from "./friends.entity";
 import { Block } from "./block.entity";
 import { UserState } from "../user-state.enum";
+import { ChatRoom } from "src/chat/entity/chat-room.entity";
 
 @Entity()
 @Unique(["nickname"])
@@ -78,4 +79,12 @@ export class User extends BaseEntity {
     },
   )
   block: Block;
+
+  @OneToMany(
+    (type) => ChatRoom,
+    (chatRoom) => {
+      chatRoom.user;
+    },
+  )
+  chatRoom: ChatRoom;
 }
