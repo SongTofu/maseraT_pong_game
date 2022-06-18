@@ -1,16 +1,15 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserRepository } from "src/userinfo/user.repository";
+import { UserRepository } from "src/user-info/repository/user.repository";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { PassportModule } from "passport-42";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "./jwt.strategy";
-import { UserinfoModule } from "src/userinfo/userinfo.module";
+import { UserInfoModule } from "src/user-info/user-info.module";
 
 @Module({
   imports: [
-    UserinfoModule,
+    UserInfoModule,
     JwtModule.register({
       secret: "1234",
       // secret: CLIENT_SECRET,

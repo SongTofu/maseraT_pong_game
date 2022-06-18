@@ -9,6 +9,7 @@ export class AuthController {
   @Get("/login")
   @UseGuards(AuthGuard("jwt"))
   async logIn(@Req() req) {
+    console.log("here");
     return this.authService.logIn(req.user);
   }
 }
