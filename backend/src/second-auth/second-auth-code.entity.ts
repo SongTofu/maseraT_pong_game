@@ -3,7 +3,8 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { User } from "../user-info/entity/user.entity";
 
@@ -15,6 +16,7 @@ export class SecondAuthCode extends BaseEntity {
   @Column()
   authCode: string;
 
-  @ManyToOne((type) => User, (user) => user.secondAuthCode, { eager: false })
+  @OneToOne((type) => User, (user) => user.secondAuthCode)
+  @JoinColumn()
   user: User;
 }

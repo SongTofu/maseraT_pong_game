@@ -12,6 +12,7 @@ import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friends } from "./friends.entity";
 import { Block } from "./block.entity";
 import { UserState } from "../user-state.enum";
+import { ChatRoom } from "src/chat/entity/chat-room.entity";
 
 @Entity()
 @Unique(["nickname"])
@@ -52,16 +53,15 @@ export class User extends BaseEntity {
   @Column()
   level: number;
 
-  @OneToOne((type) => Record, (record) => record.user, { eager: true })
-  record: Record;
-
   @OneToMany(
-    (type) => SecondAuthCode,
-    (secondAuthCode) => secondAuthCode.user,
-    {
-      eager: false,
+    (type) => Record,
+    (record) => {
+      record.user, record.enemy;
     },
   )
+  record: Record[];
+
+  @OneToOne((type) => SecondAuthCode, (secondAuthCode) => secondAuthCode.user)
   secondAuthCode: SecondAuthCode;
 
   @OneToMany(
@@ -69,9 +69,8 @@ export class User extends BaseEntity {
     (friends) => {
       friends.ownId, friends.friendsId;
     },
-    { eager: false },
   )
-  friends: Friends;
+  friends: Friends[];
 
   @OneToMany(
     (type) => Block,
@@ -80,4 +79,12 @@ export class User extends BaseEntity {
     },
   )
   block: Block;
+
+  @OneToMany(
+    (type) => ChatRoom,
+    (chatRoom) => {
+      chatRoom.user;
+    },
+  )
+  chatRoom: ChatRoom;
 }
