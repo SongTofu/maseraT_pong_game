@@ -33,16 +33,16 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  pWin: number;
+  personalWin: number;
 
   @Column()
-  pLose: number;
+  personalLose: number;
 
   @Column()
-  rWin: number;
+  ladderWin: number;
 
   @Column()
-  rLose: number;
+  ladderLose: number;
 
   @Column()
   profileImg: string;
