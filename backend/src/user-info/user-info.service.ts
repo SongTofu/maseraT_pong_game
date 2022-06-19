@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { UserRepository } from "./user.repository";
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import { UserRepository } from "./repository/user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
-import { User } from "./user.entity";
-import { FriendsRepository } from "./friends.repository";
-import { Friends } from "./friends.entity";
-import { BlockRepository } from "./block.repository";
+import { User } from "./entity/user.entity";
+import { FriendsRepository } from "./repository/friends.repository";
+import { BlockRepository } from "./repository/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
+import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 
 @Injectable()
 export class UserInfoService {
@@ -19,7 +24,7 @@ export class UserInfoService {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
-    }
+    } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
       nickname: user.nickname,
       secondAuth: user.secondAuth,
@@ -57,7 +62,30 @@ export class UserInfoService {
     return targetUserInfoDto;
   }
 
-  async isFriend(user: User, target: User): Promise<boolean> {
+  async updateUser(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
+    const user: User = await this.userRepository.findOne(userId);
+
+    if (updateUserInfoDto.nickname) {
+      user.nickname = updateUserInfoDto.nickname;
+    }
+    if (updateUserInfoDto.profileImg) {
+      user.profileImg = updateUserInfoDto.profileImg;
+    }
+    if (updateUserInfoDto.secondAuth) {
+      user.secondAuth = updateUserInfoDto.secondAuth;
+    }
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.code === "23505") return { success: false };
+      else {
+        throw new InternalServerErrorException();
+      }
+    }
+    return { success: true };
+  }
+
+  private async isFriend(user: User, target: User): Promise<boolean> {
     if (
       await this.friendsRepository.findOne({
         where: {
@@ -72,7 +100,7 @@ export class UserInfoService {
     }
   }
 
-  async isBlocked(user: User, target: User): Promise<boolean> {
+  private async isBlocked(user: User, target: User): Promise<boolean> {
     if (
       await this.blockRepository.findOne({
         where: {
@@ -85,5 +113,33 @@ export class UserInfoService {
     } else {
       return false;
     }
+  }
+
+  async initUserInfo(
+    id: number,
+    updateUserInfoDto: UpdateUserInfoDto,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    } //나중에 접속한 사람 확인되면 삭제가능
+
+    if (updateUserInfoDto.nickname) {
+      user.nickname = updateUserInfoDto.nickname;
+    }
+    if (updateUserInfoDto.profileImg) {
+      user.profileImg = updateUserInfoDto.profileImg;
+    }
+
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.code === "23505")
+        throw new ConflictException("Existing username");
+      else {
+        throw new InternalServerErrorException();
+      }
+    }
+    return user; //return 값 미정
   }
 }
