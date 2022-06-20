@@ -16,6 +16,8 @@ import { UserRepository } from "src/user-info/repository/user.repository";
 import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { SetAdminDto } from "./dto/set-admin.dto";
+import { ChatLeaveDto } from "./dto/chat-leave.dto";
+import { Body } from "@nestjs/common";
 
 @WebSocketGateway({
   cors: {
@@ -38,12 +40,11 @@ export class ChatGateway {
     @MessageBody() chatJoinDto: ChatJoinDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatJoinDto.userId);
-
     // 방이 생성이면 생성 된 room id, 입장이면 프론트에서 넘어온 room id
     chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
       chatJoinDto,
     );
-
+    console.log("createRoomNum", chatJoinDto);
     // 방 생성이면 user -> onwer, 아니면 user 참여자
     this.joinChatRoom(chatJoinDto, user);
 
@@ -56,7 +57,6 @@ export class ChatGateway {
     };
 
     const chatTitle = "chat-" + chatJoinDto.chatRoomId;
-
     this.server.in(chatTitle).emit("chat-room-join", chatParticipantDto);
 
     socket.join(chatTitle);
@@ -117,6 +117,7 @@ export class ChatGateway {
     }
 
     await chatParticipants.save();
+    console.log("jjjjjjjj", chatParticipants);
   }
 
   private async chatParticipantList(
@@ -136,5 +137,31 @@ export class ChatGateway {
       chatParticipantDto.push(new ChatParticipantDto(participant, chatRoomId));
     });
     return chatParticipantDto;
+  }
+
+  @SubscribeMessage("chat-room-leave")
+  async handleChatRoomLeave(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() chatLeaveDto: ChatLeaveDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(chatLeaveDto.userId);
+    chatLeaveDto.nickname = user.nickname;
+    console.log("input", chatLeaveDto.chatRoomId);
+    const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
+    socket.leave(chatTitle);
+    this.leaveChatRoom(chatLeaveDto, user);
+    this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
+    //누가 떠났는지 공지(?)로 알려주기
+  }
+
+  private async leaveChatRoom(
+    chatLeaveDto: ChatLeaveDto,
+    user: User,
+  ): Promise<void> {
+    const chatParticipant: ChatParticipants =
+      await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
+    if (!chatParticipant)
+      await this.chatRoomRepository.DeleteRoom(chatLeaveDto.chatRoomId);
+    else console.log("참여자 존재");
   }
 }
