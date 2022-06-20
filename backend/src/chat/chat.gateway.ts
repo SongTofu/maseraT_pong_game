@@ -15,6 +15,7 @@ import { User } from "src/user-info/entity/user.entity";
 import { UserRepository } from "src/user-info/repository/user.repository";
 import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
+import { SetAdminDto } from "./dto/set-admin.dto";
 
 @WebSocketGateway({
   cors: {
@@ -46,6 +47,7 @@ export class ChatGateway {
     // 방 생성이면 user -> onwer, 아니면 user 참여자
     this.joinChatRoom(chatJoinDto, user);
 
+    // 방 생성시 생성한 user에겐 join을 안 보내기 때문에 그 다음 유저들부턴 권한 0으로 전송
     const chatParticipantDto: ChatParticipantDto = {
       roomId: chatJoinDto.chatRoomId,
       nickname: user.nickname,
@@ -55,7 +57,7 @@ export class ChatGateway {
 
     const chatTitle = "chat-" + chatJoinDto.chatRoomId;
 
-    this.server.in(chatTitle).emit("join", chatParticipantDto);
+    this.server.in(chatTitle).emit("chat-room-join", chatParticipantDto);
 
     socket.join(chatTitle);
     // participants list
@@ -63,7 +65,32 @@ export class ChatGateway {
       "chat-participant-list",
       await this.chatParticipantList(chatJoinDto.chatRoomId),
     );
-    // join message
+  }
+
+  @SubscribeMessage("chat-room-set-admin")
+  async handleChatRoomSetAdmin(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() setAdminDto: SetAdminDto,
+  ): Promise<void> {
+    const chatParticipant: ChatParticipants =
+      await this.chatParticipantsRepository.findOne({
+        where: { user: setAdminDto.userId },
+        relations: ["user"],
+      });
+
+    if (setAdminDto.isAdmin) {
+      chatParticipant.authority = Authority.admin;
+    } else {
+      chatParticipant.authority = Authority.partiicipnat;
+    }
+
+    await chatParticipant.save();
+    this.server
+      .in("chat-" + setAdminDto.chatRoomId)
+      .emit("chat-room-set-admin", {
+        userId: setAdminDto.userId,
+        isAdmin: setAdminDto.isAdmin,
+      });
   }
 
   private async joinChatRoom(
