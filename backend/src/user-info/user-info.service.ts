@@ -28,11 +28,11 @@ export class UserInfoService {
     const myUserInfoDto: MyUserInfoDto = {
       nickname: user.nickname,
       secondAuth: user.secondAuth,
-      pWin: user.pWin,
-      pLose: user.pLose,
+      personalWin: user.personalWin,
+      personalLose: user.personalLose,
       profileImg: user.profileImg,
-      rWin: user.rWin,
-      rLose: user.rLose,
+      ladderWin: user.ladderWin,
+      ladderLose: user.ladderLose,
       level: user.level,
     };
     return myUserInfoDto;
@@ -49,10 +49,10 @@ export class UserInfoService {
     const isBlocked = await this.isBlocked(user, target);
     const targetUserInfoDto: TargetUserInfoDto = {
       nickname: user.nickname,
-      pWin: user.pWin,
-      pLose: user.pLose,
-      rWin: user.rWin,
-      rLose: user.rLose,
+      personalWin: user.personalWin,
+      personalLose: user.personalLose,
+      ladderWin: user.ladderWin,
+      ladderLose: user.ladderLose,
       profileImg: user.profileImg,
       state: user.state,
       level: user.level,
