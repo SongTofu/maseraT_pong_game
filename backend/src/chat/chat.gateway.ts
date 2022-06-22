@@ -40,11 +40,12 @@ export class ChatGateway {
     @MessageBody() chatJoinDto: ChatJoinDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatJoinDto.userId);
+
     // 방이 생성이면 생성 된 room id, 입장이면 프론트에서 넘어온 room id
     chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
       chatJoinDto,
     );
-    console.log("createRoomNum", chatJoinDto);
+
     // 방 생성이면 user -> onwer, 아니면 user 참여자
     this.joinChatRoom(chatJoinDto, user);
 
@@ -57,6 +58,7 @@ export class ChatGateway {
     };
 
     const chatTitle = "chat-" + chatJoinDto.chatRoomId;
+
     this.server.in(chatTitle).emit("chat-room-join", chatParticipantDto);
 
     socket.join(chatTitle);
@@ -117,7 +119,6 @@ export class ChatGateway {
     }
 
     await chatParticipants.save();
-    console.log("jjjjjjjj", chatParticipants);
   }
 
   private async chatParticipantList(
@@ -145,23 +146,28 @@ export class ChatGateway {
     @MessageBody() chatLeaveDto: ChatLeaveDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatLeaveDto.userId);
-    chatLeaveDto.nickname = user.nickname;
-    console.log("input", chatLeaveDto.chatRoomId);
-    const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
-    socket.leave(chatTitle);
-    this.leaveChatRoom(chatLeaveDto, user);
-    this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
-    //누가 떠났는지 공지(?)로 알려주기
-  }
 
-  private async leaveChatRoom(
-    chatLeaveDto: ChatLeaveDto,
-    user: User,
-  ): Promise<void> {
-    const chatParticipant: ChatParticipants =
+    chatLeaveDto.nickname = user.nickname;
+
+    const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
+
+    socket.leave(chatTitle); //방을 떠난다.
+
+    // 참여자 리스트에서 그 룸의 그 참여자 삭제!
+    const deluser: ChatParticipants =
+      await this.chatParticipantsRepository.findOne({
+        where: {
+          chatRoom: chatLeaveDto.chatRoomId,
+          user: user.id,
+        },
+      });
+    await this.chatParticipantsRepository.delete(deluser);
+
+    this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
+
+    //방에 참여자 없으면 방 삭제!
+    const participant: ChatParticipants =
       await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
-    if (!chatParticipant)
-      await this.chatRoomRepository.DeleteRoom(chatLeaveDto.chatRoomId);
-    else console.log("참여자 존재");
+    if (!participant) await this.chatRoomRepository.deleteRoom(chatLeaveDto);
   }
 }
