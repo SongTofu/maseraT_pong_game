@@ -3,10 +3,15 @@ import { ChatGateway } from "./chat.gateway";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ChatParticipantsRepository } from "./repository/chat-participants.repository";
 import { ChatRoomRepository } from "./repository/chat-room.repository";
+import { UserRepository } from "src/user-info/repository/user.repository";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ChatParticipantsRepository, ChatRoomRepository]),
+    TypeOrmModule.forFeature([
+      ChatParticipantsRepository,
+      ChatRoomRepository,
+      UserRepository,
+    ]),
   ],
   providers: [ChatGateway],
 })
