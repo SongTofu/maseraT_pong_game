@@ -17,7 +17,7 @@ import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { SetAdminDto } from "./dto/set-admin.dto";
 import { ChatLeaveDto } from "./dto/chat-leave.dto";
-import { Body } from "@nestjs/common";
+import { ChatMessageDto } from "./dto/chat-message.dto";
 
 @WebSocketGateway({
   cors: {
@@ -146,7 +146,6 @@ export class ChatGateway {
     @MessageBody() chatLeaveDto: ChatLeaveDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatLeaveDto.userId);
-
     chatLeaveDto.nickname = user.nickname;
 
     const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
@@ -169,5 +168,18 @@ export class ChatGateway {
     const participant: ChatParticipants =
       await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
     if (!participant) await this.chatRoomRepository.deleteRoom(chatLeaveDto);
+  }
+
+  @SubscribeMessage("chat-room-message")
+  async handleChatRoomMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() chatMessageDto: ChatMessageDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(chatMessageDto.userId);
+    chatMessageDto.nickname = user.nickname;
+
+    const chatTitle = "chat-" + chatMessageDto.chatRoomId;
+    socket.in(chatTitle).emit("chat-room-message", chatMessageDto);
+    console.log("message", chatMessageDto);
   }
 }

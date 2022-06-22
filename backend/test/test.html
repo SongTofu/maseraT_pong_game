@@ -42,8 +42,8 @@
 
       function join(roomId, userId) {
         socket.emit("chat-room-join", {
-          chatRoomId: 1,
-          title: "hi11",
+          chatRoomId: 20,
+          title: "hi",
           password: "",
           userId: userId,
           isCreate: false,
@@ -60,11 +60,21 @@
 
       function leave(roomId, userId) {
         socket.emit("chat-room-leave", {
-          chatRoomId: 18,
+          chatRoomId: 20,
           nickname: "",
           userId: userId,
         });
       }
+
+      function send(roomId, userId) {
+        socket.emit("chat-room-message", {
+          chatRoomId: 20,
+          nickname: "",
+          userId: userId,
+          message: "worrrld!!!",
+        });
+      }
+
       socket.on("message", (data) => {
         console.log("message", data);
       });
@@ -92,6 +102,7 @@
       <li><button onclick="join(1, 2)">join 2번 유저</button></li>
       <li><button onclick="leave(1, 1)">leave 1번유저</button></li>
       <li><button onclick="leave(1, 2)">leave 2번유저</button></li>
+      <li><button onclick="send(1, 1)">send 1번유저 1번방</button></li>
       <li><button onclick="setAdmin(true)">admin</button></li>
       <li><button onclick="setAdmin(false)">not admin</button></li>
     </ul>
