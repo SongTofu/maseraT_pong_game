@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Entity,
-  ManyToOne,
+  OneToOne,
 } from "typeorm";
 import { User } from "src/user-info/entity/user.entity";
 
@@ -24,6 +24,6 @@ export class Achievement extends BaseEntity {
   @Column()
   thirdWin: boolean;
 
-  @ManyToOne((type) => User, (user) => user.achievement)
+  @OneToOne((type) => User, (user) => user.achievement)
   user: User;
 }

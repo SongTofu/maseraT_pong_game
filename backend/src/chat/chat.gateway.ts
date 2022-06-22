@@ -181,6 +181,5 @@ export class ChatGateway {
 
     const chatTitle = "chat-" + chatMessageDto.chatRoomId;
     socket.in(chatTitle).emit("chat-room-message", chatMessageDto);
-    // console.log("message", chatMessageDto);
   }
 }

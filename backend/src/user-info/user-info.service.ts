@@ -21,7 +21,7 @@ export class UserInfoService {
   ) {}
 
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
-    const user = await this.userRepository.findOne(id);
+    const user: User = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능

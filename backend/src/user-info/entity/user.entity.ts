@@ -89,10 +89,10 @@ export class User extends BaseEntity {
   )
   chatParticipants: ChatParticipants;
 
-  @OneToMany(
-    (type) => Record,
-    (record) => {
-      record.user, record.enemy;
+  @OneToOne(
+    (type) => Achievement,
+    (achievement) => {
+      achievement.user;
     },
   )
   achievement: Achievement;
