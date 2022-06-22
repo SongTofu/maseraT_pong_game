@@ -19,11 +19,11 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
     return chatJoinDto.chatRoomId;
   }
 
-  async deleteRoom(chatLeaveDto: ChatLeaveDto): Promise<void> {
-    const result = await this.delete(chatLeaveDto.chatRoomId);
+  async deleteRoom(chatRoomId: number): Promise<void> {
+    const result = await this.delete(chatRoomId);
     if (result.affected === 0) {
       throw new NotFoundException(
-        `Can't find Room with id ${chatLeaveDto.chatRoomId}`, //있어야 할까,,?
+        `Can't find Room with id ${chatRoomId}`, //있어야 할까,,?
       );
     }
   }

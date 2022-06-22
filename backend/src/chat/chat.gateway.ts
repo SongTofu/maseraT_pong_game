@@ -167,7 +167,8 @@ export class ChatGateway {
     //방에 참여자 없으면 방 삭제!
     const participant: ChatParticipants =
       await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
-    if (!participant) await this.chatRoomRepository.deleteRoom(chatLeaveDto);
+    if (!participant)
+      await this.chatRoomRepository.deleteRoom(chatLeaveDto.chatRoomId);
   }
 
   @SubscribeMessage("chat-room-message")
