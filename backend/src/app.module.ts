@@ -9,6 +9,8 @@ import { NicknameModule } from "./nickname/nickname.module";
 import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { ChatModule } from "./chat/chat.module";
+import { AchievementService } from './achievement/achievement.service';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
   imports: [
@@ -25,8 +27,9 @@ import { ChatModule } from "./chat/chat.module";
       },
     }),
     ChatModule,
+    AchievementModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AchievementService],
 })
 export class AppModule {}
