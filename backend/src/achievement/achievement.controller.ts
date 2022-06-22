@@ -6,6 +6,11 @@ import { AchievementDto } from "./dto/achievement.dto";
 export class AchievementController {
   constructor(private achievementServie: AchievementService) {}
 
+  @Get()
+  getMyAchievement(@Body() id: number): Promise<AchievementDto> {
+    return this.achievementServie.getMyAchievement(id);
+  }
+
   @Patch()
   updateAchievement(@Body() id: number): Promise<AchievementDto> {
     return this.achievementServie.updateAchievement(id);
