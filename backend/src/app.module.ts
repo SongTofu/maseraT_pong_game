@@ -9,11 +9,13 @@ import { NicknameModule } from "./nickname/nickname.module";
 import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { ChatModule } from "./chat/chat.module";
-import { AchievementService } from './achievement/achievement.service';
-import { AchievementModule } from './achievement/achievement.module';
+import { AchievementService } from "./achievement/achievement.service";
+import { AchievementModule } from "./achievement/achievement.module";
+import { UserInfoModule } from "./user-info/user-info.module";
 
 @Module({
   imports: [
+    UserInfoModule,
     SecondAuthModule,
     RecordModule,
     TypeOrmModule.forRoot(typeORMConfig),
@@ -30,6 +32,6 @@ import { AchievementModule } from './achievement/achievement.module';
     AchievementModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AchievementService],
+  providers: [AppService], //, AchievementService
 })
 export class AppModule {}

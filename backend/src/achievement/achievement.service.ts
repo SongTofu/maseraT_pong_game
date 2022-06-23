@@ -12,23 +12,40 @@ export class AchievementService {
     private achievementRepository: AchievementRepository,
   ) {}
 
-  async getMyAchievement(id: number): Promise<AchievementDto> {
-    const achievement: Achievement = await this.achievementRepository.findOne(
-      id,
-    );
-
-    const achievementDto = achievement; //이렇게 넣으면 걍 알아서 들어갈 것 같음,, 테스트 안해봄
+  async getMyAchievement(id: number) {
+    const user: User = await this.userRepository.findOne(id);
+    const achievement: Achievement = await this.achievementRepository.findOne({
+      where: { user },
+    });
+    const achievementDto: AchievementDto = {
+      firstLogin: achievement.firstLogin,
+      firstWin: achievement.firstWin,
+      firstLose: achievement.firstLose,
+      thirdWin: achievement.thirdWin,
+    };
     return achievementDto;
   }
 
-  async updateAchievement(id: number): Promise<AchievementDto> {
+  async initAchievement(id: number): Promise<void> {
     const user: User = await this.userRepository.findOne(id);
-    let achievementDto: AchievementDto;
-    if (user.nickname) achievementDto.firstLogin = true;
-    if (user.personalWin + user.ladderWin == 1) achievementDto.firstWin = true;
-    if (user.personalLose + user.ladderLose == 1)
-      achievementDto.firstLose = true;
-    if (user.personalWin + user.ladderWin == 3) achievementDto.thirdWin = true;
-    return achievementDto;
+    return this.achievementRepository.createDefaultAchievement(user);
+  }
+
+  async updateAchievement(id: number) {
+    const user: User = await this.userRepository.findOne(id);
+    let achievement: Achievement = await this.achievementRepository.findOne({
+      where: { user },
+    });
+    if (user.nickname) achievement.firstLogin = true;
+    if (achievement.firstWin == false && user.personalWin + user.ladderWin >= 1)
+      achievement.firstWin = true; //조건 깔끔하게 못할까?
+    if (
+      achievement.firstLose == false &&
+      user.personalLose + user.ladderLose >= 1
+    )
+      achievement.firstLose = true;
+    if (achievement.thirdWin == false && user.personalWin + user.ladderWin >= 3)
+      achievement.thirdWin = true;
+    return achievement;
   }
 }

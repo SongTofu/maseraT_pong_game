@@ -1,7 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AchievementController } from './achievement.controller';
+import { Module } from "@nestjs/common";
+import { AchievementController } from "./achievement.controller";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AchievementRepository } from "./achievement.repository";
+import { AchievementService } from "./achievement.service";
+import { UserRepository } from "src/user-info/repository/user.repository";
 
 @Module({
-  controllers: [AchievementController]
+  imports: [TypeOrmModule.forFeature([UserRepository, AchievementRepository])],
+  controllers: [AchievementController],
+  providers: [AchievementService],
 })
 export class AchievementModule {}

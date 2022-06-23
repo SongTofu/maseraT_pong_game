@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { User } from "src/user-info/entity/user.entity";
 
@@ -25,5 +26,6 @@ export class Achievement extends BaseEntity {
   thirdWin: boolean;
 
   @OneToOne((type) => User, (user) => user.achievement)
+  @JoinColumn()
   user: User;
 }
