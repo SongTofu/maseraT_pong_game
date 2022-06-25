@@ -4,20 +4,18 @@ import { UserRepository } from "src/user-info/repository/user.repository";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtModule } from "@nestjs/jwt";
-import { JwtStrategy } from "./jwt.strategy";
-import { UserInfoModule } from "src/user-info/user-info.module";
-
+import { FtStrategy } from "./42-auth.strategy";
+import { ConfigModule } from "@nestjs/config";
 @Module({
   imports: [
-    UserInfoModule,
+    ConfigModule.forRoot(),
+    TypeOrmModule.forFeature([UserRepository]),
     JwtModule.register({
       secret: "1234",
-      // secret: CLIENT_SECRET,
       signOptions: { expiresIn: 3600 },
     }),
-    TypeOrmModule.forFeature([UserRepository]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, FtStrategy],
 })
 export class AuthModule {}
