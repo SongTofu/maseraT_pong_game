@@ -9,8 +9,9 @@ export class AuthController {
 
   @Get("/login")
   @UseGuards(ftAuthGuard)
-  async logIn(@Req() req) {
+  async logIn(@Req() req): Promise<any> {
     const userDto: UserDto = req.user;
+
     return this.authService.logIn(userDto);
   }
 }
