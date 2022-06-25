@@ -21,7 +21,7 @@ export class User extends BaseEntity {
   id: number;
 
   @Column()
-  apiId: string;
+  apiId: number;
 
   @Column({ unique: true })
   nickname: string;
