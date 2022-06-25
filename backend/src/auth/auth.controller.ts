@@ -1,14 +1,16 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
+import { UserDto } from "./dto/user.dto";
+import { ftAuthGuard } from "./guard/ft-auth.guard";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get("/login")
-  @UseGuards(AuthGuard())
+  @UseGuards(ftAuthGuard)
   async logIn(@Req() req) {
-    return this.authService.logIn(req.user);
+    const userDto: UserDto = req.user;
+    return this.authService.logIn(userDto);
   }
 }
