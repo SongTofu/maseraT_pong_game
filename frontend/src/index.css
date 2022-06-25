@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --color-background:  102 103 171;
-    --color-button: 70 71 136;
+    --color-main:  102 103 171; /* 블루 페리 */
+    --color-button: 70 71 136; /* 블루 페리에서 좀더 진한거 */
   }
 }

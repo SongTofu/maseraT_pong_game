@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "rgb(var(--color-background))",
+        main: "rgb(var(--color-main))",
         button: "rgb(var(--color-button))",
       },
       letterSpacing: {
