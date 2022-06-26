@@ -1,12 +1,15 @@
 import React from "react";
+import MainBox from "../components/MainBox";
 import TopNavBar from "../components/TopNavBar";
+import UserListBox from "../components/UserListBox";
 
 function Chat() {
   return (
     <div>
       <TopNavBar>
-        <div className="m-60">
-          <h1 className="text-3xl text-center uppercase">chat</h1>
+        <div className="content">
+          <MainBox buttonTag="채팅방 만들기" isGame={false} />
+          <UserListBox />
         </div>
       </TopNavBar>
     </div>
