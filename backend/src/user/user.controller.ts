@@ -1,33 +1,33 @@
 import { Controller, Get, Param, Patch, Body, Post } from "@nestjs/common";
-import { UserInfoService } from "./user-info.service";
+import { UserService } from "./user.service";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { User } from "./entity/user.entity";
 
-@Controller("user-info")
-export class UserInfoController {
-  constructor(private userInfoService: UserInfoService) {}
+@Controller("user")
+export class UserController {
+  constructor(private userService: UserService) {}
 
   @Get()
   getMyInfo(): Promise<MyUserInfoDto> {
-    return this.userInfoService.getMyInfo(1); //나중에 본인id 넣으면 된다.
+    return this.userService.getMyInfo(1); //나중에 본인id 넣으면 된다.
   }
 
-  @Get("/:userId")
+  @Get("/info/:userId")
   targetInfo(@Param("userId") targetId: number): Promise<TargetUserInfoDto> {
-    return this.userInfoService.targetInfo(1, targetId);
+    return this.userService.targetInfo(1, targetId);
   }
 
-  @Patch()
+  @Patch("/info")
   updateUser(@Body() updateUserInfoDto: UpdateUserInfoDto) {
-    return this.userInfoService.updateUser(2, updateUserInfoDto);
+    return this.userService.updateUser(2, updateUserInfoDto);
   }
 
-  @Post()
+  @Post("/info")
   initUserInfo(@Body() updateUserInfoDto: UpdateUserInfoDto): Promise<User> {
     console.log(updateUserInfoDto);
-    return this.userInfoService.initUserInfo(1, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
+    return this.userService.initUserInfo(1, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
     //리턴값 미정
   }
 }

@@ -9,9 +9,8 @@ import { NicknameModule } from "./nickname/nickname.module";
 import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { ChatModule } from "./chat/chat.module";
-import { AchievementService } from "./achievement/achievement.service";
 import { AchievementModule } from "./achievement/achievement.module";
-import { UserInfoModule } from "./user-info/user-info.module";
+import { UserInfoModule } from "./user/user.module";
 
 @Module({
   imports: [

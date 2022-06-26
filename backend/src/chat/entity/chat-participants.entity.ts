@@ -5,7 +5,7 @@ import {
   Column,
   ManyToOne,
 } from "typeorm";
-import { User } from "src/user-info/entity/user.entity";
+import { User } from "src/user/entity/user.entity";
 import { ChatRoom } from "./chat-room.entity";
 import { Authority } from "../enum/authority.enum";
 
