@@ -6,7 +6,6 @@ import {
   ManyToOne,
   OneToMany,
 } from "typeorm";
-import { User } from "src/user-info/entity/user.entity";
 import { ChatParticipants } from "./chat-participants.entity";
 
 @Entity()
@@ -17,14 +16,11 @@ export class ChatRoom extends BaseEntity {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ default: "" })
   password: string;
 
   @Column()
   isDM: boolean;
-
-  @ManyToOne((type) => User, (user) => user.chatRoom)
-  user: User;
 
   @OneToMany(
     (type) => ChatParticipants,

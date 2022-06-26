@@ -13,7 +13,7 @@ import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 
 @Injectable()
-export class UserInfoService {
+export class UserService {
   constructor(
     private userRepository: UserRepository,
     private friendsRepository: FriendsRepository,
@@ -21,18 +21,18 @@ export class UserInfoService {
   ) {}
 
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
-    const user = await this.userRepository.findOne(id);
+    const user: User = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
       nickname: user.nickname,
       secondAuth: user.secondAuth,
-      pWin: user.pWin,
-      pLose: user.pLose,
+      personalWin: user.personalWin,
+      personalLose: user.personalLose,
       profileImg: user.profileImg,
-      rWin: user.rWin,
-      rLose: user.rLose,
+      ladderWin: user.ladderWin,
+      ladderLose: user.ladderLose,
       level: user.level,
     };
     return myUserInfoDto;
@@ -49,10 +49,10 @@ export class UserInfoService {
     const isBlocked = await this.isBlocked(user, target);
     const targetUserInfoDto: TargetUserInfoDto = {
       nickname: user.nickname,
-      pWin: user.pWin,
-      pLose: user.pLose,
-      rWin: user.rWin,
-      rLose: user.rLose,
+      personalWin: user.personalWin,
+      personalLose: user.personalLose,
+      ladderWin: user.ladderWin,
+      ladderLose: user.ladderLose,
       profileImg: user.profileImg,
       state: user.state,
       level: user.level,

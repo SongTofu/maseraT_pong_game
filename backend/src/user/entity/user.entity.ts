@@ -12,7 +12,8 @@ import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friends } from "./friends.entity";
 import { Block } from "./block.entity";
 import { UserState } from "../user-state.enum";
-import { ChatRoom } from "src/chat/entity/chat-room.entity";
+import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
+import { Achievement } from "src/achievement/achievement.entity";
 
 @Entity()
 @Unique(["nickname"])
@@ -33,16 +34,16 @@ export class User extends BaseEntity {
   email: string;
 
   @Column({ default: 0 })
-  pWin: number;
+  personalWin: number;
 
   @Column({ default: 0 })
-  pLose: number;
+  personalLose: number;
 
   @Column({ default: 0 })
-  rWin: number;
+  ladderWin: number;
 
   @Column({ default: 0 })
-  rLose: number;
+  ladderLose: number;
 
   @Column({ default: "" })
   profileImg: string;
@@ -81,10 +82,18 @@ export class User extends BaseEntity {
   block: Block;
 
   @OneToMany(
-    (type) => ChatRoom,
-    (chatRoom) => {
-      chatRoom.user;
+    (type) => ChatParticipants,
+    (chatParticipants) => {
+      chatParticipants.user;
     },
   )
-  chatRoom: ChatRoom;
+  chatParticipants: ChatParticipants;
+
+  @OneToOne(
+    (type) => Achievement,
+    (achievement) => {
+      achievement.user;
+    },
+  )
+  achievement: Achievement;
 }
