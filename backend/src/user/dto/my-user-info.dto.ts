@@ -1,10 +1,10 @@
 export class MyUserInfoDto {
   nickname: string;
   secondAuth: boolean;
-  pWin: number;
-  pLose: number;
+  personalWin: number;
+  personalLose: number;
   profileImg: string;
-  rWin: number;
-  rLose: number;
+  ladderWin: number;
+  ladderLose: number;
   level: number;
 }

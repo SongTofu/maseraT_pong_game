@@ -2,10 +2,10 @@ import { UserState } from "../user-state.enum";
 
 export class TargetUserInfoDto {
   nickname: string;
-  pWin: number;
-  pLose: number;
-  rWin: number;
-  rLose: number;
+  personalWin: number;
+  personalLose: number;
+  ladderWin: number;
+  ladderLose: number;
   profileImg: string;
   state: UserState;
   level: number;
