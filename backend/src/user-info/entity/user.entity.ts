@@ -13,6 +13,7 @@ import { Friends } from "./friends.entity";
 import { Block } from "./block.entity";
 import { UserState } from "../user-state.enum";
 import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
+import { Achievement } from "src/achievement/achievement.entity";
 
 @Entity()
 @Unique(["nickname"])
@@ -87,4 +88,12 @@ export class User extends BaseEntity {
     },
   )
   chatParticipants: ChatParticipants;
+
+  @OneToOne(
+    (type) => Achievement,
+    (achievement) => {
+      achievement.user;
+    },
+  )
+  achievement: Achievement;
 }

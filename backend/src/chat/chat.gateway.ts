@@ -17,6 +17,8 @@ import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { SetAdminDto } from "./dto/set-admin.dto";
 import * as bcrypt from "bcryptjs";
+import { ChatLeaveDto } from "./dto/chat-leave.dto";
+import { ChatMessageDto } from "./dto/chat-message.dto";
 
 @WebSocketGateway({
   cors: {
@@ -114,5 +116,48 @@ export class ChatGateway {
       return true;
     }
     return false;
+  }
+
+  @SubscribeMessage("chat-room-leave")
+  async handleChatRoomLeave(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() chatLeaveDto: ChatLeaveDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(chatLeaveDto.userId);
+    chatLeaveDto.nickname = user.nickname;
+
+    const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
+
+    socket.leave(chatTitle); //방을 떠난다.
+
+    // 참여자 리스트에서 그 룸의 그 참여자 삭제!
+    const deluser: ChatParticipants =
+      await this.chatParticipantsRepository.findOne({
+        where: {
+          chatRoom: chatLeaveDto.chatRoomId,
+          user: user.id,
+        },
+      });
+    await this.chatParticipantsRepository.delete(deluser);
+
+    this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
+
+    //방에 참여자 없으면 방 삭제!
+    const participant: ChatParticipants =
+      await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
+    if (!participant)
+      await this.chatRoomRepository.deleteRoom(chatLeaveDto.chatRoomId);
+  }
+
+  @SubscribeMessage("chat-room-message")
+  async handleChatRoomMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() chatMessageDto: ChatMessageDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(chatMessageDto.userId);
+    chatMessageDto.nickname = user.nickname;
+
+    const chatTitle = "chat-" + chatMessageDto.chatRoomId;
+    socket.in(chatTitle).emit("chat-room-message", chatMessageDto);
   }
 }
