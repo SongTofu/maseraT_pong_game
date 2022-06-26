@@ -5,6 +5,8 @@ module.exports = {
     extend: {
       colors: {
         main: "rgb(var(--color-main))",
+        "main-light": "rgb(var(--color-main-light))",
+        "main-text": "rgb(var(--color-main-text))",
         button: "rgb(var(--color-button))",
       },
       letterSpacing: {
