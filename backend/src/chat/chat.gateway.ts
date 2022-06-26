@@ -16,6 +16,7 @@ import { UserRepository } from "src/user-info/repository/user.repository";
 import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { SetAdminDto } from "./dto/set-admin.dto";
+import * as bcrypt from "bcryptjs";
 
 @WebSocketGateway({
   cors: {
@@ -38,14 +39,17 @@ export class ChatGateway {
     @MessageBody() chatJoinDto: ChatJoinDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatJoinDto.userId);
+    let isCreate: Boolean = false;
 
     // 방이 생성이면 생성 된 room id, 입장이면 프론트에서 넘어온 room id
-    chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
-      chatJoinDto,
-    );
-
+    if (!chatJoinDto.chatRoomId) {
+      chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
+        chatJoinDto,
+      );
+      isCreate = true;
+    }
     // 방 생성이면 user -> onwer, 아니면 user 참여자
-    this.joinChatRoom(chatJoinDto, user);
+    if (!this.joinChatRoom(chatJoinDto, user, isCreate)) return;
 
     // 방 생성시 생성한 user에겐 join을 안 보내기 때문에 그 다음 유저들부턴 권한 0으로 전송
     const chatParticipantDto: ChatParticipantDto = {
@@ -60,11 +64,6 @@ export class ChatGateway {
     this.server.in(chatTitle).emit("chat-room-join", chatParticipantDto);
 
     socket.join(chatTitle);
-    // participants list
-    socket.emit(
-      "chat-participant-list",
-      await this.chatParticipantList(chatJoinDto.chatRoomId),
-    );
   }
 
   @SubscribeMessage("chat-room-set-admin")
@@ -96,45 +95,24 @@ export class ChatGateway {
   private async joinChatRoom(
     chatJoinDto: ChatJoinDto,
     user: User,
-  ): Promise<void> {
+    isCreate: Boolean,
+  ): Promise<boolean> {
     const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
       chatJoinDto.chatRoomId,
     );
 
-    let chatParticipants: ChatParticipants;
-    if (chatJoinDto.isCreate) {
-      chatParticipants = this.chatParticipantsRepository.create({
-        user,
-        authority: Authority.owner,
-        chatRoom,
-      });
-    } else {
-      chatParticipants = this.chatParticipantsRepository.create({
-        user,
-        authority: Authority.partiicipnat,
-        chatRoom,
-      });
+    if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {
+      const chatParticipants: ChatParticipants =
+        this.chatParticipantsRepository.create({
+          user,
+          chatRoom,
+        });
+      if (isCreate) {
+        chatParticipants.authority = Authority.owner;
+      }
+      await chatParticipants.save();
+      return true;
     }
-
-    await chatParticipants.save();
-  }
-
-  private async chatParticipantList(
-    chatRoomId: number,
-  ): Promise<ChatParticipantDto[]> {
-    const participants: ChatParticipants[] =
-      await this.chatParticipantsRepository.find({
-        where: {
-          chatRoom: chatRoomId,
-        },
-        relations: ["user"],
-      });
-
-    const chatParticipantDto: ChatParticipantDto[] = [];
-
-    participants.forEach((participant) => {
-      chatParticipantDto.push(new ChatParticipantDto(participant, chatRoomId));
-    });
-    return chatParticipantDto;
+    return false;
   }
 }

@@ -3,5 +3,4 @@ export class ChatJoinDto {
   title: string;
   password: string;
   userId: number;
-  isCreate: boolean;
 }
