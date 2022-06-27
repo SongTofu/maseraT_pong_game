@@ -2,8 +2,8 @@ import { Module } from "@nestjs/common";
 import { NicknameController } from "./nickname.controller";
 import { NicknameService } from "./nickname.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserRepository } from "src/user-info/repository/user.repository";
-import { UserInfoModule } from "src/user-info/user-info.module";
+import { UserRepository } from "src/user/repository/user.repository";
+import { UserInfoModule } from "src/user/user.module";
 
 @Module({
   imports: [UserInfoModule, TypeOrmModule.forFeature([UserRepository])],

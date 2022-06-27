@@ -16,7 +16,7 @@ export class ChatRoom extends BaseEntity {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ default: "" })
   password: string;
 
   @Column()

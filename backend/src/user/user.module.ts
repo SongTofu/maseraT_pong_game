@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserRepository } from "./repository/user.repository";
-import { UserInfoController } from "./user-info.controller";
-import { UserInfoService } from "./user-info.service";
+import { UserController } from "./user.controller";
+import { UserService } from "./user.service";
 import { FriendsRepository } from "./repository/friends.repository";
 import { BlockRepository } from "./repository/block.repository";
 
@@ -14,7 +14,7 @@ import { BlockRepository } from "./repository/block.repository";
       BlockRepository,
     ]),
   ],
-  controllers: [UserInfoController],
-  providers: [UserInfoService],
+  controllers: [UserController],
+  providers: [UserService],
 })
 export class UserInfoModule {}

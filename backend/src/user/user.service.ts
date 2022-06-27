@@ -13,7 +13,7 @@ import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 
 @Injectable()
-export class UserInfoService {
+export class UserService {
   constructor(
     private userRepository: UserRepository,
     private friendsRepository: FriendsRepository,

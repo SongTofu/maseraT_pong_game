@@ -6,7 +6,7 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "src/user-info/entity/user.entity";
+import { User } from "src/user/entity/user.entity";
 
 @Entity()
 export class Achievement extends BaseEntity {

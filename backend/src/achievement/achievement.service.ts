@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AchievementDto } from "./dto/achievement.dto";
-import { User } from "src/user-info/entity/user.entity";
-import { UserRepository } from "src/user-info/repository/user.repository";
+import { User } from "src/user/entity/user.entity";
+import { UserRepository } from "src/user/repository/user.repository";
 import { AchievementRepository } from "./achievement.repository";
 import { Achievement } from "./achievement.entity";
 
