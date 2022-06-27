@@ -11,7 +11,7 @@ module.exports = {
         button: "rgb(var(--color-button))",
       },
       letterSpacing: {
-        widest: ".3em",
+        widest: "1em",
       },
     },
   },
