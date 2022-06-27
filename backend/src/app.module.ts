@@ -6,8 +6,8 @@ import { RecordModule } from "./record/record.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeORMConfig } from "./configs/typeorm.configs";
 import { NicknameModule } from "./nickname/nickname.module";
-import { LoginModule } from "./login/login.module";
 import { MailerModule } from "@nestjs-modules/mailer";
+import { AuthModule } from "./auth/auth.module";
 import { ChatModule } from "./chat/chat.module";
 import { AchievementModule } from "./achievement/achievement.module";
 import { UserInfoModule } from "./user/user.module";
@@ -21,7 +21,6 @@ import { join } from "path";
     RecordModule,
     TypeOrmModule.forRoot(typeORMConfig),
     NicknameModule,
-    LoginModule,
     MailerModule.forRoot({
       transport:
         "smtps://a01083167716@gmail.com:rqzulibmccndnalz@smtp.gmail.com",
@@ -29,6 +28,7 @@ import { join } from "path";
         from: "'nest-modules' <modules@nestjs.com>",
       },
     }),
+    AuthModule,
     ChatModule,
     AchievementModule,
     ServeStaticModule.forRoot({

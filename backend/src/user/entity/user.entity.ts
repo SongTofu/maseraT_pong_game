@@ -21,37 +21,37 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  apiId: string;
+  @Column({ default: 0 })
+  apiId: number;
 
   @Column({ unique: true })
   nickname: string;
 
-  @Column()
+  @Column({ default: false })
   secondAuth: boolean;
 
-  @Column()
+  @Column({ default: "" })
   email: string;
 
-  @Column()
+  @Column({ default: 0 })
   personalWin: number;
 
-  @Column()
+  @Column({ default: 0 })
   personalLose: number;
 
-  @Column()
+  @Column({ default: 0 })
   ladderWin: number;
 
-  @Column()
+  @Column({ default: 0 })
   ladderLose: number;
 
-  @Column()
+  @Column({ default: "" })
   profileImg: string;
 
-  @Column()
+  @Column({ default: 0 })
   state: UserState;
 
-  @Column()
+  @Column({ default: 1 })
   level: number;
 
   @OneToMany(
