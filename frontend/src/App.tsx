@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <div className="min-w-max">
+        <div className="wrap min-w-max">
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />

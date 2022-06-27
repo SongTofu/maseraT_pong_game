@@ -15,7 +15,14 @@ function LoginContent(): JSX.Element {
           </h1>
         </div>
         <div className="p-10"></div>
-        <ButtonOne />
+        <ButtonOne
+          tag={"로 그 인"}
+          onClick={() =>
+            (window.location.href =
+              `https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&` +
+              `redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`)
+          }
+        />
       </div>
     </>
   );
