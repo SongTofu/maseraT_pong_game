@@ -13,16 +13,18 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/game-room" element={<GameRoom />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/chat-room" element={<ChatRoom />} />
-        </Routes>
-        <Footer />
+        <div className="wrap min-w-max">
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/game-room" element={<GameRoom />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat-room" element={<ChatRoom />} />
+          </Routes>
+          <Footer />
+        </div>
       </BrowserRouter>
     </div>
   );
