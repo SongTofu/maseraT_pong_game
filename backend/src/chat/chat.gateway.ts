@@ -6,9 +6,9 @@ import {
   ConnectedSocket,
 } from "@nestjs/websockets";
 import { Socket } from "socket.io";
+import { ChatParticipantsRepository } from "./repository/chat-participants.repository";
 import { ChatRoomRepository } from "./repository/chat-room.repository";
 import { ChatJoinDto } from "./dto/chat-join.dto";
-import { ChatParticipantsRepository } from "./repository/chat-participants.repository";
 import { ChatRoom } from "./entity/chat-room.entity";
 import { ChatParticipants } from "./entity/chat-participants.entity";
 import { User } from "src/user/entity/user.entity";
