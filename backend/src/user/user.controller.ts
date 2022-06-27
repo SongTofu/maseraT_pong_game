@@ -1,9 +1,27 @@
-import { Controller, Get, Param, Patch, Body, Post } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Body,
+  Post,
+  UseInterceptors,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { User } from "./entity/user.entity";
+import { diskStorage } from "multer";
+import { FileInterceptor } from "@nestjs/platform-express";
+
+const storage = diskStorage({
+  destination: "./img",
+  filename: (req, file, cb) => {
+    const filename = Date.now() + file.originalname;
+    cb(null, filename);
+  },
+});
 
 @Controller("user")
 export class UserController {
@@ -20,6 +38,7 @@ export class UserController {
   }
 
   @Patch("/info")
+  @UseInterceptors(FileInterceptor("profile", {}))
   updateUser(@Body() updateUserInfoDto: UpdateUserInfoDto) {
     return this.userService.updateUser(2, updateUserInfoDto);
   }

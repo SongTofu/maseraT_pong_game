@@ -11,6 +11,8 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { ChatModule } from "./chat/chat.module";
 import { AchievementModule } from "./achievement/achievement.module";
 import { UserInfoModule } from "./user/user.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -24,11 +26,14 @@ import { UserInfoModule } from "./user/user.module";
       transport:
         "smtps://a01083167716@gmail.com:rqzulibmccndnalz@smtp.gmail.com",
       defaults: {
-        from: "'neest-modules' <modules@nestjs.com>",
+        from: "'nest-modules' <modules@nestjs.com>",
       },
     }),
     ChatModule,
     AchievementModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "img"),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService], //, AchievementService
