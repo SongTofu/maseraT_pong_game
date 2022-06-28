@@ -4,9 +4,10 @@ import StatusBusy from "../img/circleRed.svg";
 
 interface IProps {
   status: boolean;
+  name: string;
 }
 
-function UserList({ status }: IProps) {
+function UserList({ status, name }: IProps) {
   return (
     <div className="border-main border-[1px] rounded-sm w-[90%] mt-2 last:mb-2">
       <div className="inline mx-2">
@@ -15,7 +16,7 @@ function UserList({ status }: IProps) {
           <img alt="status-busy" src={StatusBusy} className="inline" />
         )}
       </div>
-      <div className="inline text-main-text">name</div>
+      <div className="inline text-main-text">{name}</div>
     </div>
   );
 }
