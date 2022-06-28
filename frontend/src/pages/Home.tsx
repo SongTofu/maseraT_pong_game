@@ -1,11 +1,11 @@
 import React from "react";
-import Body from "../components/Body";
+import HomeContent from "../components/HomeContent";
 
-function Home() {
+function Home(): JSX.Element {
   return (
-    <>
-      <Body />
-    </>
+    <div className="bg-red-900 p-10 flex items-center my-20 mx-28 min-w-max">
+      <HomeContent />
+    </div>
   );
 }
 
