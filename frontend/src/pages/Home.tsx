@@ -3,7 +3,7 @@ import HomeContent from "../components/HomeContent";
 
 function Home(): JSX.Element {
   return (
-    <div className="bg-red-900 p-10 flex items-center my-20 mx-28 min-w-max">
+    <div className="wrap bg-red-900 p-10 flex items-center my-20 mx-28 min-w-max">
       <HomeContent />
     </div>
   );
