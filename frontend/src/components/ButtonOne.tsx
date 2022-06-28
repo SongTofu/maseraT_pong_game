@@ -7,9 +7,9 @@ interface BtnOneProps {
 
 function ButtonOne({ tag, onClick }: BtnOneProps): JSX.Element {
   return (
-    <div className="bg-green-400 p-10">
+    <div className="bg-green-400 flex justify-center p-10">
       <button
-        className="bg-button rounded text-white w-[300px] h-[40px] tracking-widest"
+        className="bg-button rounded text-white text-lg font-semibold w-1/2 h-[50px] tracking-[2em]"
         onClick={onClick}
       >
         &nbsp;{tag}
