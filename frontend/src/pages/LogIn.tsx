@@ -1,11 +1,10 @@
 import React from "react";
+import LoginContent from "../components/LoginContent";
 
-function LogIn() {
+function LogIn(): JSX.Element {
   return (
-    <div>
-      <div className="m-60">
-        <h1 className="text-3xl text-center uppercase">login</h1>
-      </div>
+    <div className="upload__wrap bg-red-900 p-10 my-20 mx-28 min-w-max">
+      <LoginContent />
     </div>
   );
 }

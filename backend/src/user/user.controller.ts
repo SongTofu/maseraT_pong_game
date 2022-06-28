@@ -14,6 +14,7 @@ import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { User } from "./entity/user.entity";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { GetAllUserDto } from "./dto/get-all-user.dto";
 
 const storage = diskStorage({
   destination: "./img",
@@ -26,6 +27,11 @@ const storage = diskStorage({
 @Controller("user")
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Get()
+  getAllUser(): Promise<GetAllUserDto[]> {
+    return this.userService.getAllUser();
+  }
 
   @Get()
   getMyInfo(): Promise<MyUserInfoDto> {
