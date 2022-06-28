@@ -11,6 +11,7 @@ import { FriendsRepository } from "./repository/friends.repository";
 import { BlockRepository } from "./repository/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
+import { GetAllUserDto } from "./dto/get-all-user.dto";
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,26 @@ export class UserService {
     private friendsRepository: FriendsRepository,
     private blockRepository: BlockRepository,
   ) {}
+
+  // test after saved in db
+  async getAllUser(): Promise<GetAllUserDto[]> {
+    const getAllUserDto: GetAllUserDto[] = [];
+    const user: User[] = await this.userRepository.find();
+
+    if (!user) {
+      throw new NotFoundException(`Noboby user exist`);
+    }
+
+    for (let i = 0; i < user.length; i++) {
+      getAllUserDto.push({
+        userID: user[i].apiId,
+        nickname: user[i].nickname,
+        state: user[i].state,
+      });
+    }
+
+    return getAllUserDto;
+  }
 
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
     const user: User = await this.userRepository.findOne(id);
