@@ -1,8 +1,8 @@
 import React from "react";
 import Pong from "../img/pong.png";
-import ButtonOne from "../components/ButtonOne";
+import ButtonOne from "./ButtonOne";
 
-function LoginContent(): JSX.Element {
+function HomeContent(): JSX.Element {
   return (
     <>
       <div className="bg-red-500 w-7/12 p-10">
@@ -28,4 +28,4 @@ function LoginContent(): JSX.Element {
   );
 }
 
-export default LoginContent;
+export default HomeContent;
