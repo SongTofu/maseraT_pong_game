@@ -130,27 +130,29 @@ function TopBar({ children }: Props) {
                 <div className="w-[500px] text-main-text flex justify-between items-center">
                   <p className="inline">lv. {0}</p>
                   <div className="inline">
-                    <span className="block text-xs">일반/레더전적</span>
-                    <span className="block text-sm ">
+                    <span className="block text-xs font-main">
+                      일반/레더전적
+                    </span>
+                    <span className="block text-sm font-main">
                       {0}승 {0}패/{0}승 {0}패
                     </span>
                   </div>
                   <div className="flex">
                     <ButtonTwo
                       tag="프로필 보기"
-                      className="inline text-sm mr-2"
+                      className="inline text-sm font-main mr-2"
                       onClick={() => handleOptionChange(openModal)}
                     />
                     <ButtonTwo
                       tag="닉네임 변경"
-                      className="inline text-sm mr-2"
+                      className="inline text-sm font-main mr-2"
                       onClick={() => {
                         handleOptionChange(openModal);
                       }}
                     />
                     <ButtonTwo
                       tag="2차 인증 활성화"
-                      className="inline text-sm "
+                      className="inline font-main text-sm "
                       onClick={() => {
                         handleOptionChange(openModal);
                       }}
