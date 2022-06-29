@@ -14,7 +14,7 @@ import { UserService } from "./user.service";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
-import { User } from "./entity/user.entity";
+import { User } from "./user.entity";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { GetAllUserDto } from "./dto/get-all-user.dto";

@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from "typeorm";
-import { Block } from "../entity/block.entity";
+import { Block } from "./block.entity";
 
 @EntityRepository(Block)
 export class BlockRepository extends Repository<Block> {}
