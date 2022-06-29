@@ -30,3 +30,8 @@
     @apply bg-white text-main-text border-main border-[1px]
   }
 }
+
+@font-face {
+  font-family: "Ubuntu";
+  src: local("Ubuntu"), url(./font/Ubuntu-Regular.ttf);
+}

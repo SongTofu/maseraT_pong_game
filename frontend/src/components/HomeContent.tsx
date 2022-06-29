@@ -10,7 +10,7 @@ function HomeContent(): JSX.Element {
       </div>
       <div className="content__wrap bg-blue-500 w-5/12 p-10">
         <div className="text__wrap bg-green-500 flex justify-center p-10">
-          <h1 className="text-3xl font-semibold w-[300px] h-[40px] text-center">
+          <h1 className="text-3xl font-semibold w-[300px] h-[40px] text-center font-main">
             퐁게임 함 하쉴???
           </h1>
         </div>

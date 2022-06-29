@@ -13,6 +13,9 @@ module.exports = {
       letterSpacing: {
         widest: "0.3em",
       },
+      fontFamily: {
+        main: ["Ubuntu"],
+      },
     },
   },
   plugins: [],
