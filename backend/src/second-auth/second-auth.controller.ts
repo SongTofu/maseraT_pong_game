@@ -1,17 +1,22 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, UseGuards, Req } from "@nestjs/common";
 import { SecondAuthService } from "./second-auth.service";
+import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 
 @Controller("second-auth")
+@UseGuards(JwtAuthGuard)
 export class SecondAuthController {
   constructor(private secondAuthServie: SecondAuthService) {}
 
   @Get()
-  requestAuth(): void {
-    this.secondAuthServie.requestAuth(2);
+  requestAuth(@Req() req): void {
+    this.secondAuthServie.requestAuth(req.user.id);
   }
 
   @Get("/:code")
-  checkAuth(@Param("code") code: string): Promise<{ matchCode: boolean }> {
-    return this.secondAuthServie.checkAuth(2, code);
+  checkAuth(
+    @Param("code") code: string,
+    @Req() req,
+  ): Promise<{ matchCode: boolean }> {
+    return this.secondAuthServie.checkAuth(req.user.id, code);
   }
 }

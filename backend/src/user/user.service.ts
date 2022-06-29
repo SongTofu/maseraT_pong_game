@@ -63,7 +63,7 @@ export class UserService {
     userId: number,
     targetId: number,
   ): Promise<TargetUserInfoDto> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne(userId);
     const target = await this.userRepository.findOne(targetId);
 
     const isFriend = await this.isFriend(user, target);

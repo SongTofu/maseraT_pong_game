@@ -25,6 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       throw new UnauthorizedException();
     }
 
-    return this.userRepository;
+    return isValid;
   }
 }

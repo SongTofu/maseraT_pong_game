@@ -23,10 +23,10 @@ export class AuthService {
         email: userDto.email,
         nickname: "",
       });
-      user.save();
+      user = await user.save();
     }
 
-    const id = user.apiId;
+    const id = user.id;
     const payload = { id };
     const accessToken = await this.jwtService.sign(payload);
 
