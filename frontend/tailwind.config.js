@@ -10,6 +10,9 @@ module.exports = {
         "main-text": "rgb(var(--color-main-text))",
         button: "rgb(var(--color-button))",
       },
+      letterSpacing: {
+        widest: "0.3em",
+      },
     },
   },
   plugins: [],

@@ -5,16 +5,16 @@ import ButtonOne from "./ButtonOne";
 function HomeContent(): JSX.Element {
   return (
     <>
-      <div className="bg-red-500 w-7/12 p-10">
+      <div className="img__wrap bg-red-500 w-7/12 p-10">
         <img alt={"pong"} src={Pong} />
       </div>
-      <div className="bg-blue-500 flex flex-col w-5/12 p-10 items-center">
-        <div className="bg-green-500 p-10">
+      <div className="content__wrap bg-blue-500 w-5/12 p-10">
+        <div className="text__wrap bg-green-500 flex justify-center p-10">
           <h1 className="text-3xl font-semibold w-[300px] h-[40px] text-center">
             퐁게임 함 하쉴???
           </h1>
         </div>
-        <div className="p-10"></div>
+        <div className="empty bg-violet-700 p-10"></div>
         <ButtonOne
           tag={"로 그 인"}
           onClick={() =>
