@@ -16,7 +16,7 @@ function UserList({ status, name }: IProps) {
           <img alt="status-busy" src={StatusBusy} className="inline" />
         )}
       </div>
-      <div className="inline  font-main text-main-text">{name}</div>
+      <div className="inline font-main text-main-text">{name}</div>
     </div>
   );
 }
