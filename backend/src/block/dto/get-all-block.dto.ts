@@ -1,5 +1,5 @@
 export class GetAllBlockDto {
-  userId: number;
+  userID: number;
   nickname: string;
   state: number;
 }
