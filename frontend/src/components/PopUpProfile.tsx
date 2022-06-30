@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DefltImg from "../img/maserat.png";
 import Achievement from "./Achievement";
-import BtnPopUp from "./BtnPopUp";
+import PopUpBtnBig from "./PopUpBtnBig";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
@@ -54,7 +54,7 @@ function PopUpProfile(): JSX.Element {
             </span>
           </div>
           <div className="btn__wrap w-[50px] flex items-center bg-lime-500">
-            <button className="rounded font-main text-white text-sm w-[50px] h-[30px] bg-main">
+            <button className="rounded font-main text-white text-sm w-[50px] h-[30px] bg-button">
               전적
             </button>
           </div>
@@ -62,12 +62,12 @@ function PopUpProfile(): JSX.Element {
       </div>
       <div className="btns__wrap bg-yellow-200">
         <div className="flex justify-between p-2">
-          <BtnPopUp tag="친구 추가" />
-          <BtnPopUp tag="게임 신청" />
+          <PopUpBtnBig tag="친구 추가" />
+          <PopUpBtnBig tag="게임 신청" />
         </div>
         <div className="flex justify-between p-2">
-          <BtnPopUp tag="DM 보내기" />
-          <BtnPopUp tag="차단 하기" />
+          <PopUpBtnBig tag="DM 보내기" />
+          <PopUpBtnBig tag="차단 하기" />
         </div>
       </div>
     </>

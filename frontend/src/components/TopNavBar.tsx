@@ -4,6 +4,8 @@ import ButtonTwo from "./ButtonTwo";
 import Achievement from "./Achievement";
 import PopUpParent from "./PopUpParent";
 import PopUpProfile from "./PopUpProfile";
+import PopUpNick from "./PopUpNick";
+import PopUpSecAuth from "./PopUpSecAuth";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -11,6 +13,7 @@ interface Props {
 
 function TopBar({ children }: Props) {
   const [openModal, setOpenModal] = useState(false);
+  const [btnTag, setBtnTag] = useState("");
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -81,13 +84,17 @@ function TopBar({ children }: Props) {
                     <ButtonTwo
                       tag="프로필 보기"
                       className="inline text-sm font-main mr-2"
-                      onClick={() => handleOptionChange(openModal)}
+                      onClick={() => {
+                        handleOptionChange(openModal);
+                        setBtnTag("프로필");
+                      }}
                     />
                     <ButtonTwo
                       tag="닉네임 변경"
                       className="inline text-sm font-main mr-2"
                       onClick={() => {
                         handleOptionChange(openModal);
+                        setBtnTag("닉네임");
                       }}
                     />
                     <ButtonTwo
@@ -95,6 +102,7 @@ function TopBar({ children }: Props) {
                       className="inline font-main text-sm "
                       onClick={() => {
                         handleOptionChange(openModal);
+                        setBtnTag("2차인증");
                       }}
                     />
                   </div>
@@ -105,10 +113,39 @@ function TopBar({ children }: Props) {
         </div>
         <div className="bg-main-light w-[50%] h-12 absolute top-2 right-0 border-b-2 border-main z-10"></div>
       </div>
-      {openModal && (
+      {openModal && btnTag === "프로필" && (
         <div className="flex justify-center">
-          <PopUpParent mainText="프로필 보기">
+          <PopUpParent
+            width={500}
+            height={500}
+            mainText="프로필 보기"
+            onClick={() => handleOptionChange(openModal)}
+          >
             <PopUpProfile />
+          </PopUpParent>
+        </div>
+      )}
+      {openModal && btnTag === "닉네임" && (
+        <div className="flex justify-center">
+          <PopUpParent
+            width={500}
+            height={300}
+            mainText="닉네임 변경"
+            onClick={() => handleOptionChange(openModal)}
+          >
+            <PopUpNick />
+          </PopUpParent>
+        </div>
+      )}
+      {openModal && btnTag === "2차인증" && (
+        <div className="flex justify-center">
+          <PopUpParent
+            width={500}
+            height={300}
+            mainText="2차 인증 활성화"
+            onClick={() => handleOptionChange(openModal)}
+          >
+            <PopUpSecAuth />
           </PopUpParent>
         </div>
       )}

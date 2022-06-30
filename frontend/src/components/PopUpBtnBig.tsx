@@ -5,11 +5,11 @@ interface BtnProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function BtnPopUp({ tag, onClick }: BtnProps): JSX.Element {
+function PopUpBtnBig({ tag, onClick }: BtnProps): JSX.Element {
   return (
     <>
       <button
-        className="bg-main rounded text-white font-main w-[200px] h-[40px]"
+        className="bg-button rounded text-white font-main w-[200px] h-[40px]"
         onClick={onClick}
       >
         {tag}
@@ -18,4 +18,4 @@ function BtnPopUp({ tag, onClick }: BtnProps): JSX.Element {
   );
 }
 
-export default BtnPopUp;
+export default PopUpBtnBig;

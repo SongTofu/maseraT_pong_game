@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import ButtonTwo from "./ButtonTwo";
+import PopUpBlock from "./PopUpBlock";
+import PopUpParent from "./PopUpParent";
 import UserList from "./UserList";
 
 interface IProps {
@@ -10,6 +12,11 @@ interface IProps {
 
 function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
   const [listStatus, setListStatus] = useState("all");
+  const [showBlock, setShowBlock] = useState(false);
+
+  const handleShowBlock = (val: boolean) => {
+    setShowBlock(!val);
+  };
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
@@ -44,6 +51,7 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
         <ButtonTwo
           tag="차단 유저 목록"
           className="text-sm font-main px-16 tracking-widest btn-unselected"
+          onClick={() => handleShowBlock(showBlock)}
         />
       </div>
       {isChatRoom && (
@@ -67,6 +75,18 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
             className="text-sm font-main pr-6 pl-7 tracking-widest"
             navlink="/chat"
           />
+        </div>
+      )}
+      {showBlock && (
+        <div className="relative bottom-[350px]">
+          <PopUpParent
+            width={300}
+            height={300}
+            mainText="차단 유저"
+            onClick={() => handleShowBlock(showBlock)}
+          >
+            <PopUpBlock />
+          </PopUpParent>
         </div>
       )}
     </div>
