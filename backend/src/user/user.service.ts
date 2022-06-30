@@ -12,6 +12,7 @@ import { BlockRepository } from "./repository/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { GetAllUserDto } from "./dto/get-all-user.dto";
+import { join } from "path";
 
 @Injectable()
 export class UserService {
@@ -90,6 +91,11 @@ export class UserService {
       user.nickname = updateUserInfoDto.nickname;
     }
     if (updateUserInfoDto.profileImg) {
+      const fs = require("fs");
+
+      const path = join(__dirname, "..", "..", "img", user.profileImg);
+      console.log(path);
+      fs.unlink(path, (err) => {});
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth) {
