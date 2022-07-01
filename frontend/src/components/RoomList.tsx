@@ -15,15 +15,15 @@ function RoomComponent({ status, isGame }: IProps) {
       <div className="flex justify-between items-center">
         {!isGame && (
           <div className="pr-5 text-sm">
-            {status && <div className="text-black">공개</div>}
-            {!status && <div className="text-red-800">비공개</div>}
+            {status && <div className="text-black font-main">공개</div>}
+            {!status && <div className="text-red-800 font-main">비공개</div>}
           </div>
         )}
         <div className="pr-5 text-sm">{1}명</div>
         {isGame && (
           <div className="pr-5 text-sm">
-            {status && <div className="text-yellow-500">대기중</div>}
-            {!status && <div className="text-gray-500">게임중</div>}
+            {status && <div className="text-yellow-500 font-main">대기중</div>}
+            {!status && <div className="text-gray-500 font-main">게임중</div>}
           </div>
         )}
         {isGame && (

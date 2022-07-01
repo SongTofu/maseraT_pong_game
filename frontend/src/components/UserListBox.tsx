@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import ButtonTwo from "./ButtonTwo";
+import PopUpBlock from "./PopUpBlock";
+import PopUpParent from "./PopUpParent";
 import UserList from "./UserList";
 
 interface IProps {
@@ -10,19 +12,24 @@ interface IProps {
 
 function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
   const [listStatus, setListStatus] = useState("all");
+  const [showBlock, setShowBlock] = useState(false);
+
+  const handleShowBlock = (val: boolean) => {
+    setShowBlock(!val);
+  };
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
         <ButtonTwo
           tag={buttonTag ? buttonTag : "전체 유저"}
-          className={`text-sm px-5 tracking-widest ${
+          className={`text-sm font-main px-5 tracking-widest ${
             listStatus === "all" ? "" : "btn-unselected"
           }`}
           onClick={() => setListStatus("all")}
         />
         <ButtonTwo
           tag="친구"
-          className={`text-sm px-9 tracking-widest  ${
+          className={`text-sm font-main px-9 tracking-widest  ${
             listStatus === "friends" ? "" : "btn-unselected"
           }`}
           onClick={() => setListStatus("friends")}
@@ -43,7 +50,8 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
       <div className="mt-7">
         <ButtonTwo
           tag="차단 유저 목록"
-          className="text-sm px-16 tracking-widest btn-unselected"
+          className="text-sm font-main px-16 tracking-widest btn-unselected"
+          onClick={() => handleShowBlock(showBlock)}
         />
       </div>
       {isChatRoom && (
@@ -51,7 +59,7 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
           {userStatus === "admin" ? (
             <ButtonTwo
               tag="방 설정"
-              className="text-sm pr-6 pl-7 tracking-widest"
+              className="text-sm font-main pr-6 pl-7 tracking-widest"
               onClick={() => {
                 console.log("admin");
               }}
@@ -59,14 +67,26 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
           ) : (
             <ButtonTwo
               tag="방 설정"
-              className="text-sm pr-6 pl-7 tracking-widest bg-main-light cursor-default"
+              className="text-sm font-main pr-6 pl-7 tracking-widest bg-main-light cursor-default"
             />
           )}
           <ButtonTwo
             tag="나가기"
-            className="text-sm pr-6 pl-7 tracking-widest"
+            className="text-sm font-main pr-6 pl-7 tracking-widest"
             navlink="/chat"
           />
+        </div>
+      )}
+      {showBlock && (
+        <div className="relative bottom-[350px]">
+          <PopUpParent
+            width={"w-[300px]"}
+            height={"h-[300px]"}
+            mainText="차단 유저"
+            onClick={() => handleShowBlock(showBlock)}
+          >
+            <PopUpBlock />
+          </PopUpParent>
         </div>
       )}
     </div>
