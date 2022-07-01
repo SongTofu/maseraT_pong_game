@@ -1,8 +1,8 @@
 import React from "react";
 
 interface PopParentProps {
-  width: number;
-  height: number;
+  width: string;
+  height: string;
   mainText?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children?: JSX.Element;
@@ -18,7 +18,7 @@ function PopUpParent({
   return (
     <div className="fixed flex justify-center z-99">
       <div
-        className={`w-[${width}px] h-[${height}px] rounded-[12px] bg-white border-black border-2 p-[25px]`}
+        className={`${width} ${height} rounded-[12px] bg-white border-black border-2 p-[25px]`}
       >
         <div className="flex justify-between">
           <h1 className="text-2xl font-main text-main font-semibold">

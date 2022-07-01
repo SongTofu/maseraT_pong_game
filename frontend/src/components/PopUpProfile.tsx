@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import DefltImg from "../img/maserat.png";
 import Achievement from "./Achievement";
 import PopUpBtnBig from "./PopUpBtnBig";
+import PopUpParent from "./PopUpParent";
+import PopUpRecord from "./PopUpRecord";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const handleMouseEnter = () => {
     setDisplay(true);
@@ -12,6 +15,10 @@ function PopUpProfile(): JSX.Element {
 
   const handleMouseLeave = () => {
     setDisplay(false);
+  };
+
+  const handleOptionChange = (val: boolean) => {
+    setOpenModal(!val);
   };
 
   return (
@@ -54,7 +61,10 @@ function PopUpProfile(): JSX.Element {
             </span>
           </div>
           <div className="btn__wrap w-[50px] flex items-center bg-lime-500">
-            <button className="rounded font-main text-white text-sm w-[50px] h-[30px] bg-button">
+            <button
+              className="rounded font-main text-white text-sm w-[50px] h-[30px] bg-button"
+              onClick={() => handleOptionChange(openModal)}
+            >
               전적
             </button>
           </div>
@@ -70,6 +80,16 @@ function PopUpProfile(): JSX.Element {
           <PopUpBtnBig tag="차단 하기" />
         </div>
       </div>
+      {openModal && (
+        <PopUpParent
+          width="w-[550px]"
+          height="h-[400px]"
+          mainText="게임 전적"
+          onClick={() => handleOptionChange(openModal)}
+        >
+          <PopUpRecord />
+        </PopUpParent>
+      )}
     </>
   );
 }

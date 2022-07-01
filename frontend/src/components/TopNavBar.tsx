@@ -116,8 +116,8 @@ function TopBar({ children }: Props) {
       {openModal && btnTag === "프로필" && (
         <div className="flex justify-center">
           <PopUpParent
-            width={500}
-            height={500}
+            width={"w-[500px]"}
+            height={"h-[500px]"}
             mainText="프로필 보기"
             onClick={() => handleOptionChange(openModal)}
           >
@@ -128,8 +128,8 @@ function TopBar({ children }: Props) {
       {openModal && btnTag === "닉네임" && (
         <div className="flex justify-center">
           <PopUpParent
-            width={500}
-            height={300}
+            width={"w-[500px]"}
+            height={"h-[300px]"}
             mainText="닉네임 변경"
             onClick={() => handleOptionChange(openModal)}
           >
@@ -140,8 +140,8 @@ function TopBar({ children }: Props) {
       {openModal && btnTag === "2차인증" && (
         <div className="flex justify-center">
           <PopUpParent
-            width={500}
-            height={300}
+            width={"w-[500px]"}
+            height={"h-[300px]"}
             mainText="2차 인증 활성화"
             onClick={() => handleOptionChange(openModal)}
           >

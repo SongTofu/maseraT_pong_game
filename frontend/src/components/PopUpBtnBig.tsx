@@ -9,7 +9,7 @@ function PopUpBtnBig({ tag, onClick }: BtnProps): JSX.Element {
   return (
     <>
       <button
-        className="bg-button rounded text-white font-main w-[200px] h-[40px]"
+        className="bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest"
         onClick={onClick}
       >
         {tag}

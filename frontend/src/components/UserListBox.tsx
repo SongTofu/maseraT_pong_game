@@ -80,8 +80,8 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
       {showBlock && (
         <div className="relative bottom-[350px]">
           <PopUpParent
-            width={300}
-            height={300}
+            width={"w-[300px]"}
+            height={"h-[300px]"}
             mainText="차단 유저"
             onClick={() => handleShowBlock(showBlock)}
           >
