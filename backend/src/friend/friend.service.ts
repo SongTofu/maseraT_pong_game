@@ -1,28 +1,28 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { GetAllFriendsDto } from "./dto/get-all-friends.dto";
-import { Friends } from "./friends.entity";
+import { Friend } from "./friends.entity";
 import { FriendsRepository } from "./friends.repository";
 
 @Injectable()
 export class FriendService {
   constructor(private friendsRository: FriendsRepository) {}
 
-  async getAllFriends(): Promise<GetAllFriendsDto[]> {
+  async getAllFriends(id): Promise<GetAllFriendsDto[]> {
     const getAllFriendsDto: GetAllFriendsDto[] = [];
-    const friends: Friends[] = await this.friendsRository.find();
+    const friends: Friend[] = await this.friendsRository.find({
+      where: {
+        ownId: id,
+      },
+    });
 
     if (!friends) {
       throw new NotFoundException(`Nobody friends exist`);
     }
 
-    for (let i = 0; i < friends.length; i++) {
-      getAllFriendsDto.push({
-        userID: friends[i].friendsId.id,
-        nickname: friends[i].friendsId.nickname,
-        state: friends[i].friendsId.state,
-      });
+    friends.forEach((friend) => {
+      getAllFriendsDto.push(new GetAllFriendsDto(friend.friendsId));
+    });
 
-      return getAllFriendsDto;
-    }
+    return getAllFriendsDto;
   }
 }

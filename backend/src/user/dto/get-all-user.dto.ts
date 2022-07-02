@@ -1,5 +1,5 @@
 export class GetAllUserDto {
-  userID: number;
+  userId: number;
   nickname: string;
   state: number;
 }

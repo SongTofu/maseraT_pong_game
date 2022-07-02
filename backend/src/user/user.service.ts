@@ -33,7 +33,7 @@ export class UserService {
 
     for (let i = 0; i < user.length; i++) {
       getAllUserDto.push({
-        userID: user[i].apiId,
+        userId: user[i].apiId,
         nickname: user[i].nickname,
         state: user[i].state,
       });
