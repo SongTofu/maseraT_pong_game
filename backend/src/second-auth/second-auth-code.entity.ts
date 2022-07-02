@@ -6,7 +6,7 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "../user/entity/user.entity";
+import { User } from "../user/user.entity";
 
 @Entity()
 export class SecondAuthCode extends BaseEntity {

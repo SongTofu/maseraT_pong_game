@@ -14,6 +14,7 @@ import { UserInfoModule } from "./user/user.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { FriendModule } from './friend/friend.module';
+import { BlockModule } from './block/block.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { FriendModule } from './friend/friend.module';
       rootPath: join(__dirname, "..", "img"),
     }),
     FriendModule,
+    BlockModule,
   ],
   controllers: [AppController],
   providers: [AppService], //, AchievementService

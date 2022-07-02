@@ -17,9 +17,9 @@ export class FriendService {
 
     for (let i = 0; i < friends.length; i++) {
       getAllFriendsDto.push({
-        id: friends[i].id,
-        ownId: friends[i].ownId,
-        friendsId: friends[i].friendsId,
+        userID: friends[i].friendsId.id,
+        nickname: friends[i].friendsId.nickname,
+        state: friends[i].friendsId.state,
       });
 
       return getAllFriendsDto;
