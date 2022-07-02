@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { UserDto } from "src/auth/dto/user.dto";
 import { Block } from "./block.entity";
 import { BlockRepository } from "./block.repository";
 import { GetAllBlockDto } from "./dto/get-all-block.dto";
@@ -8,13 +7,9 @@ import { GetAllBlockDto } from "./dto/get-all-block.dto";
 export class BlockService {
   constructor(private blockRepository: BlockRepository) {}
 
-  async getAllBlock(userDto: UserDto): Promise<GetAllBlockDto[]> {
+  async getAllBlock(id): Promise<GetAllBlockDto[]> {
     const getAllBlockDto: GetAllBlockDto[] = [];
-    const block: Block[] = await this.blockRepository.find({
-      where: {
-        userId: userDto.apiId,
-      },
-    });
+    const block: Block[] = await this.blockRepository.find(id);
 
     if (!block) {
       throw new NotFoundException(`Nodody block`);

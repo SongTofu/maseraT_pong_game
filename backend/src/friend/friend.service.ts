@@ -7,9 +7,9 @@ import { FriendsRepository } from "./friends.repository";
 export class FriendService {
   constructor(private friendsRository: FriendsRepository) {}
 
-  async getAllFriends(): Promise<GetAllFriendsDto[]> {
+  async getAllFriends(id): Promise<GetAllFriendsDto[]> {
     const getAllFriendsDto: GetAllFriendsDto[] = [];
-    const friends: Friends[] = await this.friendsRository.find();
+    const friends: Friends[] = await this.friendsRository.find(id);
 
     if (!friends) {
       throw new NotFoundException(`Nobody friends exist`);
