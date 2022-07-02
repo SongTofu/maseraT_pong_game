@@ -12,7 +12,7 @@ export class BlockService {
     const getAllBlockDto: GetAllBlockDto[] = [];
     const block: Block[] = await this.blockRepository.find({
       where: {
-        userID: userDto.apiId,
+        userId: userDto.apiId,
       },
     });
 
@@ -22,7 +22,7 @@ export class BlockService {
 
     for (let i = 0; i < block.length; i++) {
       getAllBlockDto.push({
-        userID: block[i].blockId.id,
+        userId: block[i].blockId.id,
         nickname: block[i].blockId.nickname,
         state: block[i].blockId.state,
       });
