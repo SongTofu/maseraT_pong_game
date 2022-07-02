@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PopUpBtnBig from "./PopUpBtnBig";
+import PopUpBtnBig from "../Button/PopUpBtnBig";
 
 function PopUpRoomSet(): JSX.Element {
   const [isSelect, setIsSelect] = useState(false);

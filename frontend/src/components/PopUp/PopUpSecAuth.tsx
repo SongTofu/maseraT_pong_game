@@ -1,5 +1,5 @@
 import React from "react";
-import PopUpBtnBig from "./PopUpBtnBig";
+import PopUpBtnBig from "../Button/PopUpBtnBig";
 interface PopSecAuthProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
