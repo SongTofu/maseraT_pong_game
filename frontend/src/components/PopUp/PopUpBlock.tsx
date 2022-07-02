@@ -1,5 +1,5 @@
 import React from "react";
-import BlockList from "./BlockList";
+import BlockList from "../List/BlockList";
 
 function PopUpBlock(): JSX.Element {
   return (

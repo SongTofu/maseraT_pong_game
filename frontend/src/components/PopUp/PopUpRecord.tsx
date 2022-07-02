@@ -1,5 +1,5 @@
 import React from "react";
-import RecordList from "./RecordList";
+import RecordList from "../List/RecordList";
 
 function PopUpRecord(): JSX.Element {
   return (
