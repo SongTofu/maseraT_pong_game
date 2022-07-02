@@ -8,6 +8,7 @@ import Game from "./pages/Game";
 import GameRoom from "./pages/GameRoom";
 import Home from "./pages/Home";
 import LogIn from "./pages/LogIn";
+import SecondAuth from "./pages/SecondAuth";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LogIn />} />
+            <Route path="/second-auth" element={<SecondAuth />} />
             <Route path="/game" element={<Game />} />
             <Route path="/game-room" element={<GameRoom />} />
             <Route path="/chat" element={<Chat />} />

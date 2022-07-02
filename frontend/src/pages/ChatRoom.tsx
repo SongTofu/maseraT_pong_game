@@ -1,7 +1,7 @@
 import React from "react";
-import ChatBox from "../components/ChatBox";
+import ChatBox from "../components/Content/ChatBox";
 import TopNavBar from "../components/TopNavBar";
-import UserListBox from "../components/UserListBox";
+import UserListBox from "../components/Content/UserListBox";
 
 function ChatRoom() {
   return (

@@ -4,13 +4,15 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from "@nestjs/common";
-import { UserRepository } from "./repository/user.repository";
+import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
-import { User } from "./entity/user.entity";
-import { FriendsRepository } from "./repository/friends.repository";
-import { BlockRepository } from "./repository/block.repository";
+import { User } from "./user.entity";
+import { FriendsRepository } from "../friend/friends.repository";
+import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
+import { GetAllUserDto } from "./dto/get-all-user.dto";
+import { join } from "path";
 
 @Injectable()
 export class UserService {
@@ -19,6 +21,26 @@ export class UserService {
     private friendsRepository: FriendsRepository,
     private blockRepository: BlockRepository,
   ) {}
+
+  // test after saved in db
+  async getAllUser(): Promise<GetAllUserDto[]> {
+    const getAllUserDto: GetAllUserDto[] = [];
+    const user: User[] = await this.userRepository.find();
+
+    if (!user) {
+      throw new NotFoundException(`Noboby user exist`);
+    }
+
+    for (let i = 0; i < user.length; i++) {
+      getAllUserDto.push({
+        userID: user[i].apiId,
+        nickname: user[i].nickname,
+        state: user[i].state,
+      });
+    }
+
+    return getAllUserDto;
+  }
 
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
     const user: User = await this.userRepository.findOne(id);
@@ -42,7 +64,7 @@ export class UserService {
     userId: number,
     targetId: number,
   ): Promise<TargetUserInfoDto> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne(userId);
     const target = await this.userRepository.findOne(targetId);
 
     const isFriend = await this.isFriend(user, target);
@@ -69,6 +91,11 @@ export class UserService {
       user.nickname = updateUserInfoDto.nickname;
     }
     if (updateUserInfoDto.profileImg) {
+      const fs = require("fs");
+
+      const path = join(__dirname, "..", "..", "img", user.profileImg);
+      console.log(path);
+      fs.unlink(path, (err) => {});
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth) {

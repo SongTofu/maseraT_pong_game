@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import MainBox from "../components/MainBox";
+import MainBox from "../components/Content/MainBox";
 import TopNavBar from "../components/TopNavBar";
-import UserListBox from "../components/UserListBox";
+import UserListBox from "../components/Content/UserListBox";
 
 function Game() {
   const [gameType, setGameType] = useState("regular");

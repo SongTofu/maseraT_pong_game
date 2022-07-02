@@ -11,8 +11,9 @@ import { AuthModule } from "./auth/auth.module";
 import { ChatModule } from "./chat/chat.module";
 import { AchievementModule } from "./achievement/achievement.module";
 import { UserInfoModule } from "./user/user.module";
-import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { FriendModule } from './friend/friend.module';
+import { BlockModule } from './block/block.module';
 
 @Module({
   imports: [
@@ -31,9 +32,8 @@ import { join } from "path";
     AuthModule,
     ChatModule,
     AchievementModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "img"),
-    }),
+    FriendModule,
+    BlockModule,
   ],
   controllers: [AppController],
   providers: [AppService], //, AchievementService
