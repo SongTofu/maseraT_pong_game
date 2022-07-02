@@ -8,7 +8,7 @@ import {
 import { User } from "../user/user.entity";
 
 @Entity()
-export class Friends extends BaseEntity {
+export class Friend extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

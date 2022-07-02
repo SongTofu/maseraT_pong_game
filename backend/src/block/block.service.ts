@@ -9,20 +9,16 @@ export class BlockService {
 
   async getAllBlock(id): Promise<GetAllBlockDto[]> {
     const getAllBlockDto: GetAllBlockDto[] = [];
-    const block: Block[] = await this.blockRepository.find(id);
+    const blocks: Block[] = await this.blockRepository.find(id);
 
-    if (!block) {
+    if (!blocks) {
       throw new NotFoundException(`Nodody block`);
     }
 
-    for (let i = 0; i < block.length; i++) {
-      getAllBlockDto.push({
-        userId: block[i].blockId.id,
-        nickname: block[i].blockId.nickname,
-        state: block[i].blockId.state,
-      });
+    blocks.forEach((block) => {
+      getAllBlockDto.push(new GetAllBlockDto(block.blockId));
+    });
 
-      return getAllBlockDto;
-    }
+    return getAllBlockDto;
   }
 }
