@@ -9,7 +9,11 @@ export class FriendService {
 
   async getAllFriends(id): Promise<GetAllFriendsDto[]> {
     const getAllFriendsDto: GetAllFriendsDto[] = [];
-    const friends: Friend[] = await this.friendsRository.find(id);
+    const friends: Friend[] = await this.friendsRository.find({
+      where: {
+        ownId: id,
+      },
+    });
 
     if (!friends) {
       throw new NotFoundException(`Nobody friends exist`);

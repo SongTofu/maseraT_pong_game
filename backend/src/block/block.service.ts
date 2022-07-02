@@ -9,7 +9,11 @@ export class BlockService {
 
   async getAllBlock(id): Promise<GetAllBlockDto[]> {
     const getAllBlockDto: GetAllBlockDto[] = [];
-    const blocks: Block[] = await this.blockRepository.find(id);
+    const blocks: Block[] = await this.blockRepository.find({
+      where: {
+        ownId: id,
+      },
+    });
 
     if (!blocks) {
       throw new NotFoundException(`Nodody block`);
