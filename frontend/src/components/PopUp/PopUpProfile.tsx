@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DefltImg from "../img/maserat.png";
+import DefltImg from "../../img/maserat.png";
 import Achievement from "../Achievement";
 import PopUpBtnBig from "../Button/PopUpBtnBig";
 import PopUpParent from "./PopUpParent";
