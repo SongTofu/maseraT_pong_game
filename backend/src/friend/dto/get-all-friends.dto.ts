@@ -1,7 +1,7 @@
-import { User } from "src/user/entity/user.entity";
+import { User } from "src/user/user.entity";
 
 export class GetAllFriendsDto {
-  id: number;
-  ownId: User;
-  friendsId: User;
+  userID: number;
+  nickname: string;
+  state: number;
 }

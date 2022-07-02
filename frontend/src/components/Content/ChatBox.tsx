@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import ButtonTwo from "./ButtonTwo";
+import ButtonTwo from "../Button/ButtonTwo";
 
 interface IProps {
   username: string;
@@ -14,17 +14,18 @@ function ChatBox({ username }: IProps) {
           <NavLink to="/chat">&lt;</NavLink>
         </div>
         <div>
-          <span className="text-main-text">{username}</span>님의 채팅방
+          <span className="font-main text-main-text">{username}</span>님의
+          채팅방
         </div>
       </div>
       <div className="w-full h-full flex flex-col justify-start items-center">
-        <div className="w-[90%] h-[80%] border-main border-2 mt-7 p-1">
+        <div className="w-[90%] h-[80%] border-main border-2 mt-7 p-1 font-main">
           채팅창
         </div>
         <div className="w-[90%] flex justify-between mt-4">
           <input
             type="text"
-            className="w-[85%] border-main border-2 rounded px-2 py-1 text-sm"
+            className="w-[85%] border-main border-2 rounded px-2 py-1 text-sm font-main"
           />
           <div>
             <ButtonTwo tag="보내기" className="py-1" />

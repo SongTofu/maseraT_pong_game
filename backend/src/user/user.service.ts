@@ -4,11 +4,11 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from "@nestjs/common";
-import { UserRepository } from "./repository/user.repository";
+import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
-import { User } from "./entity/user.entity";
+import { User } from "./user.entity";
 import { FriendsRepository } from "../friend/friends.repository";
-import { BlockRepository } from "./repository/block.repository";
+import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { GetAllUserDto } from "./dto/get-all-user.dto";
