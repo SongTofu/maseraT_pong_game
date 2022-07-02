@@ -1,13 +1,18 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { GetAllBlockDto } from "./dto/get-all-block.dto";
 import { BlockService } from "./block.service";
+import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
+import { UserDto } from "src/auth/dto/user.dto";
 
 @Controller("block")
+@UseGuards(JwtAuthGuard)
 export class BlockController {
   constructor(private blockService: BlockService) {}
 
-  @Get("/block")
-  getAllBlock(): Promise<GetAllBlockDto[]> {
-    return this.blockService.getAllBlock();
+  @Get()
+  getAllBlock(@Req() req): Promise<GetAllBlockDto[]> {
+    const userDto: UserDto = req.user;
+
+    return this.blockService.getAllBlock(userDto);
   }
 }
