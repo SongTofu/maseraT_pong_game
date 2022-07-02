@@ -3,13 +3,13 @@ import { ChatParticipants } from "../entity/chat-participants.entity";
 
 export class ChatParticipantDto {
   constructor(chatParticipant: ChatParticipants, roomId: number) {
+    this.userId = chatParticipant.user.id;
     this.nickname = chatParticipant.user.nickname;
     this.authority = chatParticipant.authority;
-    this.userId = chatParticipant.user.id;
     this.roomId = roomId;
   }
-  roomId: number;
+  userId: number;
   nickname: string;
   authority: Authority;
-  userId: number;
+  roomId: number;
 }
