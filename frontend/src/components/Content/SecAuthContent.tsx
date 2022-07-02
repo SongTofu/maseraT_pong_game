@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonOne from "../components/ButtonOne";
+import ButtonOne from "../Button/ButtonOne";
 import Pong from "../img/pong.png";
 
 function SecAuthContent(): JSX.Element {

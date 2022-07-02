@@ -1,6 +1,6 @@
 import React from "react";
 import Pong from "../img/pong.png";
-import ButtonOne from "./ButtonOne";
+import ButtonOne from "../Button/ButtonOne";
 
 function HomeContent(): JSX.Element {
   return (

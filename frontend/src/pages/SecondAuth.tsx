@@ -1,5 +1,5 @@
 import React from "react";
-import SecAuthContent from "../components/SecAuthContent";
+import SecAuthContent from "../components/Content/SecAuthContent";
 
 function SecondAuth(): JSX.Element {
   return (

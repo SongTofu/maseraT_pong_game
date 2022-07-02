@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonOne from "../components/ButtonOne";
+import ButtonOne from "../Button/ButtonOne";
 import DefltImg from "../img/maserat.png";
 
 function LoginContent(): JSX.Element {

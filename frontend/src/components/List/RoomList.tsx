@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonTwo from "./ButtonTwo";
+import ButtonTwo from "../Button/ButtonTwo";
 
 interface IProps {
   status: boolean;
