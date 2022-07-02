@@ -53,19 +53,23 @@ export class UserController {
   }
 
   @Patch("/info")
-  @UseInterceptors(FileInterceptor("profile", {}))
-  updateUser(@Body() updateUserInfoDto: UpdateUserInfoDto, @Req() req) {
+  @UseInterceptors(FileInterceptor("profile", { storage }))
+  updateUser(
+    @Body() updateUserInfoDto: UpdateUserInfoDto,
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    updateUserInfoDto.profileImg = file.filename;
     return this.userService.updateUser(req.user.id, updateUserInfoDto);
   }
 
   @Post("/info")
-  @UseInterceptors(FileInterceptor("img", { storage }))
+  @UseInterceptors(FileInterceptor("profile", { storage }))
   initUserInfo(
     @Body() updateUserInfoDto: UpdateUserInfoDto,
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<User> {
-    console.log(file.filename);
     updateUserInfoDto.profileImg = file.filename;
     return this.userService.initUserInfo(req.user.id, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
     //리턴값 미정
