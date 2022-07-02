@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import ButtonTwo from "./ButtonTwo";
+import ButtonTwo from "./Button/ButtonTwo";
 import Achievement from "./Achievement";
-import PopUpParent from "./PopUpParent";
-import PopUpProfile from "./PopUpProfile";
-import PopUpNick from "./PopUpNick";
-import PopUpSecAuth from "./PopUpSecAuth";
+import PopUpParent from "./PopUp/PopUpParent";
+import PopUpProfile from "./PopUp/PopUpProfile";
+import PopUpNick from "./PopUp/PopUpNick";
+import PopUpSecAuth from "./PopUp/PopUpSecAuth";
 
 interface Props {
   children: JSX.Element | JSX.Element[];

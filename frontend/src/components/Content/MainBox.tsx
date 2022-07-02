@@ -1,6 +1,6 @@
 import React from "react";
-import ButtonTwo from "./ButtonTwo";
-import RoomList from "./RoomList";
+import ButtonTwo from "../Button/ButtonTwo";
+import RoomList from "../List/RoomList";
 
 interface IProps {
   buttonTag: string;

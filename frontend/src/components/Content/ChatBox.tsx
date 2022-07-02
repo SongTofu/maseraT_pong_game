@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import ButtonTwo from "./ButtonTwo";
+import ButtonTwo from "../Button/ButtonTwo";
 
 interface IProps {
   username: string;

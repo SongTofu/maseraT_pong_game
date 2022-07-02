@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import ButtonTwo from "./ButtonTwo";
-import PopUpBlock from "./PopUpBlock";
-import PopUpParent from "./PopUpParent";
-import UserList from "./UserList";
+import ButtonTwo from "../Button/ButtonTwo";
+import PopUpBlock from "../PopUp/PopUpBlock";
+import PopUpParent from "../PopUp/PopUpParent";
+import UserList from "../List/UserList";
 
 interface IProps {
   buttonTag?: string;
