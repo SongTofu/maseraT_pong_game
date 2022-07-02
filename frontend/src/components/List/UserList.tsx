@@ -1,6 +1,6 @@
 import React from "react";
-import StatusOn from "../img/circleGreen.svg";
-import StatusBusy from "../img/circleRed.svg";
+import StatusOn from "../../img/circleGreen.svg";
+import StatusBusy from "../../img/circleRed.svg";
 
 interface IProps {
   status: boolean;
