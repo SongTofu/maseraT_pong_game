@@ -37,15 +37,69 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
       </div>
       <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
         {listStatus}
-        <UserList status={true} name="name" />
-        <UserList status={false} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={2}
+          isYourself={true}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={false}
+          name="name"
+          myAuth={1}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
       </div>
       <div className="mt-7">
         <ButtonTwo
