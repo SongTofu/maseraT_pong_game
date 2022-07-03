@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PopUpBtnBig from "../Button/PopUpBtnBig";
+import BtnPopUp from "../Button/BtnPopUp";
 
 function PopUpRoomSet(): JSX.Element {
   const [isSelect, setIsSelect] = useState(false);
@@ -50,7 +50,7 @@ function PopUpRoomSet(): JSX.Element {
         </div>
       </div>
       <div className="btn__wrap flex justify-center">
-        <PopUpBtnBig tag="확 인" />
+        <BtnPopUp tag="확 인" />
       </div>
     </>
   );
