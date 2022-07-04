@@ -11,8 +11,8 @@ export class BlockController {
 
   @Get()
   getAllBlock(@Req() req): Promise<GetAllBlockDto[]> {
-    const userDto: UserDto = req.user;
+    const id = req.user.id;
 
-    return this.blockService.getAllBlock(userDto);
+    return this.blockService.getAllBlock(id);
   }
 }

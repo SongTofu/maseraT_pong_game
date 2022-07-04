@@ -7,7 +7,7 @@ import {
 import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { User } from "./user.entity";
-import { FriendsRepository } from "../friend/friends.repository";
+import { FriendsRepository } from "../friend/friend.repository";
 import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
@@ -33,7 +33,7 @@ export class UserService {
 
     for (let i = 0; i < user.length; i++) {
       getAllUserDto.push({
-        userID: user[i].apiId,
+        userId: user[i].apiId,
         nickname: user[i].nickname,
         state: user[i].state,
       });
