@@ -12,9 +12,9 @@ export class Friend extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User, (user) => user.friends)
+  @ManyToOne((type) => User, (user) => user.friend)
   ownId: User;
 
-  @ManyToOne((type) => User, (user) => user.friends)
-  friendsId: User;
+  @ManyToOne((type) => User, (user) => user.friend)
+  friendId: User;
 }

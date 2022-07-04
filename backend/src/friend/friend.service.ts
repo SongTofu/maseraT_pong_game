@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { GetAllFriendsDto } from "./dto/get-all-friends.dto";
-import { Friend } from "./friends.entity";
-import { FriendsRepository } from "./friends.repository";
+import { Friend } from "./friend.entity";
+import { FriendsRepository } from "./friend.repository";
 
 @Injectable()
 export class FriendService {
@@ -20,7 +20,7 @@ export class FriendService {
     }
 
     friends.forEach((friend) => {
-      getAllFriendsDto.push(new GetAllFriendsDto(friend.friendsId));
+      getAllFriendsDto.push(new GetAllFriendsDto(friend.friendId));
     });
 
     return getAllFriendsDto;
