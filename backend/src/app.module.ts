@@ -14,6 +14,7 @@ import { UserInfoModule } from "./user/user.module";
 import { join } from "path";
 import { FriendModule } from './friend/friend.module';
 import { BlockModule } from './block/block.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { BlockModule } from './block/block.module';
     AchievementModule,
     FriendModule,
     BlockModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService], //, AchievementService
