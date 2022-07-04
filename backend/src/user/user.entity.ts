@@ -9,9 +9,9 @@ import {
 } from "typeorm";
 import { Record } from "src/record/record.entity";
 import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
-import { Friends } from "../../friend/friends.entity";
-import { Block } from "./block.entity";
-import { UserState } from "../user-state.enum";
+import { Friend } from "../friend/friend.entity";
+import { Block } from "../block/block.entity";
+import { UserState } from "./user-state.enum";
 import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
 import { Achievement } from "src/achievement/achievement.entity";
 
@@ -66,12 +66,12 @@ export class User extends BaseEntity {
   secondAuthCode: SecondAuthCode;
 
   @OneToMany(
-    (type) => Friends,
-    (friends) => {
-      friends.ownId, friends.friendsId;
+    (type) => Friend,
+    (friend) => {
+      friend.ownId, friend.friendId;
     },
   )
-  friends: Friends[];
+  friend: Friend[];
 
   @OneToMany(
     (type) => Block,

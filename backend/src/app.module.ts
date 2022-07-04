@@ -12,7 +12,8 @@ import { ChatModule } from "./chat/chat.module";
 import { AchievementModule } from "./achievement/achievement.module";
 import { UserInfoModule } from "./user/user.module";
 import { join } from "path";
-import { FriendModule } from "./friend/friend.module";
+import { FriendModule } from './friend/friend.module';
+import { BlockModule } from './block/block.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FriendModule } from "./friend/friend.module";
     ChatModule,
     AchievementModule,
     FriendModule,
+    BlockModule,
   ],
   controllers: [AppController],
   providers: [AppService], //, AchievementService
