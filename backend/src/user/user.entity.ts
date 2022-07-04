@@ -14,6 +14,7 @@ import { Block } from "../block/block.entity";
 import { UserState } from "./user-state.enum";
 import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
 import { Achievement } from "src/achievement/achievement.entity";
+import { GameParticipant } from "src/game/entity/game-participant.entity";
 
 @Entity()
 @Unique(["nickname"])
@@ -96,4 +97,10 @@ export class User extends BaseEntity {
     },
   )
   achievement: Achievement;
+
+  @OneToMany(
+    (type) => GameParticipant,
+    (gameParticipant) => gameParticipant.user,
+  )
+  gameParticipant: GameParticipant;
 }
