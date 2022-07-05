@@ -3,6 +3,7 @@ import ButtonTwo from "../Button/ButtonTwo";
 import PopUpBlock from "../PopUp/PopUpBlock";
 import PopUpParent from "../PopUp/PopUpParent";
 import UserList from "../List/UserList";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 interface IProps {
   buttonTag?: string;
@@ -37,15 +38,69 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
       </div>
       <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
         {listStatus}
-        <UserList status={true} name="name" />
-        <UserList status={false} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
-        <UserList status={true} name="name" />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={2}
+          isYourself={true}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={false}
+          name="name"
+          myAuth={1}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
+        <UserList
+          status={true}
+          name="name"
+          myAuth={0}
+          isYourself={false}
+          isChatRoom={isChatRoom}
+        />
       </div>
       <div className="mt-7">
         <ButtonTwo
@@ -78,16 +133,18 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
         </div>
       )}
       {showBlock && (
-        <div className="relative bottom-[350px]">
-          <PopUpParent
-            width={"w-[300px]"}
-            height={"h-[300px]"}
-            mainText="차단 유저"
-            onClick={() => handleShowBlock(showBlock)}
-          >
-            <PopUpBlock />
-          </PopUpParent>
-        </div>
+        <ClickAwayListener onClickAway={() => setShowBlock(false)}>
+          <div className="relative bottom-[350px]">
+            <PopUpParent
+              width={"w-[300px]"}
+              height={"h-[300px]"}
+              mainText="차단 유저"
+              onClick={() => handleShowBlock(showBlock)}
+            >
+              <PopUpBlock />
+            </PopUpParent>
+          </div>
+        </ClickAwayListener>
       )}
     </div>
   );

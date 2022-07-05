@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import DefltImg from "../../img/maserat.png";
 import Achievement from "../Achievement";
-import PopUpBtnBig from "../Button/PopUpBtnBig";
+import BtnPopUp from "../Button/BtnPopUp";
 import PopUpParent from "./PopUpParent";
 import PopUpRecord from "./PopUpRecord";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
@@ -22,7 +23,7 @@ function PopUpProfile(): JSX.Element {
   };
 
   return (
-    <>
+    <div>
       <div className="child__wrap bg-blue-400 p-2">
         <div className="bg-violet-500 flex items-center">
           <div
@@ -67,30 +68,34 @@ function PopUpProfile(): JSX.Element {
             >
               전적
             </button>
+            {openModal && (
+              <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+                <div className="relative bottom-[200px] left-[-500px]">
+                  <PopUpParent
+                    width="w-[550px]"
+                    height="h-[400px]"
+                    mainText="게임 전적"
+                    onClick={() => handleOptionChange(openModal)}
+                  >
+                    <PopUpRecord />
+                  </PopUpParent>
+                </div>
+              </ClickAwayListener>
+            )}
           </div>
         </div>
       </div>
       <div className="btns__wrap bg-yellow-200">
         <div className="flex justify-between p-2">
-          <PopUpBtnBig tag="친구 추가" />
-          <PopUpBtnBig tag="게임 신청" />
+          <BtnPopUp tag="친구 추가" />
+          <BtnPopUp tag="게임 신청" />
         </div>
         <div className="flex justify-between p-2">
-          <PopUpBtnBig tag="DM 보내기" />
-          <PopUpBtnBig tag="차단 하기" />
+          <BtnPopUp tag="DM 보내기" />
+          <BtnPopUp tag="차단 하기" />
         </div>
       </div>
-      {openModal && (
-        <PopUpParent
-          width="w-[550px]"
-          height="h-[400px]"
-          mainText="게임 전적"
-          onClick={() => handleOptionChange(openModal)}
-        >
-          <PopUpRecord />
-        </PopUpParent>
-      )}
-    </>
+    </div>
   );
 }
 
