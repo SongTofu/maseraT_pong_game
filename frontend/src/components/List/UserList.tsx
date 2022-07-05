@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import StatusOn from "../../img/circleGreen.svg";
 import StatusBusy from "../../img/circleRed.svg";
 import PopUpChatMenu from "../PopUp/PopUpChatMenu";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 interface IProps {
   status: boolean;
@@ -27,7 +28,7 @@ function UserList({
   };
   return (
     <div
-      className="border-main border-[1px] rounded-sm w-[90%] mt-2 last:mb-2"
+      className="relative border-main border-[1px] rounded-sm w-[90%] mt-2 last:mb-2"
       onContextMenu={(event) => {
         event.preventDefault();
         handleOptionChange(openModal);
@@ -41,11 +42,15 @@ function UserList({
       </div>
       <div className="inline font-main text-main-text">{name}</div>
       {isChatRoom && openModal && (
-        <PopUpChatMenu
-          myAuth={myAuth}
-          targetAuth={targetAuth}
-          isYourself={isYourself}
-        />
+        <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+          <div className="fixed top-[350px] right-[850px] z-50">
+            <PopUpChatMenu
+              myAuth={myAuth}
+              targetAuth={targetAuth}
+              isYourself={isYourself}
+            />
+          </div>
+        </ClickAwayListener>
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import Achievement from "../Achievement";
 import BtnPopUp from "../Button/BtnPopUp";
 import PopUpParent from "./PopUpParent";
 import PopUpRecord from "./PopUpRecord";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
@@ -22,7 +23,7 @@ function PopUpProfile(): JSX.Element {
   };
 
   return (
-    <>
+    <div>
       <div className="child__wrap bg-blue-400 p-2">
         <div className="bg-violet-500 flex items-center">
           <div
@@ -67,6 +68,20 @@ function PopUpProfile(): JSX.Element {
             >
               전적
             </button>
+            {openModal && (
+              <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+                <div className="relative bottom-[200px] left-[-500px]">
+                  <PopUpParent
+                    width="w-[550px]"
+                    height="h-[400px]"
+                    mainText="게임 전적"
+                    onClick={() => handleOptionChange(openModal)}
+                  >
+                    <PopUpRecord />
+                  </PopUpParent>
+                </div>
+              </ClickAwayListener>
+            )}
           </div>
         </div>
       </div>
@@ -80,17 +95,7 @@ function PopUpProfile(): JSX.Element {
           <BtnPopUp tag="차단 하기" />
         </div>
       </div>
-      {openModal && (
-        <PopUpParent
-          width="w-[550px]"
-          height="h-[400px]"
-          mainText="게임 전적"
-          onClick={() => handleOptionChange(openModal)}
-        >
-          <PopUpRecord />
-        </PopUpParent>
-      )}
-    </>
+    </div>
   );
 }
 

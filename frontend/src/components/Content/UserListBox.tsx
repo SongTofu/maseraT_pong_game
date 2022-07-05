@@ -3,6 +3,7 @@ import ButtonTwo from "../Button/ButtonTwo";
 import PopUpBlock from "../PopUp/PopUpBlock";
 import PopUpParent from "../PopUp/PopUpParent";
 import UserList from "../List/UserList";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 interface IProps {
   buttonTag?: string;
@@ -132,16 +133,18 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
         </div>
       )}
       {showBlock && (
-        <div className="relative bottom-[350px]">
-          <PopUpParent
-            width={"w-[300px]"}
-            height={"h-[300px]"}
-            mainText="차단 유저"
-            onClick={() => handleShowBlock(showBlock)}
-          >
-            <PopUpBlock />
-          </PopUpParent>
-        </div>
+        <ClickAwayListener onClickAway={() => setShowBlock(false)}>
+          <div className="relative bottom-[350px]">
+            <PopUpParent
+              width={"w-[300px]"}
+              height={"h-[300px]"}
+              mainText="차단 유저"
+              onClick={() => handleShowBlock(showBlock)}
+            >
+              <PopUpBlock />
+            </PopUpParent>
+          </div>
+        </ClickAwayListener>
       )}
     </div>
   );
