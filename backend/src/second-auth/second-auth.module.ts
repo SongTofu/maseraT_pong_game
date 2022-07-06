@@ -3,7 +3,7 @@ import { SecondAuthService } from "./second-auth.service";
 import { SecondAuthController } from "./second-auth.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { SecondAuthRepository } from "./second-auth.repository";
-import { UserRepository } from "src/user/repository/user.repository";
+import { UserRepository } from "src/user/user.repository";
 
 @Module({
   imports: [

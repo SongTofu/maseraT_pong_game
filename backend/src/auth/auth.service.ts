@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { UserRepository } from "src/user/repository/user.repository";
+import { UserRepository } from "src/user/user.repository";
 import { UserDto } from "./dto/user.dto";
 
 @Injectable()
@@ -23,10 +23,10 @@ export class AuthService {
         email: userDto.email,
         nickname: "",
       });
-      user.save();
+      user = await user.save();
     }
 
-    const id = user.apiId;
+    const id = user.id;
     const payload = { id };
     const accessToken = await this.jwtService.sign(payload);
 
