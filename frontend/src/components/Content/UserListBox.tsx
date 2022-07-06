@@ -40,63 +40,63 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
         {listStatus}
         <UserList
           status={true}
-          name="name"
+          name="name1"
           myAuth={2}
-          isYourself={true}
+          isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={false}
-          name="name"
+          name="name2"
           myAuth={1}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name3"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name4"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name5"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name6"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name7"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name8"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
         />
         <UserList
           status={true}
-          name="name"
+          name="name9"
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
