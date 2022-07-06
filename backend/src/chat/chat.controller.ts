@@ -12,4 +12,9 @@ export class ChatController {
   ): Promise<ChatParticipantDto[]> {
     return this.chatService.participantList(chatRoomId);
   }
+
+  @Get("/room")
+  async chatRoomList() {
+    return this.chatService.chatRoomList();
+  }
 }
