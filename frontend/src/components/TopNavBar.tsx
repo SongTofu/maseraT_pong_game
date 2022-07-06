@@ -7,6 +7,8 @@ import PopUpProfile from "./PopUp/PopUpProfile";
 import PopUpNick from "./PopUp/PopUpNick";
 import PopUpSecAuth from "./PopUp/PopUpSecAuth";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { userInfoAtom } from "../atom/userInfoAtom";
+import { useRecoilValue } from "recoil";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -15,11 +17,11 @@ interface Props {
 function TopBar({ children }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const [btnTag, setBtnTag] = useState("");
+  const info = useRecoilValue(userInfoAtom);
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
   };
-
   return (
     <div>
       <div className="flex justify-center bg-main relative">
@@ -68,17 +70,18 @@ function TopBar({ children }: Props) {
             <li>
               <div className="h-12 w-[800px] bg-main-light flex justify-between px-3 items-center border-b-2 border-main">
                 <div className="text-main-text flex flex-row">
-                  <p className="pr-2">player name</p>
+                  <p className="pr-2">{info[0].nickname}</p>
                   <Achievement />
                 </div>
                 <div className="w-[500px] text-main-text flex justify-between items-center">
-                  <p className="inline">lv. {0}</p>
+                  <p className="inline">lv. {info[0].level}</p>
                   <div className="inline">
                     <span className="block text-xs font-main">
                       일반/레더전적
                     </span>
                     <span className="block text-sm font-main">
-                      {0}승 {0}패/{0}승 {0}패
+                      {info[0].personalWin}승 {info[0].personalLose}패/
+                      {info[0].ladderWin}승{info[0].ladderLose}패
                     </span>
                   </div>
                   <div className="flex">
