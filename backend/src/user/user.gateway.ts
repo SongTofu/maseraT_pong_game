@@ -17,8 +17,7 @@ import { GetAllUserDto } from "./dto/get-all-user.dto";
   },
 })
 export class ChatGateway {
-  constructor(private userRepository: UserRepository) {} //   private chatRoomRepository: ChatRoomRepository,
-  //   private chatParticipantsRepository: ChatParticipantsRepository,
+  constructor(private userRepository: UserRepository) {}
 
   @WebSocketServer()
   server;
