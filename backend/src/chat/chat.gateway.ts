@@ -82,7 +82,7 @@ export class ChatGateway {
     if (setAdminDto.isAdmin) {
       chatParticipant.authority = Authority.admin;
     } else {
-      chatParticipant.authority = Authority.partiicipnat;
+      chatParticipant.authority = Authority.participant;
     }
 
     await chatParticipant.save();
