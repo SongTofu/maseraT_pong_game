@@ -1,5 +1,5 @@
 import React from "react";
-import PopUpBtnBig from "../Button/PopUpBtnBig";
+import BtnPopUp from "../Button/BtnPopUp";
 
 function PopUpNick(): JSX.Element {
   return (
@@ -23,7 +23,7 @@ function PopUpNick(): JSX.Element {
         </div>
       </div>
       <div className="btn__wrap flex justify-center">
-        <PopUpBtnBig tag="변경하기" />
+        <BtnPopUp tag="변경하기" />
       </div>
       <div className="absolute bottom-[130px] left-[185px] w-[140px] h-[20px] text-red-600 text-center font-main">
         중복된 닉네임입니다!
