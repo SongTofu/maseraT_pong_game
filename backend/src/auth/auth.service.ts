@@ -16,12 +16,13 @@ export class AuthService {
         apiId: userDto.apiId,
       },
     });
-
     if (!user) {
+      const autoNickname = this.autoSetNickName(userDto);
+
       user = this.userRepository.create({
         apiId: userDto.apiId,
         email: userDto.email,
-        nickname: "",
+        nickname: autoNickname,
       });
       user = await user.save();
     }
@@ -35,5 +36,10 @@ export class AuthService {
       nickname: user.nickname,
       token: accessToken,
     };
+  }
+  private autoSetNickName(userDto: UserDto) {
+    const authCode: string = Math.random().toString(36).substr(2, 5);
+    const autoNickname: string = userDto.nickname + "_" + authCode;
+    return autoNickname;
   }
 }

@@ -10,6 +10,7 @@ export class NicknameService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
   ) {}
+
   async isValidNickname(
     nicknameCredentialsDto: NicknameCredentialsDto,
   ): Promise<{ isValidNickname: boolean }> {
