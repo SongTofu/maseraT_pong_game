@@ -12,10 +12,10 @@ export interface IUserInfo {
   secondAuth: boolean;
 }
 
-export const userInfoAtom = atom<IUserInfo[]>({
-  key: "userInfo",
-  default: [],
-});
+// export const userInfoAtom = atom<IUserInfo[]>({
+//   key: "userInfo",
+//   default: [],
+// });
 
 export const reqUserInfo = atom({
   key: "reqUserInfo",
@@ -30,6 +30,5 @@ export const getUserInfoSelector = selector({
   },
   set: ({ set }, newValue) => {
     set(reqUserInfo, (prev) => prev + 1);
-    // set(userInfoAtom, newValue);
   },
 });
