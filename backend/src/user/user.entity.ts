@@ -80,7 +80,7 @@ export class User extends BaseEntity {
       block.ownId, block.blockId;
     },
   )
-  block: Block;
+  block: Block[];
 
   @OneToMany(
     (type) => ChatParticipants,
@@ -88,7 +88,7 @@ export class User extends BaseEntity {
       chatParticipants.user;
     },
   )
-  chatParticipants: ChatParticipants;
+  chatParticipants: ChatParticipants[];
 
   @OneToOne(
     (type) => Achievement,
@@ -96,11 +96,11 @@ export class User extends BaseEntity {
       achievement.user;
     },
   )
-  achievement: Achievement;
+  achievement: Achievement[];
 
   @OneToMany(
     (type) => GameParticipant,
     (gameParticipant) => gameParticipant.user,
   )
-  gameParticipant: GameParticipant;
+  gameParticipant: GameParticipant[];
 }

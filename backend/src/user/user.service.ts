@@ -32,11 +32,9 @@ export class UserService {
     }
 
     for (let i = 0; i < user.length; i++) {
-      getAllUserDto.push({
-        userId: user[i].apiId,
-        nickname: user[i].nickname,
-        state: user[i].state,
-      });
+      if (user[i].state !== 0) {
+        getAllUserDto.push(new GetAllUserDto(user[i]));
+      }
     }
 
     return getAllUserDto;

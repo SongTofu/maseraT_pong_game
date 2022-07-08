@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import { ChatService } from "./chat.service";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
+import { ChatRoomDto } from "./dto/chat-room.dto";
 
 @Controller("chat")
 export class ChatController {
@@ -11,5 +12,10 @@ export class ChatController {
     @Param("chatRoomId") chatRoomId: number,
   ): Promise<ChatParticipantDto[]> {
     return this.chatService.participantList(chatRoomId);
+  }
+
+  @Get("/room")
+  async chatRoomList(): Promise<ChatRoomDto[]> {
+    return this.chatService.chatRoomList();
   }
 }
