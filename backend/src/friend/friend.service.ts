@@ -13,6 +13,7 @@ export class FriendService {
       where: {
         ownId: id,
       },
+      relations: ["friendId"],
     });
 
     if (!friends) {
