@@ -14,7 +14,7 @@ export class ChatParticipants extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: Authority.partiicipnat })
+  @Column({ default: Authority.participant })
   authority: Authority;
 
   @ManyToOne((type) => User, (user) => user.chatParticipants)

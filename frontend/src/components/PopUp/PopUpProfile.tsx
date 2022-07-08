@@ -5,10 +5,13 @@ import BtnPopUp from "../Button/BtnPopUp";
 import PopUpParent from "./PopUpParent";
 import PopUpRecord from "./PopUpRecord";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { useRecoilValue } from "recoil";
+import { getUserInfoSelector } from "../../state/getUserInfo";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const userInfo = useRecoilValue(getUserInfoSelector);
 
   const handleMouseEnter = () => {
     setDisplay(true);
@@ -47,9 +50,9 @@ function PopUpProfile(): JSX.Element {
             )}
           </div>
           <div className="info__wrap bg-green-500 w-[280px] p-4">
-            <h1 className="font-main text-2xl">Nickname</h1>
+            <h1 className="font-main text-2xl">{userInfo.nickname}</h1>
             <h1 className="font-main text-2xl flex justify-between">
-              Lv.0
+              Lv.{userInfo.level}
               <Achievement />
             </h1>
           </div>
@@ -58,7 +61,8 @@ function PopUpProfile(): JSX.Element {
           <div className="record__wrap bg-slate-300 w-[400px] flex justify-between  p-2">
             <span className="font-main block">전적/래더전적</span>
             <span className="font-main block">
-              {0}승{0}패/{0}승{0}패
+              {userInfo.personalWin}승{userInfo.personalLose}패/
+              {userInfo.ladderWin}승{userInfo.ladderLose}패
             </span>
           </div>
           <div className="btn__wrap w-[50px] flex items-center bg-lime-500">
@@ -72,7 +76,7 @@ function PopUpProfile(): JSX.Element {
               <ClickAwayListener onClickAway={() => setOpenModal(false)}>
                 <div className="relative bottom-[200px] left-[-500px]">
                   <PopUpParent
-                    width="w-[550px]"
+                    width="w-[600px]"
                     height="h-[400px]"
                     mainText="게임 전적"
                     onClick={() => handleOptionChange(openModal)}
