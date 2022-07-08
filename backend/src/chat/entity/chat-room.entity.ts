@@ -26,5 +26,5 @@ export class ChatRoom extends BaseEntity {
     (type) => ChatParticipants,
     (chatParticipants) => chatParticipants.chatRoom,
   )
-  chatParticipants: ChatParticipants;
+  chatParticipants: ChatParticipants[];
 }

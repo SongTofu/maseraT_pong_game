@@ -41,7 +41,7 @@ export class UserController {
 
   @Get("info")
   getMyInfo(@Req() req): Promise<MyUserInfoDto> {
-    return this.userService.getMyInfo(req.user.id); //나중에 본인id 넣으면 된다.
+    return this.userService.getMyInfo(req.user.id);
   }
 
   @Get("/info/:userId")
