@@ -19,27 +19,27 @@ function RecordList({
         <div
           className={`texts__wrap ${
             gameWin ? "bg-blue-800" : "bg-red-800"
-          } rounded w-[420px] h-[40px] flex justify-between`}
+          } rounded w-[470px] h-[40px] flex justify-between`}
         >
-          <div className="text__wrap flex items-center ml-2 w-[140px]">
-            <span className="font-main text-xl text-white font-bold tracking-wide">
+          <div className="text__wrap flex items-center ml-2 w-[190px]">
+            <span className="font-main text-lg text-white font-bold tracking-wide">
               {`vs ${enemy} `}
             </span>
           </div>
           <div className="text__wrap flex items-center justify-center w-[80px]">
-            <span className="font-main text-xl text-white font-bold tracking-wide">
+            <span className="font-main text-lg text-white font-bold tracking-wide">
               {isLadder ? "래더 게임" : " 일반 게임"}
             </span>
           </div>
           <div className="text__wrap flex items-center justify-center mr-2 w-[170px]">
-            <span className="font-main text-xl text-white font-bold tracking-wide">
+            <span className="font-main text-lg text-white font-bold tracking-wide">
               {`${date}`}
             </span>
           </div>
         </div>
         <div className="text__wrap flex items-center">
           <span
-            className={`font-main font-bold text-xl ${
+            className={`font-main font-bold text-lg ${
               gameWin ? "text-blue-800" : "text-red-800"
             }`}
           >

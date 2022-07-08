@@ -76,7 +76,7 @@ function PopUpProfile(): JSX.Element {
               <ClickAwayListener onClickAway={() => setOpenModal(false)}>
                 <div className="relative bottom-[200px] left-[-500px]">
                   <PopUpParent
-                    width="w-[550px]"
+                    width="w-[600px]"
                     height="h-[400px]"
                     mainText="게임 전적"
                     onClick={() => handleOptionChange(openModal)}
