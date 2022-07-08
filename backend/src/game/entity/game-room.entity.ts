@@ -22,5 +22,5 @@ export class GameRoom extends BaseEntity {
   isLadder: boolean;
 
   @OneToMany((type) => GameParticipant, (gameParticipant) => gameParticipant.id)
-  gameParticipant: GameParticipant;
+  gameParticipant: GameParticipant[];
 }
