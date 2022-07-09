@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { User } from "src/user/user.entity";
 import { GameRoom } from "./game-room.entity";
+import { GamePosition } from "../game-position.enum";
 
 @Entity()
 export class GameParticipant extends BaseEntity {
@@ -14,7 +15,7 @@ export class GameParticipant extends BaseEntity {
   id: number;
 
   @Column()
-  isGamer: boolean;
+  position: GamePosition;
 
   @ManyToOne((type) => User, (user) => user.gameParticipant)
   user: User;

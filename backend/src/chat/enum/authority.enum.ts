@@ -1,5 +1,5 @@
 export enum Authority {
-  partiicipnat,
+  participant,
   admin,
   owner,
 }

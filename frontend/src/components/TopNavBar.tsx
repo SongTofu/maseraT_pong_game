@@ -6,6 +6,7 @@ import PopUpParent from "./PopUp/PopUpParent";
 import PopUpProfile from "./PopUp/PopUpProfile";
 import PopUpNick from "./PopUp/PopUpNick";
 import PopUpSecAuth from "./PopUp/PopUpSecAuth";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -110,45 +111,51 @@ function TopBar({ children }: Props) {
               </div>
             </li>
           </ul>
+          {openModal && btnTag === "프로필" && (
+            <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+              <div className="flex justify-center">
+                <PopUpParent
+                  width={"w-[500px]"}
+                  height={"h-[500px]"}
+                  mainText="프로필 보기"
+                  onClick={() => handleOptionChange(openModal)}
+                >
+                  <PopUpProfile />
+                </PopUpParent>
+              </div>
+            </ClickAwayListener>
+          )}
+          {openModal && btnTag === "닉네임" && (
+            <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+              <div className="flex justify-center">
+                <PopUpParent
+                  width={"w-[500px]"}
+                  height={"h-[300px]"}
+                  mainText="닉네임 변경"
+                  onClick={() => handleOptionChange(openModal)}
+                >
+                  <PopUpNick />
+                </PopUpParent>
+              </div>
+            </ClickAwayListener>
+          )}
+          {openModal && btnTag === "2차인증" && (
+            <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+              <div className="flex justify-center">
+                <PopUpParent
+                  width={"w-[500px]"}
+                  height={"h-[300px]"}
+                  mainText="2차 인증 활성화"
+                  onClick={() => handleOptionChange(openModal)}
+                >
+                  <PopUpSecAuth />
+                </PopUpParent>
+              </div>
+            </ClickAwayListener>
+          )}
         </div>
         <div className="bg-main-light w-[50%] h-12 absolute top-2 right-0 border-b-2 border-main z-10"></div>
       </div>
-      {openModal && btnTag === "프로필" && (
-        <div className="flex justify-center">
-          <PopUpParent
-            width={"w-[500px]"}
-            height={"h-[500px]"}
-            mainText="프로필 보기"
-            onClick={() => handleOptionChange(openModal)}
-          >
-            <PopUpProfile />
-          </PopUpParent>
-        </div>
-      )}
-      {openModal && btnTag === "닉네임" && (
-        <div className="flex justify-center">
-          <PopUpParent
-            width={"w-[500px]"}
-            height={"h-[300px]"}
-            mainText="닉네임 변경"
-            onClick={() => handleOptionChange(openModal)}
-          >
-            <PopUpNick />
-          </PopUpParent>
-        </div>
-      )}
-      {openModal && btnTag === "2차인증" && (
-        <div className="flex justify-center">
-          <PopUpParent
-            width={"w-[500px]"}
-            height={"h-[300px]"}
-            mainText="2차 인증 활성화"
-            onClick={() => handleOptionChange(openModal)}
-          >
-            <PopUpSecAuth />
-          </PopUpParent>
-        </div>
-      )}
 
       {children}
     </div>
