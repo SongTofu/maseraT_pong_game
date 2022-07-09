@@ -5,8 +5,10 @@ export class UserListDto {
     this.userId = user.id;
     this.nickname = user.nickname;
     this.state = user.state;
+    this.socketId = user.socketId;
   }
   userId: number;
   nickname: string;
   state: number;
+  socketId: string;
 }

@@ -75,6 +75,10 @@
         });
       }
 
+      function connect() {
+        socket.emit("connect-user");
+      }
+
       socket.on("message", (data) => {
         console.log("message", data);
       });
@@ -104,7 +108,7 @@
       <li><button onclick="leave(1, 2)">leave 2번유저</button></li>
       <li><button onclick="send(1, 1)">send 1번유저 1번방</button></li>
       <li><button onclick="setAdmin(true)">admin</button></li>
-      <li><button onclick="setAdmin(false)">not admin</button></li>
+      <li><button onclick="connect()">connect</button></li>
     </ul>
   </body>
 </html>
