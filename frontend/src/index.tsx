@@ -1,8 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { RecoilRoot } from "recoil";
+import PageLoading from "./components/PageLoading";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
@@ -10,7 +11,9 @@ const root = ReactDOM.createRoot(
 root.render(
   // <React.StrictMode>
   <RecoilRoot>
-    <App />
+    <Suspense fallback={<PageLoading />}>
+      <App />
+    </Suspense>
   </RecoilRoot>,
   // </React.StrictMode>,
 );

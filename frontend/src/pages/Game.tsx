@@ -9,49 +9,8 @@ import { useRecoilState } from "recoil";
 function Game() {
   const [loading, setLoading] = useState(false);
   const [gameType, setGameType] = useState("regular");
-  const [userInfo, setUserInfo] = useRecoilState<IUserInfo[]>(userInfoAtom);
 
-  // const addItem = (data: IUserInfo) => {
-  //   setUserInfo((oldUserInfo) => [
-  //     ...oldUserInfo,
-  //     {
-  //       ladderWin: data.ladderWin,
-  //       ladderLose: data.ladderLose,
-  //       personalWin: data.personalWin,
-  //       personalLose: data.personalLose,
-  //       level: data.level,
-  //       nickname: data.nickname,
-  //       profileImg: data.profileImg,
-  //       secondAuth: data.secondAuth,
-  //     },
-  //   ]);
-  // };
-
-  const getUser = useCallback(async () => {
-    const data = await getApi("user/info");
-    setUserInfo((oldUserInfo) => [
-      ...oldUserInfo.filter((info) => info.nickname !== data.nickname),
-      {
-        ladderWin: data.ladderWin,
-        ladderLose: data.ladderLose,
-        personalWin: data.personalWin,
-        personalLose: data.personalLose,
-        level: data.level,
-        nickname: data.nickname,
-        profileImg: data.profileImg,
-        secondAuth: data.secondAuth,
-      },
-    ]);
-    setLoading(true);
-  }, [setUserInfo]);
-
-  useEffect(() => {
-    getUser();
-  }, [getUser]);
-
-  console.log(userInfo);
-
-  return loading ? (
+  return (
     <div>
       <TopNavBar>
         <div className="content">
