@@ -17,6 +17,7 @@ interface Props {
 function TopBar({ children }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const [btnTag, setBtnTag] = useState("");
+
   const userInfo = useRecoilValue(getUserInfoSelector);
   const reqApi = useSetRecoilState(getUserInfoSelector);
 

@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import MainBox from "../components/Content/MainBox";
 import TopNavBar from "../components/TopNavBar";
 import UserListBox from "../components/Content/UserListBox";
+import { getApi } from "../api/getApi";
+import { IUserInfo, userInfoAtom } from "../atom/userInfoAtom";
+import { useRecoilState } from "recoil";
 
 function Game() {
+  const [loading, setLoading] = useState(false);
   const [gameType, setGameType] = useState("regular");
 
   return (
@@ -55,6 +59,8 @@ function Game() {
         </div>
       </TopNavBar>
     </div>
+  ) : (
+    <div>Loading...</div>
   );
 }
 
