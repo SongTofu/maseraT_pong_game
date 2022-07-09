@@ -9,7 +9,7 @@ import { Socket } from "socket.io";
 import { User } from "../user/user.entity";
 import { UserRepository } from "../user/user.repository";
 import { Req } from "@nestjs/common";
-import { GetAllUserDto } from "./dto/get-all-user.dto";
+import { UserListDto } from "././dto/user-list.dto";
 
 @WebSocketGateway({
   cors: {
@@ -26,7 +26,7 @@ export class UserGateway {
   async handleConnectUser(@ConnectedSocket() socket: Socket, @Req() req: any) {
     const user: User = await this.userRepository.findOne(req.user.id);
 
-    const getAllUserDto: GetAllUserDto = {
+    const getAllUserDto: UserListDto = {
       userId: user.id,
       nickname: user.nickname,
       state: user.state,

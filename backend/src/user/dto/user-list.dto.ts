@@ -1,6 +1,6 @@
 import { User } from "../user.entity";
 
-export class GetAllUserDto {
+export class UserListDto {
   constructor(user: User) {
     this.userId = user.id;
     this.nickname = user.nickname;

@@ -11,7 +11,7 @@ import { FriendsRepository } from "../friend/friend.repository";
 import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
-import { GetAllUserDto } from "./dto/get-all-user.dto";
+import { UserListDto } from "././dto/user-list.dto";
 import { join } from "path";
 
 @Injectable()
@@ -23,8 +23,8 @@ export class UserService {
   ) {}
 
   // test after saved in db
-  async getAllUser(): Promise<GetAllUserDto[]> {
-    const getAllUserDto: GetAllUserDto[] = [];
+  async getAllUser(): Promise<UserListDto[]> {
+    const getAllUserDto: UserListDto[] = [];
     const user: User[] = await this.userRepository.find();
 
     if (!user) {
@@ -33,7 +33,7 @@ export class UserService {
 
     for (let i = 0; i < user.length; i++) {
       if (user[i].state !== 0) {
-        getAllUserDto.push(new GetAllUserDto(user[i]));
+        getAllUserDto.push(new UserListDto(user[i]));
       }
     }
 
