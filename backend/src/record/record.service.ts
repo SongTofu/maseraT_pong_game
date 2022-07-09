@@ -11,6 +11,9 @@ export class RecordService {
     const records: Record[] = await this.recordRepository.find({
       where: { user: id },
       relations: ["enemy"],
+      order: {
+        date: -1,
+      },
     });
 
     const recordDto: RecordDto[] = [];
