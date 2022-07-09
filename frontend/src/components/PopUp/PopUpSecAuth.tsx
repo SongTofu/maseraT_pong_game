@@ -1,5 +1,5 @@
 import React from "react";
-import PopUpBtnBig from "../Button/PopUpBtnBig";
+import BtnPopUp from "../Button/BtnPopUp";
 interface PopSecAuthProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
@@ -47,7 +47,7 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
         </div>
       </div>
       <div className="btn__wrap flex justify-center">
-        <PopUpBtnBig tag="활성화" />
+        <BtnPopUp tag="활성화" />
       </div>
       <div className="absolute bottom-[90px] left-[185px] w-[140px] h-[20px] text-red-600 text-center font-main">
         일치하지 않습니다!
