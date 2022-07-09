@@ -23,14 +23,16 @@ export class UserGateway {
   server;
 
   @SubscribeMessage("connect-user")
-  async handleConnectUser(@ConnectedSocket() socket: Socket, @Req() req: any) {
+  async handleConnectUser(@ConnectedSocket() socket: Socket, @Req() req) {
+    //req ㅅㅏ용 가능?
     const user: User = await this.userRepository.findOne(req.user.id);
 
-    const getAllUserDto: UserListDto = {
+    const userListDto: UserListDto = {
       userId: user.id,
       nickname: user.nickname,
       state: user.state,
+      socketId: user.socketId,
     };
-    this.server.emit("connect-user", getAllUserDto);
+    this.server.emit("connect-user", userListDto);
   }
 }
