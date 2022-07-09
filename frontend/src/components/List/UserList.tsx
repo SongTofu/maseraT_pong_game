@@ -43,7 +43,7 @@ function UserList({
       <div className="inline font-main text-main-text">{name}</div>
       {isChatRoom && openModal && (
         <ClickAwayListener onClickAway={() => setOpenModal(false)}>
-          <div className="fixed top-[350px] right-[850px] z-50">
+          <div className="relative">
             <PopUpChatMenu
               myAuth={myAuth}
               targetAuth={targetAuth}
