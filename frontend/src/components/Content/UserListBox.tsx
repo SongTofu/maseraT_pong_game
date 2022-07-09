@@ -37,7 +37,7 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
         />
       </div>
       <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
-        {listStatus}
+        {listStatus} {/*buttonTag ? 참여유저 : 전체유저*/}
         <UserList
           status={true}
           name="name1"
