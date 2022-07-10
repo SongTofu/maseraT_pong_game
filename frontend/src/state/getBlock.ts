@@ -2,7 +2,7 @@ import { selector } from "recoil";
 import { getApi } from "../api/getApi";
 
 export interface IBlock {
-  userId: string;
+  userId: number;
   nickname: string;
   state: number;
 }

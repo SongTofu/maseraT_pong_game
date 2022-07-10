@@ -3,6 +3,9 @@ import Owner from "../../img/owner.svg";
 import Admin from "../../img/admin.svg";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import PopUpChatMenu from "../PopUp/PopUpChatMenu";
+import { useRecoilValue } from "recoil";
+import { getUserInfoSelector, IUserInfo } from "../../state/getUserInfo";
+import { getChRoomUser, IParticipant } from "../../state/getChRoomUser";
 
 interface UListCProps {
   userId: number;
@@ -10,12 +13,16 @@ interface UListCProps {
   authority: number;
 }
 
-function UserListChat({
-  userId,
-  nickname,
-  authority,
-}: UListCProps): JSX.Element {
+function UserListChat({ nickname, authority }: UListCProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
+  const mainUser = useRecoilValue<IUserInfo>(getUserInfoSelector);
+  const chatParticipants = useRecoilValue<IParticipant[]>(getChRoomUser);
+  const myIndex = chatParticipants.findIndex(
+    (participant) => participant.nickname === mainUser.nickname,
+  );
+  const targetIndex = chatParticipants.findIndex(
+    (participant) => participant.nickname === nickname,
+  );
 
   const handleOptionChange = () => setOpenModal((prev) => !prev);
   return (
@@ -35,7 +42,14 @@ function UserListChat({
       {openModal && (
         <ClickAwayListener onClickAway={() => setOpenModal(false)}>
           <div className="relative">
-            <PopUpChatMenu myAuth={2} targetAuth={0} isYourself={false} />
+            <PopUpChatMenu
+              myAuth={chatParticipants[myIndex].authority}
+              targetAuth={chatParticipants[targetIndex].authority}
+              isYourself={
+                chatParticipants[myIndex].userId ===
+                chatParticipants[targetIndex].userId
+              }
+            />
           </div>
         </ClickAwayListener>
       )}
