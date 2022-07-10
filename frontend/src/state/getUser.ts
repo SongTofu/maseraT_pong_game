@@ -1,15 +1,14 @@
 import { selector } from "recoil";
 import { getApi } from "../api/getApi";
-
-export interface IBlock {
+export interface IUser {
   userId: number;
   nickname: string;
-  state: number;
+  state: 0;
 }
 
-export const getBlockSelector = selector({
-  key: "block/get",
+export const getUser = selector({
+  key: "user/get",
   get: async () => {
-    return await getApi("block/");
+    return await getApi("user/");
   },
 });

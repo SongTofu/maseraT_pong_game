@@ -24,7 +24,7 @@ function App() {
             <Route path="/game" element={<Game />} />
             <Route path="/game-room" element={<GameRoom />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/chat-room" element={<ChatRoom />} />
+            <Route path="/chat-room/*" element={<ChatRoom />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
           <Footer />
