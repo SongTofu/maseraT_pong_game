@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import ButtonTwo from "../Button/ButtonTwo";
 import PopUpBlock from "../PopUp/PopUpBlock";
 import PopUpParent from "../PopUp/PopUpParent";
-import UserList from "../List/UserList";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import UserListAll from "../List/UserListAll";
+import UserListChat from "../List/UserListChat";
+import UserListFriend from "../List/UserListFriend";
 
 interface IProps {
   buttonTag?: string;
@@ -38,7 +40,32 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
       </div>
       <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
         {listStatus} {/*buttonTag ? 참여유저 : 전체유저*/}
-        <UserList
+        {listStatus === "friends" && (
+          <>
+            <UserListFriend userId={7} nickname="sehan" state={0} />
+            <UserListFriend userId={8} nickname="jeongwle" state={1} />
+            <UserListFriend userId={9} nickname="ji-kim" state={2} />
+            <UserListFriend userId={10} nickname="yejsong" state={1} />
+            <UserListFriend userId={11} nickname="yeslee" state={1} />
+          </>
+        )}
+        {listStatus === "all" && isChatRoom && (
+          <>
+            <UserListChat userId={7} nickname="jeongwle" authority={2} />
+            <UserListChat userId={8} nickname="ji-kim" authority={1} />
+            <UserListChat userId={9} nickname="sehan" authority={0} />
+          </>
+        )}
+        {listStatus === "all" && !isChatRoom && (
+          <>
+            <UserListAll userId={7} nickname="sehan" state={0} />
+            <UserListAll userId={8} nickname="jeongwle" state={1} />
+            <UserListAll userId={9} nickname="ji-kim" state={2} />
+            <UserListAll userId={10} nickname="yejsong" state={1} />
+            <UserListAll userId={11} nickname="yeslee" state={1} />
+          </>
+        )}
+        {/* <UserList
           status={true}
           name="name1"
           myAuth={2}
@@ -100,7 +127,7 @@ function UserListBox({ buttonTag, isChatRoom, userStatus }: IProps) {
           myAuth={0}
           isYourself={false}
           isChatRoom={isChatRoom}
-        />
+        /> */}
       </div>
       <div className="mt-7">
         <ButtonTwo
