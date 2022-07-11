@@ -12,12 +12,13 @@ export class AchievementService {
     private achievementRepository: AchievementRepository,
   ) {}
 
-  async getMyAchievement(id: number) {
+  async getMyAchievement(id: number): Promise<AchievementDto> {
     const user: User = await this.userRepository.findOne(id);
-    const achievement: Achievement = await this.achievementRepository.findOne({
-      where: { user },
-    });
+    const achievement: Achievement = await this.achievementRepository.findOne(
+      user,
+    );
     const achievementDto: AchievementDto = {
+      userId: user.id,
       firstLogin: achievement.firstLogin,
       firstWin: achievement.firstWin,
       firstLose: achievement.firstLose,
@@ -26,19 +27,37 @@ export class AchievementService {
     return achievementDto;
   }
 
+  async getTargetAchievement(targetId: number): Promise<AchievementDto> {
+    const target = await this.userRepository.findOne(targetId);
+    const achievement: Achievement = await this.achievementRepository.findOne(
+      target,
+    );
+
+    const targetAchievementDto: AchievementDto = {
+      userId: targetId,
+      firstLogin: achievement.firstLogin,
+      firstWin: achievement.firstWin,
+      firstLose: achievement.firstLose,
+      thirdWin: achievement.thirdWin,
+    };
+
+    return targetAchievementDto;
+  }
+
   async initAchievement(id: number): Promise<void> {
     const user: User = await this.userRepository.findOne(id);
     return this.achievementRepository.createDefaultAchievement(user);
   }
 
-  async updateAchievement(id: number) {
+  async updateAchievement(id: number): Promise<Achievement> {
     const user: User = await this.userRepository.findOne(id);
     let achievement: Achievement = await this.achievementRepository.findOne({
       where: { user },
     });
+    // 게임 생기면 조건 추가
     if (user.nickname) achievement.firstLogin = true;
     if (achievement.firstWin == false && user.personalWin + user.ladderWin >= 1)
-      achievement.firstWin = true; //조건 깔끔하게 못할까?
+      achievement.firstWin = true;
     if (
       achievement.firstLose == false &&
       user.personalLose + user.ladderLose >= 1

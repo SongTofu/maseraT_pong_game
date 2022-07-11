@@ -1,4 +1,5 @@
 export class AchievementDto {
+  userId: number;
   firstLogin: boolean;
   firstWin: boolean;
   firstLose: boolean;

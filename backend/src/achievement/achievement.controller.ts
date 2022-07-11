@@ -1,23 +1,31 @@
-import { Controller, Patch, Get, Body, Post } from "@nestjs/common";
+import { Controller, Patch, Get, Post, Param, Req } from "@nestjs/common";
 import { AchievementService } from "./achievement.service";
 import { AchievementDto } from "./dto/achievement.dto";
+import { Achievement } from "./achievement.entity";
 
 @Controller("achievement")
 export class AchievementController {
   constructor(private achievementServie: AchievementService) {}
 
   @Get()
-  getMyAchievement() {
-    return this.achievementServie.getMyAchievement(1);
+  getMyAchievement(@Req() req): Promise<AchievementDto> {
+    return this.achievementServie.getMyAchievement(req.user.id);
+  }
+
+  @Get("/:targetId")
+  getTargetAchievement(
+    @Param("targetId") targetId: number,
+  ): Promise<AchievementDto> {
+    return this.achievementServie.getTargetAchievement(targetId);
   }
 
   @Post()
-  initAchievement(): Promise<void> {
-    return this.achievementServie.initAchievement(1);
+  initAchievement(@Req() req): Promise<void> {
+    return this.achievementServie.initAchievement(req.user.id);
   }
 
   @Patch()
-  updateAchievement(): Promise<AchievementDto> {
-    return this.achievementServie.updateAchievement(1);
+  updateAchievement(@Req() req): Promise<Achievement> {
+    return this.achievementServie.updateAchievement(req.user.id);
   }
 }

@@ -17,5 +17,6 @@ import { UserRepository } from "src/user/user.repository";
   ],
   providers: [ChatGateway, ChatService],
   controllers: [ChatController],
+  exports: [ChatGateway],
 })
 export class ChatModule {}
