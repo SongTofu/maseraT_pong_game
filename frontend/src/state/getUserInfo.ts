@@ -28,7 +28,7 @@ export const getUserInfoSelector = selector({
     get(reqUserInfo);
     return await getApi("user/info");
   },
-  set: ({ set }, newValue) => {
+  set: ({ set }) => {
     set(reqUserInfo, (prev) => prev + 1);
   },
 });

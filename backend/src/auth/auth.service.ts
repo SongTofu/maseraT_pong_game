@@ -11,6 +11,8 @@ export class AuthService {
   ) {}
 
   async logIn(userDto: UserDto): Promise<any> {
+    let firstLogin: boolean = false;
+
     let user = await this.userRepository.findOne({
       where: {
         apiId: userDto.apiId,
@@ -25,6 +27,7 @@ export class AuthService {
         nickname: autoNickname,
       });
       user = await user.save();
+      firstLogin = true;
     }
 
     const id = user.id;
@@ -35,6 +38,7 @@ export class AuthService {
       secondAuth: user.secondAuth,
       nickname: user.nickname,
       token: accessToken,
+      firstLogin,
     };
   }
   private autoSetNickName(userDto: UserDto) {

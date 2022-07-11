@@ -33,7 +33,7 @@ function UserListBox({ buttonTag, isChatRoom }: IProps) {
   const myIndex = chatParticipants.findIndex(
     (chatParticipant) => chatParticipant.nickname === mainUser.nickname,
   );
-  const mainUserAuth = chatParticipants[myIndex].authority;
+  const mainUserAuth = chatParticipants[myIndex]?.authority;
 
   const handleShowBlock = (val: boolean) => {
     setShowBlock(!val);

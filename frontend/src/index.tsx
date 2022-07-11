@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { RecoilRoot } from "recoil";
 import PageLoading from "./components/PageLoading";
+import { CookiesProvider } from "react-cookie";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
@@ -11,9 +12,11 @@ const root = ReactDOM.createRoot(
 root.render(
   // <React.StrictMode>
   <RecoilRoot>
-    <Suspense fallback={<PageLoading />}>
-      <App />
-    </Suspense>
+    <CookiesProvider>
+      <Suspense fallback={<PageLoading />}>
+        <App />
+      </Suspense>
+    </CookiesProvider>
   </RecoilRoot>,
   // </React.StrictMode>,
 );
