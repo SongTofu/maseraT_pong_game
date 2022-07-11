@@ -10,14 +10,14 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { AuthModule } from "./auth/auth.module";
 import { ChatModule } from "./chat/chat.module";
 import { AchievementModule } from "./achievement/achievement.module";
-import { UserInfoModule } from "./user/user.module";
+import { UserModule } from "./user/user.module";
 import { FriendModule } from "./friend/friend.module";
 import { BlockModule } from "./block/block.module";
 import { GameModule } from "./game/game.module";
 
 @Module({
   imports: [
-    UserInfoModule,
+    UserModule,
     SecondAuthModule,
     RecordModule,
     TypeOrmModule.forRoot(typeORMConfig),
@@ -37,6 +37,6 @@ import { GameModule } from "./game/game.module";
     GameModule,
   ],
   controllers: [AppController],
-  providers: [AppService], //, AchievementService
+  providers: [AppService],
 })
 export class AppModule {}
