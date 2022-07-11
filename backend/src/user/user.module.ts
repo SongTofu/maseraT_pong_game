@@ -5,6 +5,7 @@ import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 import { BlockRepository } from "../block/block.repository";
 import { FriendsRepository } from "src/friend/friend.repository";
+import { UserGateway } from "./user.gateway";
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { FriendsRepository } from "src/friend/friend.repository";
     ]),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserGateway],
 })
 export class UserInfoModule {}

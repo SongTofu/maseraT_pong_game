@@ -126,17 +126,19 @@ export class GameGateway {
     // gameRoom.isStart = true;
     // await gameRoom.save();
 
+    // 방 생성, 방 수정으로 이동할 예정
     this.gameData[gameRoomId] = {};
     this.gameData[gameRoomId].ball = new BallData();
     this.gameData[gameRoomId].leftUser = new UserData(true);
     this.gameData[gameRoomId].rightUser = new UserData(false);
     this.gameData[gameRoomId].isLadder = isLadder;
+    this.gameData[gameRoomId].mode = 1;
     this.server.in("game-" + gameRoomId).emit("game-start");
 
     this.gameData[gameRoomId].interval = setInterval(() => {
       this.update(gameRoomId);
       this.server
-        .in("game-" + startGameDto.gameRoomId)
+        .in("game-" + gameRoomId)
         .emit("game", this.gameData[gameRoomId]);
     }, 30);
   }
@@ -194,8 +196,9 @@ export class GameGateway {
       ball.velocityX = ball.speed * Math.cos(angleRad) * direction;
       ball.velocityY = ball.speed * Math.sin(angleRad);
 
-      // speed 증가 추가
-      ball.speed += 2;
+      if (this.gameData[gameRoomId].mode && ball.speed < 25) {
+        ball.speed += 2;
+      }
     }
 
     if (ball.x - ball.radius < -10) {

@@ -7,6 +7,8 @@ import PopUpProfile from "./PopUp/PopUpProfile";
 import PopUpNick from "./PopUp/PopUpNick";
 import PopUpSecAuth from "./PopUp/PopUpSecAuth";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { getUserInfoSelector } from "../state/getUserInfo";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -16,10 +18,12 @@ function TopBar({ children }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const [btnTag, setBtnTag] = useState("");
 
+  const userInfo = useRecoilValue(getUserInfoSelector);
+  const reqApi = useSetRecoilState(getUserInfoSelector);
+
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
   };
-
   return (
     <div>
       <div className="flex justify-center bg-main relative">
@@ -42,7 +46,9 @@ function TopBar({ children }: Props) {
                     : "text-gray-300"
                 }`}
               >
-                <NavLink to="/game">게임</NavLink>
+                <NavLink to="/game" onClick={reqApi}>
+                  게임
+                </NavLink>
               </h1>
             </li>
             <li
@@ -62,23 +68,26 @@ function TopBar({ children }: Props) {
                     : "text-gray-300"
                 }`}
               >
-                <NavLink to="/chat">채팅</NavLink>
+                <NavLink to="/chat" onClick={reqApi}>
+                  채팅
+                </NavLink>
               </h1>
             </li>
             <li>
               <div className="h-12 w-[800px] bg-main-light flex justify-between px-3 items-center border-b-2 border-main">
                 <div className="text-main-text flex flex-row">
-                  <p className="pr-2">player name</p>
+                  <p className="pr-2">{userInfo.nickname}</p>
                   <Achievement />
                 </div>
                 <div className="w-[500px] text-main-text flex justify-between items-center">
-                  <p className="inline">lv. {0}</p>
+                  <p className="inline">lv. {userInfo.level}</p>
                   <div className="inline">
                     <span className="block text-xs font-main">
                       일반/레더전적
                     </span>
                     <span className="block text-sm font-main">
-                      {0}승 {0}패/{0}승 {0}패
+                      {userInfo.personalWin}승 {userInfo.personalLose}패/
+                      {userInfo.ladderWin}승{userInfo.ladderLose}패
                     </span>
                   </div>
                   <div className="flex">

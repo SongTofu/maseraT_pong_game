@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import PageNotFound from "./components/PageNotFound";
 import Chat from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import Game from "./pages/Game";
@@ -23,7 +24,8 @@ function App() {
             <Route path="/game" element={<Game />} />
             <Route path="/game-room" element={<GameRoom />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/chat-room" element={<ChatRoom />} />
+            <Route path="/chat-room/*" element={<ChatRoom />} />
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
           <Footer />
         </div>

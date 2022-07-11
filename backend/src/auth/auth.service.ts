@@ -11,19 +11,23 @@ export class AuthService {
   ) {}
 
   async logIn(userDto: UserDto): Promise<any> {
+    let firstLogin: boolean = false;
+
     let user = await this.userRepository.findOne({
       where: {
         apiId: userDto.apiId,
       },
     });
-
     if (!user) {
+      const autoNickname = this.autoSetNickName(userDto);
+
       user = this.userRepository.create({
         apiId: userDto.apiId,
         email: userDto.email,
-        nickname: "",
+        nickname: autoNickname,
       });
       user = await user.save();
+      firstLogin = true;
     }
 
     const id = user.id;
@@ -34,6 +38,12 @@ export class AuthService {
       secondAuth: user.secondAuth,
       nickname: user.nickname,
       token: accessToken,
+      firstLogin,
     };
+  }
+  private autoSetNickName(userDto: UserDto) {
+    const authCode: string = Math.random().toString(36).substr(2, 5);
+    const autoNickname: string = userDto.nickname + "_" + authCode;
+    return autoNickname;
   }
 }

@@ -5,6 +5,7 @@ import UserListBox from "../components/Content/UserListBox";
 
 function Game() {
   const [gameType, setGameType] = useState("regular");
+
   return (
     <div>
       <TopNavBar>

@@ -32,11 +32,9 @@ export class UserService {
     }
 
     for (let i = 0; i < user.length; i++) {
-      getAllUserDto.push({
-        userId: user[i].apiId,
-        nickname: user[i].nickname,
-        state: user[i].state,
-      });
+      if (user[i].state !== 0) {
+        getAllUserDto.push(new GetAllUserDto(user[i]));
+      }
     }
 
     return getAllUserDto;
@@ -48,6 +46,7 @@ export class UserService {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
+      id: user.id,
       nickname: user.nickname,
       secondAuth: user.secondAuth,
       personalWin: user.personalWin,
