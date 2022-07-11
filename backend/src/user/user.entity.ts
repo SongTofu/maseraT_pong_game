@@ -46,7 +46,7 @@ export class User extends BaseEntity {
   @Column({ default: 0 })
   ladderLose: number;
 
-  @Column({ default: "" })
+  @Column({ default: "maserat.png" })
   profileImg: string;
 
   @Column({ default: 0 })
