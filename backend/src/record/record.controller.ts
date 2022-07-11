@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, UseGuards, Req } from "@nestjs/common";
 import { RecordService } from "./record.service";
 import { RecordDto } from "./dto/record.dto";
+import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 
 @Controller("record")
 export class RecordController {
@@ -9,5 +10,12 @@ export class RecordController {
   @Get("/:userId")
   getRecord(@Param("userId") id: number): Promise<RecordDto[]> {
     return this.recordService.getRecord(id);
+  }
+
+  @Get("")
+  @UseGuards(JwtAuthGuard)
+  getMeRecord(@Req() req) {
+    console.log("aa");
+    return this.recordService.getRecord(req.user.id);
   }
 }
