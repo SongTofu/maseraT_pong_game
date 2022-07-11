@@ -1,4 +1,5 @@
 export class MyUserInfoDto {
+  id: number;
   nickname: string;
   secondAuth: boolean;
   personalWin: number;
