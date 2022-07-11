@@ -57,18 +57,19 @@ export class GameGateway {
       );
     }
 
-    if (!this.joinGameRoom(gameJoinDto, user)) return ;
+    if (!this.joinGameRoom(gameJoinDto, user)) return;
 
     const gameParticipantDto: GameParticipantDto = {
-      gameRoomId = gameJoinDto.gameRoodId,
-      title: "",
+      gameRoomId: gameJoinDto.gameRoodId,
+      title: "", // 입력받아함
       userId: user.id,
       userNickname: user.nickname,
-      position = GamePosition.spectator,
+      position: GamePosition.spectator,
     };
 
-    // 입력받아야함
-    this.server.in(gameParticipantDto.title).emit("game-room-join"), gameParticipantDto);
+    this.server
+      .in(gameParticipantDto.title)
+      .emit("game-room-join", gameParticipantDto);
 
     socket.join(gameParticipantDto.title);
   }
