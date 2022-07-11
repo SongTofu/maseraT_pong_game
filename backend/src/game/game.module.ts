@@ -4,6 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GameRoomRepository } from "./repository/game-room.repository";
 import { GameParticipantRepository } from "./repository/game-participant.repository";
 import { RecordRepository } from "src/record/record.repository";
+import { UserRepository } from "src/user/user.repository";
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { RecordRepository } from "src/record/record.repository";
       GameRoomRepository,
       GameParticipantRepository,
       RecordRepository,
+      UserRepository,
     ]),
   ],
   providers: [GameGateway],
