@@ -16,6 +16,6 @@ export const gameRecordAtom = atom<IRecord[]>({
 export const getRecordSelector = selector({
   key: "record/get",
   get: async () => {
-    return await getApi("record/7");
+    return await getApi("record/");
   },
 });
