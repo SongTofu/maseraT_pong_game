@@ -15,6 +15,8 @@ import { StartGameDto } from "./dto/start-game.dto";
 import { GamePosition } from "./game-position.enum";
 import { GameParticipant } from "./entity/game-participant.entity";
 import { RecordRepository } from "src/record/record.repository";
+import { GameDataDto } from "./dto/game-data.dto";
+import { UserRepository } from "src/user/user.repository";
 
 const cvs = {
   width: 600,
@@ -31,9 +33,11 @@ export class GameGateway {
     private gameRoomRepository: GameRoomRepository,
     private gameParticipantRepository: GameParticipantRepository,
     private recordRepository: RecordRepository,
+    private userRepository: UserRepository,
   ) {}
 
   gameData: Object = {};
+  match = [];
 
   @WebSocketServer()
   server;
@@ -45,10 +49,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage("start-game")
-  async handleGameStart(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() startGameDto: StartGameDto,
-  ) {
+  async handleGameStart(@MessageBody() startGameDto: StartGameDto) {
     const { gameRoomId, isLadder } = startGameDto;
 
     // const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
@@ -94,12 +95,27 @@ export class GameGateway {
   @SubscribeMessage("user")
   handleGame(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() data: { gameRoomId: number; position: number; y: number },
+    // @MessageBody() data: { gameRoomId: number; position: number; y: number },
+    @MessageBody() gameDataDto: GameDataDto,
   ) {
-    if (data.position === GamePosition.leftUser) {
-      this.gameData[data.gameRoomId].leftUser.y = data.y;
-    } else if (data.position === GamePosition.rightUser) {
-      this.gameData[data.gameRoomId].rightUser.y = data.y;
+    if (gameDataDto.position === GamePosition.leftUser) {
+      this.gameData[gameDataDto.gameRoomId].leftUser.y = gameDataDto.y;
+    } else if (gameDataDto.position === GamePosition.rightUser) {
+      this.gameData[gameDataDto.gameRoomId].rightUser.y = gameDataDto.y;
+    }
+  }
+
+  @SubscribeMessage("match")
+  handleMatch(@ConnectedSocket() socket: Socket) {
+    // this.userRepository.findOne({
+    //   where: {
+    //   },
+    // });
+    // this.match.push(data.userId);
+    if (this.match.length >= 2) {
+      //게임방 join 추가
+      const startGameDto: StartGameDto = { isLadder: true, gameRoomId: 1 };
+      this.handleGameStart(startGameDto);
     }
   }
 

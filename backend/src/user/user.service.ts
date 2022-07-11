@@ -93,8 +93,9 @@ export class UserService {
       const fs = require("fs");
 
       const path = join(__dirname, "..", "..", "img", user.profileImg);
-      console.log(path);
-      fs.unlink(path, (err) => {});
+      if (user.profileImg !== "maserat.png") {
+        fs.unlink(path, (err) => {});
+      }
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth) {
