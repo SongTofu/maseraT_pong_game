@@ -12,7 +12,6 @@ export class AchievementRepository extends Repository<Achievement> {
       thirdWin: false,
       user,
     });
-    console.log("ache", achievement);
     await this.save(achievement);
   }
 }
