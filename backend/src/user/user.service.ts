@@ -167,6 +167,6 @@ export class UserService {
         throw new InternalServerErrorException();
       }
     }
-    return user; //return 값 미정
+    return { success: true }; //return 값 미정
   }
 }

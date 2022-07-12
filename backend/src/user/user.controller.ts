@@ -69,9 +69,8 @@ export class UserController {
     @Body() updateUserInfoDto: UpdateUserInfoDto,
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<User> {
+  ) {
     updateUserInfoDto.profileImg = file.filename;
     return this.userService.initUserInfo(req.user.id, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
-    //리턴값 미정
   }
 }
