@@ -17,7 +17,7 @@ import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { User } from "./user.entity";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { GetAllUserDto } from "./dto/get-all-user.dto";
+import { UserListDto } from "./dto/user-list.dto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 
 const storage = diskStorage({
@@ -35,7 +35,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  getAllUser(): Promise<GetAllUserDto[]> {
+  getAllUser(): Promise<UserListDto[]> {
     return this.userService.getAllUser();
   }
 
