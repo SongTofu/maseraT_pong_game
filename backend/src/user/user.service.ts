@@ -69,14 +69,14 @@ export class UserService {
     const isFriend = await this.isFriend(user, target);
     const isBlocked = await this.isBlocked(user, target);
     const targetUserInfoDto: TargetUserInfoDto = {
-      nickname: user.nickname,
-      personalWin: user.personalWin,
-      personalLose: user.personalLose,
-      ladderWin: user.ladderWin,
-      ladderLose: user.ladderLose,
-      profileImg: user.profileImg,
-      state: user.state,
-      level: user.level,
+      nickname: target.nickname,
+      personalWin: target.personalWin,
+      personalLose: target.personalLose,
+      ladderWin: target.ladderWin,
+      ladderLose: target.ladderLose,
+      profileImg: target.profileImg,
+      state: target.state,
+      level: target.level,
       isFriend,
       isBlocked,
     };
@@ -117,7 +117,7 @@ export class UserService {
       await this.friendsRepository.findOne({
         where: {
           ownId: user,
-          friendsId: target,
+          friendId: target,
         },
       })
     ) {
