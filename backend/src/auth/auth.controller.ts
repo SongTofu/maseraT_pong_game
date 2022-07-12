@@ -8,20 +8,32 @@ import { Response } from "express";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @Get("/login")
-  // @Redirect("http://localhost:3001/login")
-  // @UseGuards(ftAuthGuard)
-  // async logIn(
-  //   @Req() req,
-  //   @Res({ passthrough: true }) res: Response,
-  // ): Promise<any> {
-  //   const userDto: UserDto = req.user;
-
-  //   const accessToken: string = await this.authService.logIn(userDto);
-  //   res.cookie("token", accessToken);
-  // }
-
   @Get("/login")
+  @UseGuards(ftAuthGuard)
+  async logIn(
+    @Req() req,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
+    const userDto: UserDto = req.user;
+
+    await this.authService.logIn(userDto).then((data) => {
+      res.cookie("token", data.token);
+      res.cookie("nickname", data.nickname);
+      if (data.firstLogin) {
+        res.redirect("http://localhost:3001/login");
+      } else {
+        if (data.secondAuth) {
+          res.redirect("http://localhost:3001/second-auth");
+        } else {
+          res.redirect("http://localhost:3001/game");
+        }
+      }
+    });
+    // const accessToken: string = await this.authService.logIn(userDto);
+    // res.cookie("token", accessToken);
+  }
+
+  @Get("/test")
   @UseGuards(ftAuthGuard)
   async test(@Req() req): Promise<any> {
     const userDto: UserDto = req.user;

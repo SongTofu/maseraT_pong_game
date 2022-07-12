@@ -1,13 +1,21 @@
+import { getCookie } from "./../cookie/cookie";
 import axios from "axios";
 
 export async function getApi(api: string) {
+  const accessToken = getCookie("token");
+  // console.log(accessToken);
   const config = {
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNjU3MDg3OTMwLCJleHAiOjE2ODg2MjM5MzB9.vedsKRI96GBQFNsNW05lalMGB4Va9whCmzxbnd5xzP4`,
+      Authorization: `Bearer ${accessToken}`,
+      // Authorization: `Bearer ${process.env.REACT_APP_SEHAN_TOKEN}`,
     },
   };
 
-  const response = await axios.get("http://112.154.12.4:3000/" + api, config);
+  const response = await axios.get(
+    process.env.REACT_APP_LOCAL_SERVER + api,
+    config,
+  );
+  // const response = await axios.get(process.env.REACT_APP_SERVER + api, config);
   // console.log(response.data.nickname);
   // console.log(response.data.personalWin);
   return response.data;

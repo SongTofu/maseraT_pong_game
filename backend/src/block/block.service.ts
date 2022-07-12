@@ -13,6 +13,7 @@ export class BlockService {
       where: {
         ownId: id,
       },
+      relations: ["blockId"],
     });
 
     if (!blocks) {

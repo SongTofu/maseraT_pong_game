@@ -59,7 +59,7 @@ export class UserController {
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    updateUserInfoDto.profileImg = file.filename;
+    if (file) updateUserInfoDto.profileImg = file.filename;
     return this.userService.updateUser(req.user.id, updateUserInfoDto);
   }
 

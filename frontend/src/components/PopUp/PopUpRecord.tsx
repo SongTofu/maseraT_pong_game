@@ -1,58 +1,25 @@
 import React from "react";
+import { useRecoilValue } from "recoil";
+import { getRecordSelector, IRecord } from "../../state/getRecord";
 import RecordList from "../List/RecordList";
+import shortid from "shortid";
 
 function PopUpRecord(): JSX.Element {
+  const records = useRecoilValue<IRecord[]>(getRecordSelector);
+
   return (
     <>
       <div className="wrap h-[300px] overflow-auto">
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.01 16:40"}
-          isLadder={true}
-          gameWin={true}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 17:40"}
-          isLadder={true}
-          gameWin={true}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 18:40"}
-          isLadder={true}
-          gameWin={false}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 19:20"}
-          isLadder={false}
-          gameWin={false}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 19:30"}
-          isLadder={true}
-          gameWin={false}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 19:35"}
-          isLadder={false}
-          gameWin={true}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 19:42"}
-          isLadder={true}
-          gameWin={true}
-        />
-        <RecordList
-          enemy={"Nickname"}
-          date={"2022.07.02 19:52"}
-          isLadder={false}
-          gameWin={true}
-        />
+        {records.map((record) => (
+          <div key={shortid.generate()}>
+            <RecordList
+              enemy={record.enemy}
+              date={record.date}
+              isLadder={record.isLadder}
+              gameWin={record.gameWin}
+            />
+          </div>
+        ))}
       </div>
     </>
   );

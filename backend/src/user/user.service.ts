@@ -46,6 +46,7 @@ export class UserService {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
+      id: user.id,
       nickname: user.nickname,
       secondAuth: user.secondAuth,
       personalWin: user.personalWin,
@@ -92,8 +93,9 @@ export class UserService {
       const fs = require("fs");
 
       const path = join(__dirname, "..", "..", "img", user.profileImg);
-      console.log(path);
-      fs.unlink(path, (err) => {});
+      if (user.profileImg !== "maserat.png") {
+        fs.unlink(path, (err) => {});
+      }
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth) {
