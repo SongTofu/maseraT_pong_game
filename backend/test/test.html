@@ -42,7 +42,7 @@
 
       function join(roomId, userId) {
         socket.emit("chat-room-join", {
-          chatRoomId: 20,
+          chatRoomId: 38,
           title: "hi",
           password: "",
           userId: userId,
@@ -60,7 +60,7 @@
 
       function leave(roomId, userId) {
         socket.emit("chat-room-leave", {
-          chatRoomId: 20,
+          chatRoomId: 38,
           nickname: "",
           userId: userId,
         });
@@ -68,11 +68,22 @@
 
       function send(roomId, userId) {
         socket.emit("chat-room-message", {
-          chatRoomId: 20,
+          chatRoomId: 38,
           nickname: "",
           userId: userId,
           message: "worrrld!!!",
         });
+      }
+
+      function kick(roomId, targetId) {
+        socket.emit("chat-room-kick", {
+          targetId: 1,
+          chatRoomId: 38,
+        });
+      }
+
+      function connect() {
+        socket.emit("connect-user");
       }
 
       socket.on("message", (data) => {
@@ -104,7 +115,7 @@
       <li><button onclick="leave(1, 2)">leave 2번유저</button></li>
       <li><button onclick="send(1, 1)">send 1번유저 1번방</button></li>
       <li><button onclick="setAdmin(true)">admin</button></li>
-      <li><button onclick="setAdmin(false)">not admin</button></li>
+      <li><button onclick="kick()">kick</button></li>
     </ul>
   </body>
 </html>

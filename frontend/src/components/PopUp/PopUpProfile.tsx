@@ -1,25 +1,26 @@
 import React, { useState } from "react";
-import DefltImg from "../../img/maserat.png";
 import Achievement from "../Achievement";
 import BtnPopUp from "../Button/BtnPopUp";
 import PopUpParent from "./PopUpParent";
 import PopUpRecord from "./PopUpRecord";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { useRecoilValue } from "recoil";
-import { getUserInfoSelector } from "../../state/getUserInfo";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  getUserInfoSelector,
+  IUserInfo,
+  reqUserInfo,
+} from "../../state/getUserInfo";
+import { imgUploadOnC } from "../../utils/imgUploadOnC";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const userInfo = useRecoilValue(getUserInfoSelector);
+  const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
+  const setReqUserInfo = useSetRecoilState(reqUserInfo);
 
-  const handleMouseEnter = () => {
-    setDisplay(true);
-  };
+  const handleMouseEnter = () => setDisplay(true);
 
-  const handleMouseLeave = () => {
-    setDisplay(false);
-  };
+  const handleMouseLeave = () => setDisplay(false);
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -34,20 +35,29 @@ function PopUpProfile(): JSX.Element {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <img
-              alt="profileImg"
-              src={DefltImg}
-              className="rounded-full w-[150px] h-[150px] p-2"
-              onClick={() => 1}
-            />
             {display && (
-              <div
-                className="bg-black w-[130px] h-[25px] absolute top-[70px] left-[10px] text-white font-main rounded-full"
+              <label
+                htmlFor="profileImg"
+                className="bg-black w-[130px] h-[25px] absolute top-[70px] left-[10px] text-white text-center font-main rounded-full"
                 onMouseEnter={handleMouseEnter}
               >
-                이미지를 바꿔보세요
-              </div>
+                눌러서 바꿔보세요
+              </label>
             )}
+            <input
+              type="file"
+              id="profileImg"
+              accept="image/*"
+              onChange={(event) => imgUploadOnC(event, setReqUserInfo)}
+              className="hidden"
+            />
+            <div className="img__wrap">
+              <img
+                alt="profileImg"
+                src={`${process.env.REACT_APP_LOCAL_SERVER}${userInfo.profileImg}`}
+                className="rounded-full w-[150px] h-[150px] p-2"
+              />
+            </div>
           </div>
           <div className="info__wrap bg-green-500 w-[280px] p-4">
             <h1 className="font-main text-2xl">{userInfo.nickname}</h1>
