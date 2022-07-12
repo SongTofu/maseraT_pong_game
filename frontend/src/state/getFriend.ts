@@ -1,3 +1,4 @@
+import { reqUserInfo } from "./getUserInfo";
 import { selector } from "recoil";
 import { getApi } from "../api/getApi";
 export interface IFriend {
@@ -8,7 +9,8 @@ export interface IFriend {
 
 export const getFriend = selector({
   key: "friend/get",
-  get: async () => {
+  get: async ({ get }) => {
+    get(reqUserInfo);
     return await getApi("friend/");
   },
 });

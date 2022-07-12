@@ -13,18 +13,23 @@ interface UListCProps {
   authority: number;
 }
 
-function UserListChat({ nickname, authority }: UListCProps): JSX.Element {
+function UserListChat({
+  userId,
+  nickname,
+  authority,
+}: UListCProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const mainUser = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const chatParticipants = useRecoilValue<IParticipant[]>(getChRoomUser);
   const myIndex = chatParticipants.findIndex(
-    (participant) => participant.nickname === mainUser.nickname,
+    (participant) => participant.userId === mainUser.id,
   );
   const targetIndex = chatParticipants.findIndex(
-    (participant) => participant.nickname === nickname,
+    (participant) => participant.userId === userId,
   );
 
   const handleOptionChange = () => setOpenModal((prev) => !prev);
+
   return (
     <div
       className="relative border-main border-[1px] rounded-sm w-[90%] mt-2 last:mb-2"
@@ -44,7 +49,9 @@ function UserListChat({ nickname, authority }: UListCProps): JSX.Element {
           <div className="relative">
             <PopUpChatMenu
               myAuth={chatParticipants[myIndex].authority}
+              myId={chatParticipants[myIndex].userId}
               targetAuth={chatParticipants[targetIndex].authority}
+              targetId={chatParticipants[targetIndex].userId}
               isYourself={
                 chatParticipants[myIndex].userId ===
                 chatParticipants[targetIndex].userId
