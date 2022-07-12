@@ -29,11 +29,6 @@ export class AchievementService {
     return achievementDto;
   }
 
-  async initAchievement(id: number): Promise<void> {
-    const user: User = await this.userRepository.findOne(id);
-    return this.achievementRepository.createDefaultAchievement(user);
-  }
-
   async updateAchievement(id: number): Promise<Achievement> {
     const user: User = await this.userRepository.findOne(id);
     let achievement: Achievement = await this.achievementRepository.findOne({

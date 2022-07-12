@@ -13,16 +13,16 @@ export class Achievement extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: true })
   firstLogin: boolean;
 
-  @Column()
+  @Column({ default: false })
   firstWin: boolean;
 
-  @Column()
+  @Column({ default: false })
   firstLose: boolean;
 
-  @Column()
+  @Column({ default: false })
   thirdWin: boolean;
 
   @OneToOne((type) => User, (user) => user.achievement)

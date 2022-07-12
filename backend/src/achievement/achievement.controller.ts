@@ -12,11 +12,6 @@ export class AchievementController {
     return this.achievementServie.getMyAchievement(req.user.id);
   }
 
-  @Post()
-  initAchievement(@Req() req): Promise<void> {
-    return this.achievementServie.initAchievement(req.user.id);
-  }
-
   @Patch()
   updateAchievement(@Req() req): Promise<Achievement> {
     return this.achievementServie.updateAchievement(req.user.id);

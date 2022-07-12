@@ -63,14 +63,15 @@ export class UserController {
     return this.userService.updateUser(req.user.id, updateUserInfoDto);
   }
 
-  @Post("/info")
-  @UseInterceptors(FileInterceptor("profile", { storage }))
-  initUserInfo(
-    @Body() updateUserInfoDto: UpdateUserInfoDto,
-    @Req() req,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    updateUserInfoDto.profileImg = file.filename;
-    return this.userService.initUserInfo(req.user.id, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
-  }
+  //로그인 시 진행해서 필요 없음.(세한님과 말했음)
+  // @Post("/info")
+  // @UseInterceptors(FileInterceptor("profile", { storage }))
+  // initUserInfo(
+  //   @Body() updateUserInfoDto: UpdateUserInfoDto,
+  //   @Req() req,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   updateUserInfoDto.profileImg = file.filename;
+  //   return this.userService.initUserInfo(req.user.id, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
+  // }
 }
