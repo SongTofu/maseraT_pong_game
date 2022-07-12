@@ -4,6 +4,6 @@ export class NicknameCredentialsDto {
   @IsString()
   @MinLength(2)
   @MaxLength(20)
-  @Matches(/^[a-zA-Z0-9]*$/)
+  @Matches(/^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/)
   nickname: string;
 }
