@@ -38,10 +38,14 @@ function PopUpProfile(): JSX.Element {
             {display && (
               <label
                 htmlFor="profileImg"
-                className="bg-black w-[130px] h-[25px] absolute top-[70px] left-[10px] text-white text-center font-main rounded-full"
+                className="bg-black w-[150px] h-[150px] absolute text-center rounded-full opacity-50"
                 onMouseEnter={handleMouseEnter}
               >
-                눌러서 바꿔보세요
+                <div className="mt-[70px]">
+                  <span className="text-white font-main">
+                    눌러서 바꿔보세요
+                  </span>
+                </div>
               </label>
             )}
             <input
@@ -54,7 +58,7 @@ function PopUpProfile(): JSX.Element {
             <div className="img__wrap">
               <img
                 alt="profileImg"
-                src={`${process.env.REACT_APP_LOCAL_SERVER}${userInfo.profileImg}`}
+                src={`${process.env.REACT_APP_SERVER}${userInfo.profileImg}`}
                 className="rounded-full w-[150px] h-[150px] p-2"
               />
             </div>
