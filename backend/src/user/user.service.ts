@@ -11,7 +11,7 @@ import { FriendsRepository } from "../friend/friend.repository";
 import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
-import { GetAllUserDto } from "./dto/get-all-user.dto";
+import { UserListDto } from "././dto/user-list.dto";
 import { join } from "path";
 
 @Injectable()
@@ -23,8 +23,8 @@ export class UserService {
   ) {}
 
   // test after saved in db
-  async getAllUser(): Promise<GetAllUserDto[]> {
-    const getAllUserDto: GetAllUserDto[] = [];
+  async getAllUser(): Promise<UserListDto[]> {
+    const getAllUserDto: UserListDto[] = [];
     const user: User[] = await this.userRepository.find();
 
     if (!user) {
@@ -33,7 +33,7 @@ export class UserService {
 
     for (let i = 0; i < user.length; i++) {
       if (user[i].state !== 0) {
-        getAllUserDto.push(new GetAllUserDto(user[i]));
+        getAllUserDto.push(new UserListDto(user[i]));
       }
     }
 
@@ -46,6 +46,7 @@ export class UserService {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
+      id: user.id,
       nickname: user.nickname,
       secondAuth: user.secondAuth,
       personalWin: user.personalWin,
@@ -92,8 +93,9 @@ export class UserService {
       const fs = require("fs");
 
       const path = join(__dirname, "..", "..", "img", user.profileImg);
-      console.log(path);
-      fs.unlink(path, (err) => {});
+      if (user.profileImg !== "maserat.png") {
+        fs.unlink(path, (err) => {});
+      }
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth) {
@@ -140,10 +142,7 @@ export class UserService {
     }
   }
 
-  async initUserInfo(
-    id: number,
-    updateUserInfoDto: UpdateUserInfoDto,
-  ): Promise<User> {
+  async initUserInfo(id: number, updateUserInfoDto: UpdateUserInfoDto) {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
@@ -165,6 +164,6 @@ export class UserService {
         throw new InternalServerErrorException();
       }
     }
-    return user; //return 값 미정
+    return { success: true }; //return 값 미정
   }
 }

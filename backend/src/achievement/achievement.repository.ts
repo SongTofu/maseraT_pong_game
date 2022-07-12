@@ -4,15 +4,11 @@ import { User } from "src/user/user.entity";
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
-  async createDefaultAchievement(user: User): Promise<void> {
+  async createDefaultAchievement(user: User): Promise<Achievement> {
     const achievement = this.create({
-      firstLogin: false,
-      firstWin: false,
-      firstLose: false,
-      thirdWin: false,
       user,
     });
-    console.log("ache", achievement);
     await this.save(achievement);
+    return achievement;
   }
 }

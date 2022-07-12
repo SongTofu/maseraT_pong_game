@@ -2,12 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserRepository } from "src/user/user.repository";
 import { UserDto } from "./dto/user.dto";
+import { AchievementRepository } from "src/achievement/achievement.repository";
 
 @Injectable()
 export class AuthService {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
+    private achievementRepository: AchievementRepository,
   ) {}
 
   async logIn(userDto: UserDto): Promise<any> {
@@ -27,7 +29,7 @@ export class AuthService {
         nickname: autoNickname,
       });
       user = await user.save();
-      firstLogin = true;
+      this.achievementRepository.createDefaultAchievement(user);
     }
 
     const id = user.id;
@@ -38,7 +40,6 @@ export class AuthService {
       secondAuth: user.secondAuth,
       nickname: user.nickname,
       token: accessToken,
-      firstLogin,
     };
   }
   private autoSetNickName(userDto: UserDto) {

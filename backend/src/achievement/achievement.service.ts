@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { AchievementDto } from "./dto/achievement.dto";
 import { User } from "src/user/user.entity";
 import { UserRepository } from "src/user/user.repository";
@@ -12,12 +12,15 @@ export class AchievementService {
     private achievementRepository: AchievementRepository,
   ) {}
 
-  async getMyAchievement(id: number) {
+  async getMyAchievement(id: number): Promise<AchievementDto> {
     const user: User = await this.userRepository.findOne(id);
-    const achievement: Achievement = await this.achievementRepository.findOne({
-      where: { user },
-    });
+    if (!user) throw new NotFoundException(`Can't find Board with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
+
+    const achievement: Achievement = await this.achievementRepository.findOne(
+      user,
+    );
     const achievementDto: AchievementDto = {
+      userId: user.id,
       firstLogin: achievement.firstLogin,
       firstWin: achievement.firstWin,
       firstLose: achievement.firstLose,
@@ -26,19 +29,15 @@ export class AchievementService {
     return achievementDto;
   }
 
-  async initAchievement(id: number): Promise<void> {
-    const user: User = await this.userRepository.findOne(id);
-    return this.achievementRepository.createDefaultAchievement(user);
-  }
-
-  async updateAchievement(id: number) {
+  async updateAchievement(id: number): Promise<Achievement> {
     const user: User = await this.userRepository.findOne(id);
     let achievement: Achievement = await this.achievementRepository.findOne({
       where: { user },
     });
+    // 게임 생기면 조건 추가
     if (user.nickname) achievement.firstLogin = true;
     if (achievement.firstWin == false && user.personalWin + user.ladderWin >= 1)
-      achievement.firstWin = true; //조건 깔끔하게 못할까?
+      achievement.firstWin = true;
     if (
       achievement.firstLose == false &&
       user.personalLose + user.ladderLose >= 1
@@ -47,5 +46,25 @@ export class AchievementService {
     if (achievement.thirdWin == false && user.personalWin + user.ladderWin >= 3)
       achievement.thirdWin = true;
     return achievement;
+  }
+
+  async getTargetAchievement(targetId: number): Promise<AchievementDto> {
+    const target = await this.userRepository.findOne(targetId);
+    if (!target)
+      throw new NotFoundException(`Can't find Board with id ${targetId}`); //나중에 접속한 사람 확인되면 삭제가능
+
+    const achievement: Achievement = await this.achievementRepository.findOne(
+      target,
+    );
+
+    const targetAchievementDto: AchievementDto = {
+      userId: targetId,
+      firstLogin: achievement.firstLogin,
+      firstWin: achievement.firstWin,
+      firstLose: achievement.firstLose,
+      thirdWin: achievement.thirdWin,
+    };
+
+    return targetAchievementDto;
   }
 }
