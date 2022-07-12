@@ -7,38 +7,37 @@ import UserListAll from "../List/UserListAll";
 import UserListChat from "../List/UserListChat";
 import UserListFriend from "../List/UserListFriend";
 import { useRecoilValue } from "recoil";
-import { getChRoomUser, IParticipant } from "../../state/getChRoomUser";
+import { IParticipant } from "../../state/getChRoomUser";
 import shortid from "shortid";
 import { getUser, IUser } from "../../state/getUser";
 import { getFriend, IFriend } from "../../state/getFriend";
-import { getUserInfoSelector, IUserInfo } from "../../state/getUserInfo";
 import PopUpRoomSet from "../PopUp/PopUpRoomSet";
 
 interface IProps {
   buttonTag?: string;
   isChatRoom?: boolean;
+  chatParticipants?: IParticipant[];
+  mainUserAuth?: number;
 }
 
-function UserListBox({ buttonTag, isChatRoom }: IProps) {
+function UserListBox({
+  buttonTag,
+  isChatRoom,
+  chatParticipants,
+  mainUserAuth,
+}: IProps) {
   const [listStatus, setListStatus] = useState("all");
   const [showBlock, setShowBlock] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const chatParticipants = useRecoilValue<IParticipant[]>(getChRoomUser);
   const users = useRecoilValue<IUser[]>(getUser);
   const friends = useRecoilValue<IFriend[]>(getFriend);
-
-  // 현재 접속하고있는 채팅방에서 접속한 유저의 auth
-  const mainUser = useRecoilValue<IUserInfo>(getUserInfoSelector);
-  const myIndex = chatParticipants.findIndex(
-    (chatParticipant) => chatParticipant.nickname === mainUser.nickname,
-  );
-  const mainUserAuth = chatParticipants[myIndex]?.authority;
 
   const handleShowBlock = (val: boolean) => {
     setShowBlock(!val);
   };
   const handleOptionChange = () => setOpenModal((prev) => !prev);
+
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
@@ -70,6 +69,7 @@ function UserListBox({ buttonTag, isChatRoom }: IProps) {
           ))}
         {listStatus === "all" &&
           isChatRoom &&
+          chatParticipants &&
           chatParticipants.map((participant) => (
             <UserListChat
               key={shortid.generate()}

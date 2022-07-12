@@ -4,23 +4,16 @@ import BtnPopUp from "../Button/BtnPopUp";
 import PopUpParent from "./PopUpParent";
 import PopUpRecord from "./PopUpRecord";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  getUserInfoSelector,
-  IUserInfo,
-  reqUserInfo,
-} from "../../state/getUserInfo";
-import { imgUploadOnC } from "../../utils/imgUploadOnC";
+import { useRecoilValue } from "recoil";
+import { getUserInfoSelector, IUserInfo } from "../../state/getUserInfo";
 
-function PopUpProfile(): JSX.Element {
-  const [display, setDisplay] = useState(false);
+interface PopUpOthProfProps {
+  targetId: number;
+}
+
+function PopUpOtherProfile(): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
-  const setReqUserInfo = useSetRecoilState(reqUserInfo);
-
-  const handleMouseEnter = () => setDisplay(true);
-
-  const handleMouseLeave = () => setDisplay(false);
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -30,31 +23,7 @@ function PopUpProfile(): JSX.Element {
     <div>
       <div className="child__wrap bg-blue-400 p-2">
         <div className="bg-violet-500 flex items-center">
-          <div
-            className="img__wrap relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {display && (
-              <label
-                htmlFor="profileImg"
-                className="bg-black w-[150px] h-[150px] absolute text-center rounded-full opacity-50"
-                onMouseEnter={handleMouseEnter}
-              >
-                <div className="mt-[70px]">
-                  <span className="text-white font-main">
-                    눌러서 바꿔보세요
-                  </span>
-                </div>
-              </label>
-            )}
-            <input
-              type="file"
-              id="profileImg"
-              accept="image/*"
-              onChange={(event) => imgUploadOnC(event, setReqUserInfo)}
-              className="hidden"
-            />
+          <div className="img__wrap relative">
             <div className="img__wrap">
               <img
                 alt="profileImg"
@@ -117,4 +86,4 @@ function PopUpProfile(): JSX.Element {
   );
 }
 
-export default PopUpProfile;
+export default PopUpOtherProfile;

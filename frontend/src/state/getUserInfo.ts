@@ -2,6 +2,7 @@ import { atom, selector } from "recoil";
 import { getApi } from "../api/getApi";
 
 export interface IUserInfo {
+  id: number;
   ladderWin: number;
   ladderLose: number;
   personalWin: number;
