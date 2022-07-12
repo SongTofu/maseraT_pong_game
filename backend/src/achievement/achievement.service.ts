@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { AchievementDto } from "./dto/achievement.dto";
 import { User } from "src/user/user.entity";
 import { UserRepository } from "src/user/user.repository";
@@ -14,6 +14,8 @@ export class AchievementService {
 
   async getMyAchievement(id: number): Promise<AchievementDto> {
     const user: User = await this.userRepository.findOne(id);
+    if (!user) throw new NotFoundException(`Can't find Board with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
+
     const achievement: Achievement = await this.achievementRepository.findOne(
       user,
     );
