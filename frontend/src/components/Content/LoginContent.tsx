@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ButtonOne from "../Button/ButtonOne";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -7,15 +7,21 @@ import {
   reqUserInfo,
 } from "../../state/getUserInfo";
 import { imgUploadOnC } from "../../utils/imgUploadOnC";
+import { nicknameOnC } from "../../utils/nicknameOnC";
+import { btnNickOnC } from "../../utils/btnNickOnC";
 
 function LoginContent(): JSX.Element {
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
+  const [nickname, setNickname] = useState("");
+  const [display, setDisplay] = useState(false);
 
   return (
     <div className="bg-blue-500 w-[800px]">
       <div className="text__wrap bg-violet-500 flex justify-center">
-        <h1 className="text-3xl font-main p-10">Nickname의 프로필</h1>
+        <h1 className="text-3xl font-main p-10">
+          {userInfo.nickname}의 프로필
+        </h1>
       </div>
       <div className="img__wrap bg-yellow-400 flex justify-center">
         <img
@@ -49,19 +55,21 @@ function LoginContent(): JSX.Element {
             id="nickname"
             placeholder="닉네임을 입력해주세요."
             className="rounded p-2"
+            onChange={(event) => nicknameOnC(event, setNickname)}
           />
-          <div className="flex justify-between bg-lime-200">
-            <h1 className="text-red-600 p-2 font-main">
-              {/* 
-              state 하나 넣어서 백엔드에서 중복된다고 정보줄 경우
-              삼항연산자로 display 할지 말지 하는 로직 필요 */}
-              중복된 닉네임입니다.
-            </h1>
+          <div className="flex justify-between bg-lime-200 w-[360px] h-[40px]">
+            {display && (
+              <h1 className="text-red-600 p-2 font-main">
+                중복된 닉네임입니다.
+              </h1>
+            )}
           </div>
         </div>
       </div>
-      {/* 버튼 누를 시 제출하는 로직 필요 */}
-      <ButtonOne tag="제 출" />
+      <ButtonOne
+        tag="제 출"
+        onClick={() => btnNickOnC(nickname, setDisplay, setReqUserInfo)}
+      />
     </div>
   );
 }

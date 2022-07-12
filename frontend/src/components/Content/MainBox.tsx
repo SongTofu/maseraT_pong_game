@@ -77,7 +77,7 @@ function MainBox({ buttonTag, isGame }: IProps) {
               key={shortid.generate()}
               title={chatRoom.title}
               passwd={chatRoom.password ? true : false}
-              roomId={1}
+              roomId={chatRoom.chatRoomId}
             />
           ))
         )}
