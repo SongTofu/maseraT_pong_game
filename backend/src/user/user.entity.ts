@@ -25,6 +25,9 @@ export class User extends BaseEntity {
   @Column({ default: 0 })
   apiId: number;
 
+  @Column({ default: "" })
+  socketId: string;
+
   @Column({ unique: true })
   nickname: string;
 

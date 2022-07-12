@@ -19,6 +19,7 @@ import { SetAdminDto } from "./dto/set-admin.dto";
 import * as bcrypt from "bcryptjs";
 import { ChatLeaveDto } from "./dto/chat-leave.dto";
 import { ChatMessageDto } from "./dto/chat-message.dto";
+import { ChatKickDto } from "./dto/chat-kick.dto";
 
 @WebSocketGateway({
   cors: {
@@ -131,14 +132,14 @@ export class ChatGateway {
     socket.leave(chatTitle); //방을 떠난다.
 
     // 참여자 리스트에서 그 룸의 그 참여자 삭제!
-    const deluser: ChatParticipants =
+    const delUser: ChatParticipants =
       await this.chatParticipantsRepository.findOne({
         where: {
           chatRoom: chatLeaveDto.chatRoomId,
           user: user.id,
         },
       });
-    await this.chatParticipantsRepository.delete(deluser);
+    await this.chatParticipantsRepository.delete(delUser);
 
     this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
 
@@ -159,5 +160,27 @@ export class ChatGateway {
 
     const chatTitle = "chat-" + chatMessageDto.chatRoomId;
     socket.in(chatTitle).emit("chat-room-message", chatMessageDto);
+  }
+
+  @SubscribeMessage("chat-room-kick")
+  async handleChatRoomKick(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() chatKickDto: ChatKickDto,
+  ) {
+    const target: User = await this.userRepository.findOne(
+      chatKickDto.targetId,
+    );
+
+    const delUser: ChatParticipants =
+      await this.chatParticipantsRepository.findOne({
+        where: {
+          chatRoom: chatKickDto.chatRoomId,
+          user: chatKickDto.targetId,
+        },
+      });
+    await this.chatParticipantsRepository.delete(delUser);
+
+    const chatTitle = "chat-" + chatKickDto.chatRoomId;
+    this.server.in(target.socketId).socketsLeave(chatTitle);
   }
 }
