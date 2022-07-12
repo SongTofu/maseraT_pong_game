@@ -31,6 +31,8 @@ export class AchievementService {
 
   async getTargetAchievement(targetId: number): Promise<AchievementDto> {
     const target = await this.userRepository.findOne(targetId);
+    if (!target) throw new NotFoundException(`Can't find Board with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
+    
     const achievement: Achievement = await this.achievementRepository.findOne(
       target,
     );
