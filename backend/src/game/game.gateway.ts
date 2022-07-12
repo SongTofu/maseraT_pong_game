@@ -15,9 +15,10 @@ import { StartGameDto } from "./dto/start-game.dto";
 import { GamePosition } from "./game-position.enum";
 import { GameParticipant } from "./entity/game-participant.entity";
 import { RecordRepository } from "src/record/record.repository";
-import { GameJoinDto } from "./dto/game-room.dto";
-import { User } from "src/user/user.entity";
+import { GameDataDto } from "./dto/game-data.dto";
 import { UserRepository } from "src/user/user.repository";
+import { GameJoinDto, GameLeaveDto } from "./dto/game-room.dto";
+import { User } from "src/user/user.entity";
 import { GameParticipantDto } from "./dto/game-participant.dto";
 
 const cvs = {
@@ -39,6 +40,7 @@ export class GameGateway {
   ) {}
 
   gameData: Object = {};
+  match = [];
 
   @WebSocketServer()
   server;
@@ -61,7 +63,7 @@ export class GameGateway {
 
     const gameParticipantDto: GameParticipantDto = {
       gameRoomId: gameJoinDto.gameRoodId,
-      title: "", // 입력받아함
+      title: gameJoinDto.title,
       userId: user.id,
       userNickname: user.nickname,
       position: GamePosition.spectator,
@@ -106,6 +108,40 @@ export class GameGateway {
     }
   }
 
+  // gameRoomId, userId
+  @SubscribeMessage("game-room-leave")
+  async handleGameRoomLeave(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() gameLeaveDto: GameLeaveDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
+
+    socket.leave(gameLeaveDto.title);
+
+    const delUser: GameParticipant = await this.gameParticipantRepository.findOne({
+      where: {
+        gameRoom: gameLeaveDto.gameRoomId,
+        user: user.id
+      }
+    });
+
+    await this.gameParticipantRepository.delete(delUser);
+
+    this.server.in(gameLeaveDto.title).emit("game-room-leave"), gameLeaveDto);
+
+    const participant: GameParticipant =
+      await this.gameParticipantRepository.findOne(gameLeaveDto.userId);
+
+    // spactator가 나가면 무시
+    // leftUser 혹은 rightUser가 나가면 게임 중지 후 대기?
+    // 전부 다 나가면 gameRoom 폭파
+    if (participant.position === GamePosition.leftUser || participant.position === GamePosition.rightUser) {
+     participant.position = null; 
+    } else if (!participant) {
+      await this.gameRoomRepository.deleteRoom(gameLeaveDto.gameRoomId);
+    }
+  }
+
   //// test 게임방 참여, game room join으로 바꿔야함
   @SubscribeMessage("test")
   handleConnect(@ConnectedSocket() socket: Socket) {
@@ -113,10 +149,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage("start-game")
-  async handleGameStart(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() startGameDto: StartGameDto,
-  ) {
+  async handleGameStart(@MessageBody() startGameDto: StartGameDto) {
     const { gameRoomId, isLadder } = startGameDto;
 
     // const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
@@ -162,12 +195,27 @@ export class GameGateway {
   @SubscribeMessage("user")
   handleGame(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() data: { gameRoomId: number; position: number; y: number },
+    // @MessageBody() data: { gameRoomId: number; position: number; y: number },
+    @MessageBody() gameDataDto: GameDataDto,
   ) {
-    if (data.position === GamePosition.leftUser) {
-      this.gameData[data.gameRoomId].leftUser.y = data.y;
-    } else if (data.position === GamePosition.rightUser) {
-      this.gameData[data.gameRoomId].rightUser.y = data.y;
+    if (gameDataDto.position === GamePosition.leftUser) {
+      this.gameData[gameDataDto.gameRoomId].leftUser.y = gameDataDto.y;
+    } else if (gameDataDto.position === GamePosition.rightUser) {
+      this.gameData[gameDataDto.gameRoomId].rightUser.y = gameDataDto.y;
+    }
+  }
+
+  @SubscribeMessage("match")
+  handleMatch(@ConnectedSocket() socket: Socket) {
+    // this.userRepository.findOne({
+    //   where: {
+    //   },
+    // });
+    // this.match.push(data.userId);
+    if (this.match.length >= 2) {
+      //게임방 join 추가
+      const startGameDto: StartGameDto = { isLadder: true, gameRoomId: 1 };
+      this.handleGameStart(startGameDto);
     }
   }
 
