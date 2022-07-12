@@ -142,10 +142,7 @@ export class UserService {
     }
   }
 
-  async initUserInfo(
-    id: number,
-    updateUserInfoDto: UpdateUserInfoDto,
-  ): Promise<User> {
+  async initUserInfo(id: number, updateUserInfoDto: UpdateUserInfoDto) {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
