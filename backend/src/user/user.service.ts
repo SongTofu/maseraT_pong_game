@@ -7,7 +7,7 @@ import {
 import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { User } from "./user.entity";
-import { FriendsRepository } from "../friend/friend.repository";
+import { FriendRepository } from "../friend/friend.repository";
 import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
@@ -18,7 +18,7 @@ import { join } from "path";
 export class UserService {
   constructor(
     private userRepository: UserRepository,
-    private friendsRepository: FriendsRepository,
+    private friendsRepository: FriendRepository,
     private blockRepository: BlockRepository,
   ) {}
 
