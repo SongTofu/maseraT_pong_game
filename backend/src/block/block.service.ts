@@ -32,7 +32,10 @@ export class BlockService {
     return getAllBlockDto;
   }
 
-  async addBlock(id: number, targetId: number) {
+  async addBlock(
+    id: number,
+    targetId: number,
+  ): Promise<{ isSuccess: boolean }> {
     const user: User = await this.userRepository.findOne(id);
     const target: User = await this.userRepository.findOne(targetId);
 
@@ -43,6 +46,21 @@ export class BlockService {
 
     await block.save();
 
+    return { isSuccess: true };
+  }
+
+  async deleteBlock(
+    id: number,
+    targetId: number,
+  ): Promise<{ isSuccess: boolean }> {
+    const block: Block = await this.blockRepository.findOne({
+      where: {
+        ownId: id,
+        blockId: targetId,
+      },
+    });
+
+    await this.blockRepository.remove(block);
     return { isSuccess: true };
   }
 }
