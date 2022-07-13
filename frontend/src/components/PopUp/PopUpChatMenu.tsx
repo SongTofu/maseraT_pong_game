@@ -6,14 +6,18 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 interface ChatMenuProps {
   myAuth: number;
+  myId: number;
   targetAuth?: number;
+  targetId: number;
   isYourself: boolean;
   name?: string;
 }
 
 function PopUpChatMenu({
   myAuth,
+  myId,
   targetAuth,
+  targetId,
   isYourself,
   name,
 }: ChatMenuProps): JSX.Element {

@@ -29,30 +29,6 @@ export class AchievementService {
     return achievementDto;
   }
 
-  async getTargetAchievement(targetId: number): Promise<AchievementDto> {
-    const target = await this.userRepository.findOne(targetId);
-    if (!target) throw new NotFoundException(`Can't find Board with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
-    
-    const achievement: Achievement = await this.achievementRepository.findOne(
-      target,
-    );
-
-    const targetAchievementDto: AchievementDto = {
-      userId: targetId,
-      firstLogin: achievement.firstLogin,
-      firstWin: achievement.firstWin,
-      firstLose: achievement.firstLose,
-      thirdWin: achievement.thirdWin,
-    };
-
-    return targetAchievementDto;
-  }
-
-  async initAchievement(id: number): Promise<void> {
-    const user: User = await this.userRepository.findOne(id);
-    return this.achievementRepository.createDefaultAchievement(user);
-  }
-
   async updateAchievement(id: number): Promise<Achievement> {
     const user: User = await this.userRepository.findOne(id);
     let achievement: Achievement = await this.achievementRepository.findOne({
@@ -70,5 +46,25 @@ export class AchievementService {
     if (achievement.thirdWin == false && user.personalWin + user.ladderWin >= 3)
       achievement.thirdWin = true;
     return achievement;
+  }
+
+  async getTargetAchievement(targetId: number): Promise<AchievementDto> {
+    const target = await this.userRepository.findOne(targetId);
+    if (!target)
+      throw new NotFoundException(`Can't find Board with id ${targetId}`); //나중에 접속한 사람 확인되면 삭제가능
+
+    const achievement: Achievement = await this.achievementRepository.findOne(
+      target,
+    );
+
+    const targetAchievementDto: AchievementDto = {
+      userId: targetId,
+      firstLogin: achievement.firstLogin,
+      firstWin: achievement.firstWin,
+      firstLose: achievement.firstLose,
+      thirdWin: achievement.thirdWin,
+    };
+
+    return targetAchievementDto;
   }
 }
