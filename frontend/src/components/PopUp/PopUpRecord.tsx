@@ -1,12 +1,13 @@
 import React from "react";
-import { useRecoilValue } from "recoil";
-import { getRecordSelector, IRecord } from "../../state/getRecord";
+import { IRecord } from "../../state/getRecord";
 import RecordList from "../List/RecordList";
 import shortid from "shortid";
 
-function PopUpRecord(): JSX.Element {
-  const records = useRecoilValue<IRecord[]>(getRecordSelector);
+interface IRecordProps {
+  records: IRecord[];
+}
 
+function PopUpRecord({ records }: IRecordProps): JSX.Element {
   return (
     <>
       <div className="wrap h-[300px] overflow-auto">

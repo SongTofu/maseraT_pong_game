@@ -11,12 +11,14 @@ import {
   reqUserInfo,
 } from "../../state/getUserInfo";
 import { imgUploadOnC } from "../../utils/imgUploadOnC";
+import { getRecordSelector, IRecord } from "../../state/getRecord";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
+  const records = useRecoilValue<IRecord[]>(getRecordSelector);
 
   const handleMouseEnter = () => setDisplay(true);
 
@@ -95,7 +97,7 @@ function PopUpProfile(): JSX.Element {
                     mainText="게임 전적"
                     onClick={() => handleOptionChange(openModal)}
                   >
-                    <PopUpRecord />
+                    <PopUpRecord records={records} />
                   </PopUpParent>
                 </div>
               </ClickAwayListener>
@@ -105,12 +107,12 @@ function PopUpProfile(): JSX.Element {
       </div>
       <div className="btns__wrap bg-yellow-200">
         <div className="flex justify-between p-2">
-          <BtnPopUp tag="친구 추가" />
-          <BtnPopUp tag="게임 신청" />
+          <BtnPopUp tag="친구 추가" myProfile={true} />
+          <BtnPopUp tag="게임 신청" myProfile={true} />
         </div>
         <div className="flex justify-between p-2">
-          <BtnPopUp tag="DM 보내기" />
-          <BtnPopUp tag="차단 하기" />
+          <BtnPopUp tag="DM 보내기" myProfile={true} />
+          <BtnPopUp tag="차단 하기" myProfile={true} />
         </div>
       </div>
     </div>
