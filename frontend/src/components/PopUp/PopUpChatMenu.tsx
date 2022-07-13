@@ -3,6 +3,7 @@ import BtnChatMenu from "../Button/BtnChatMenu";
 import PopUpParent from "./PopUpParent";
 import PopUpProfile from "./PopUpProfile";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import PopUpOtherProfile from "./PopUpOtherProfile";
 
 interface ChatMenuProps {
   myAuth: number;
@@ -102,7 +103,7 @@ function PopUpChatMenu({
           ) : null}
         </div>
       </div>
-      {openModal && (
+      {openModal && myId === targetId && (
         <ClickAwayListener onClickAway={() => setOpenModal(false)}>
           <div className="fixed top-[100px] left-auto">
             <PopUpParent
@@ -112,6 +113,20 @@ function PopUpChatMenu({
               onClick={() => handleOptionChange(openModal)}
             >
               <PopUpProfile />
+            </PopUpParent>
+          </div>
+        </ClickAwayListener>
+      )}
+      {openModal && myId !== targetId && (
+        <ClickAwayListener onClickAway={() => setOpenModal(false)}>
+          <div className="fixed top-[100px] left-auto">
+            <PopUpParent
+              width={"w-[500px]"}
+              height={"h-[500px]"}
+              mainText={"프로필 보기"}
+              onClick={() => handleOptionChange(openModal)}
+            >
+              <PopUpOtherProfile targetId={targetId} />
             </PopUpParent>
           </div>
         </ClickAwayListener>

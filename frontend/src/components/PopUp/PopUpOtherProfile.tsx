@@ -1,19 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Achievement from "../Achievement";
 import BtnPopUp from "../Button/BtnPopUp";
 import PopUpParent from "./PopUpParent";
 import PopUpRecord from "./PopUpRecord";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { useRecoilValue } from "recoil";
-import { getUserInfoSelector, IUserInfo } from "../../state/getUserInfo";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { IUserInfo, reqUserInfo } from "../../state/getUserInfo";
+import {
+  getOtherUserInfoSel,
+  userIdInfoAtom,
+} from "../../state/getOtherUserInfo";
+import { IRecord } from "../../state/getRecord";
+import { getOtherRecordSel } from "../../state/getOtherRecord";
+import { getFriend, IFriend } from "../../state/getFriend";
+import { getBlockSelector, IBlock } from "../../state/getBlock";
+import { btnFriendOnC } from "../../utils/btnFriendOnC";
+import { btnBlockOnC } from "../../utils/btnBlockOnC";
 
 interface PopUpOthProfProps {
   targetId: number;
 }
 
-function PopUpOtherProfile(): JSX.Element {
+function PopUpOtherProfile({ targetId }: PopUpOthProfProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
-  const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
+  const setUserIdInfo = useSetRecoilState(userIdInfoAtom);
+  const setReqUserInfo = useSetRecoilState(reqUserInfo);
+
+  useEffect(
+    () => setUserIdInfo(targetId.toString()),
+    [targetId, setUserIdInfo],
+  );
+
+  const targetInfo = useRecoilValue<IUserInfo>(getOtherUserInfoSel);
+  const targetRecords = useRecoilValue<IRecord[]>(getOtherRecordSel);
+
+  const myFriends = useRecoilValue<IFriend[]>(getFriend);
+  const isFriend = myFriends.findIndex(
+    (myFriend) => myFriend.userId === targetId,
+  );
+  console.log("my friends  = ", isFriend);
+
+  const myBlocks = useRecoilValue<IBlock[]>(getBlockSelector);
+  const isBlocked = myBlocks.findIndex(
+    (myBlock) => myBlock.userId === targetId,
+  );
+
+  console.log("my block = ", isBlocked);
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -27,15 +59,15 @@ function PopUpOtherProfile(): JSX.Element {
             <div className="img__wrap">
               <img
                 alt="profileImg"
-                src={`${process.env.REACT_APP_SERVER}${userInfo.profileImg}`}
+                src={`${process.env.REACT_APP_SERVER}${targetInfo?.profileImg}`}
                 className="rounded-full w-[150px] h-[150px] p-2"
               />
             </div>
           </div>
           <div className="info__wrap bg-green-500 w-[280px] p-4">
-            <h1 className="font-main text-2xl">{userInfo.nickname}</h1>
+            <h1 className="font-main text-2xl">{targetInfo?.nickname}</h1>
             <h1 className="font-main text-2xl flex justify-between">
-              Lv.{userInfo.level}
+              Lv.{targetInfo?.level}
               <Achievement />
             </h1>
           </div>
@@ -44,8 +76,8 @@ function PopUpOtherProfile(): JSX.Element {
           <div className="record__wrap bg-slate-300 w-[400px] flex justify-between  p-2">
             <span className="font-main block">전적/래더전적</span>
             <span className="font-main block">
-              {userInfo.personalWin}승{userInfo.personalLose}패/
-              {userInfo.ladderWin}승{userInfo.ladderLose}패
+              {targetInfo?.personalWin}승{targetInfo?.personalLose}패/
+              {targetInfo?.ladderWin}승{targetInfo?.ladderLose}패
             </span>
           </div>
           <div className="btn__wrap w-[50px] flex items-center bg-lime-500">
@@ -64,7 +96,7 @@ function PopUpOtherProfile(): JSX.Element {
                     mainText="게임 전적"
                     onClick={() => handleOptionChange(openModal)}
                   >
-                    <PopUpRecord />
+                    <PopUpRecord records={targetRecords} />
                   </PopUpParent>
                 </div>
               </ClickAwayListener>
@@ -74,12 +106,20 @@ function PopUpOtherProfile(): JSX.Element {
       </div>
       <div className="btns__wrap bg-yellow-200">
         <div className="flex justify-between p-2">
-          <BtnPopUp tag="친구 추가" />
+          <BtnPopUp
+            tag="친구 추가"
+            isFriend={isFriend >= 0}
+            onClick={() => btnFriendOnC(targetId, setReqUserInfo)}
+          />
           <BtnPopUp tag="게임 신청" />
         </div>
         <div className="flex justify-between p-2">
           <BtnPopUp tag="DM 보내기" />
-          <BtnPopUp tag="차단 하기" />
+          <BtnPopUp
+            tag="차단 하기"
+            isBlocked={isBlocked >= 0}
+            onClick={() => btnBlockOnC(targetId, setReqUserInfo)}
+          />
         </div>
       </div>
     </div>

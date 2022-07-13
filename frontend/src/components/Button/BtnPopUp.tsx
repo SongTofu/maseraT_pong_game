@@ -3,44 +3,70 @@ import React from "react";
 interface BtnProps {
   tag: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  nickActivate?: boolean;
+  nickDeactivate?: boolean; // nickname's submit button
+  myProfile?: boolean; // profile's 4 button
+  isFriend?: boolean; // other profile's add friend button
+  isBlocked?: boolean; // other profile's add blocklist button
 }
 
-function BtnPopUp({ tag, onClick, nickActivate }: BtnProps): JSX.Element {
+function BtnPopUp({
+  tag,
+  onClick,
+  nickDeactivate,
+  myProfile,
+  isFriend,
+  isBlocked,
+}: BtnProps): JSX.Element {
   return (
     <>
-      {nickActivate !== undefined && (
+      {myProfile ? (
         <button
-          className={`
-      bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest
-      ${nickActivate ? "" : "opacity-25"}
-      `}
+          className={`bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest ${
+            myProfile ? "opacity-25" : ""
+          }`}
           onClick={onClick}
-          disabled={nickActivate ? false : true}
+          disabled={myProfile ? true : false}
+        >
+          {tag}
+        </button>
+      ) : isFriend ? (
+        <button
+          className={`bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest ${
+            isFriend ? "opacity-25" : ""
+          }`}
+          onClick={onClick}
+          disabled={isFriend ? true : false}
+        >
+          {tag}
+        </button>
+      ) : isBlocked ? (
+        <button
+          className={`bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest ${
+            isBlocked ? "opacity-25" : ""
+          }`}
+          onClick={onClick}
+          disabled={isBlocked ? true : false}
+        >
+          {tag}
+        </button>
+      ) : nickDeactivate ? (
+        <button
+          className={`bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest ${
+            nickDeactivate ? "opacity-25" : ""
+          }`}
+          onClick={onClick}
+          disabled={nickDeactivate ? true : false}
+        >
+          {tag}
+        </button>
+      ) : (
+        <button
+          className={`bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest`}
+          onClick={onClick}
         >
           {tag}
         </button>
       )}
-      {nickActivate === undefined && (
-        <button
-          className={`
-      bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest
-      `}
-          onClick={onClick}
-        >
-          {tag}
-        </button>
-      )}
-      {/* <button
-        className={`
-        bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest
-        ${nickActivate ? "" : "opacity-25"}
-        `}
-        onClick={onClick}
-        disabled={nickActivate ? false : true}
-      >
-        {tag}
-      </button> */}
     </>
   );
 }
