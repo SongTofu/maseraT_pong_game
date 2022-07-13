@@ -1,8 +1,8 @@
 export class GameJoinDto {
-  gameRoodId: number;
+  gameRoomId: number;
   title: string;
   userId: number;
-  userNickname: string;
+  nickname: string;
 }
 
 export class GameLeaveDto {

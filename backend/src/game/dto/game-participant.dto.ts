@@ -4,6 +4,6 @@ export class GameParticipantDto {
   gameRoomId: number;
   title: string;
   userId: number;
-  userNickname: string;
+  nickname: string;
   position: GamePosition;
 }

@@ -10,6 +10,8 @@ export class GameRoomRepository extends Repository<GameRoom> {
 
     const gameRoom: GameRoom = this.create({
       title,
+      isStart: false,
+      isLadder: false,
     });
 
     const saveRoom = await gameRoom.save();

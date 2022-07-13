@@ -7,19 +7,19 @@ import { GameParticipantDto } from "./dto/game-participant.dto";
 @Injectable()
 export class GameService {
   constructor(
-    private gameJoinRepository: GameRoomRepository,
+    private gameRoomRepository: GameRoomRepository,
     private gameParticipantRepository: GameParticipantRepository,
   ) {}
 
   async gameRoomList() {
-    return await this.gameJoinRepository.find();
+    return await this.gameRoomRepository.find();
   }
 
   async gameParticipantList(gameRoomId: number): Promise<GameParticipantDto[]> {
     const gameParticipants: GameParticipant[] =
       await this.gameParticipantRepository.find({
         where: { gameRoom: gameRoomId },
-        relations: ["User"],
+        relations: ["user"],
       });
 
     const gameParticipantDto: GameParticipantDto[] = [];

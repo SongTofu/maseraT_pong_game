@@ -51,47 +51,55 @@ export class GameGateway {
     @MessageBody() gameJoinDto: GameJoinDto,
   ) {
     const user: User = await this.userRepository.findOne(gameJoinDto.userId);
+    const isJoin: boolean = await this.joinGameRoom(gameJoinDto, user);
 
     // id가 0이여서 방을 새로 만드는 경우
-    if (!gameJoinDto.gameRoodId) {
-      gameJoinDto.gameRoodId = await this.gameRoomRepository.createRoom(
+    if (!gameJoinDto.gameRoomId) {
+      gameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         gameJoinDto,
       );
     }
 
-    if (!this.joinGameRoom(gameJoinDto, user)) return;
+    if (!isJoin) return;
 
+    // 방에 들어올 때 무조건 관전자로 들어오는지?
+    // leftUser, rightUser 체크해서 없으면 거기 넣어야할거같은데?
     const gameParticipantDto: GameParticipantDto = {
-      gameRoomId: gameJoinDto.gameRoodId,
+      gameRoomId: gameJoinDto.gameRoomId,
       title: gameJoinDto.title,
       userId: user.id,
-      userNickname: user.nickname,
+      nickname: user.nickname,
       position: GamePosition.spectator,
     };
 
-    this.server
-      .in(gameParticipantDto.title)
-      .emit("game-room-join", gameParticipantDto);
+    const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
 
-    socket.join(gameParticipantDto.title);
+    this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
+
+    socket.join(joinGameTitle);
   }
 
-  private async joinGameRoom(gameJoinDto: GameJoinDto, user: User) {
-    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-      gameJoinDto.gameRoodId,
-    );
+  private async joinGameRoom(
+    gameJoinDto: GameJoinDto,
+    user: User,
+  ): Promise<boolean> {
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne({
+      where: {
+        id: gameJoinDto.gameRoomId,
+      },
+    });
 
-    if (!gameJoinDto.gameRoodId) {
-      let gameParticipant: GameParticipant;
-
-      // participant id에 따라 position 결정
-      if (gameParticipant.id === 1) {
-        gameParticipant = this.gameParticipantRepository.create({
+    // 게임 첫 참여자는 무조건 leftUser인지?
+    if (!gameJoinDto.gameRoomId) {
+      let gameParticipant: GameParticipant =
+        this.gameParticipantRepository.create({
           position: GamePosition.leftUser,
           user,
           gameRoom,
         });
-      } else if (gameParticipant.id === 2) {
+
+      // participant id에 따라 position 결정
+      if (gameParticipant.id === 2) {
         gameParticipant = this.gameParticipantRepository.create({
           position: GamePosition.rightUser,
           user,
@@ -105,7 +113,10 @@ export class GameGateway {
         });
       }
       await gameParticipant.save();
+
+      return true;
     }
+    return false;
   }
 
   // gameRoomId, userId
@@ -114,29 +125,47 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() gameLeaveDto: GameLeaveDto,
   ): Promise<void> {
-    const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
-
-    socket.leave(gameLeaveDto.title);
-
-    const delUser: GameParticipant = await this.gameParticipantRepository.findOne({
+    const user: User = await this.userRepository.findOne({
       where: {
-        gameRoom: gameLeaveDto.gameRoomId,
-        user: user.id
-      }
+        id: gameLeaveDto.userId,
+      },
     });
 
-    await this.gameParticipantRepository.delete(delUser);
+    const gameParticipantDto: GameParticipantDto = {
+      gameRoomId: gameLeaveDto.gameRoomId,
+      title: gameLeaveDto.title,
+      userId: user.id,
+      nickname: user.nickname,
+      position: GamePosition.spectator,
+    };
 
-    this.server.in(gameLeaveDto.title).emit("game-room-leave"), gameLeaveDto);
+    const leaveGameTitle = "game-" + gameParticipantDto.gameRoomId;
+
+    socket.leave(leaveGameTitle);
+
+    const delUser: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: {
+          gameRoom: gameLeaveDto.gameRoomId,
+          user: user.id,
+        },
+      });
+
+    await this.gameParticipantRepository.delete(delUser);
 
     const participant: GameParticipant =
       await this.gameParticipantRepository.findOne(gameLeaveDto.userId);
 
+    this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
+
     // spactator가 나가면 무시
     // leftUser 혹은 rightUser가 나가면 게임 중지 후 대기?
     // 전부 다 나가면 gameRoom 폭파
-    if (participant.position === GamePosition.leftUser || participant.position === GamePosition.rightUser) {
-     participant.position = null; 
+    if (
+      participant.position === GamePosition.leftUser ||
+      participant.position === GamePosition.rightUser
+    ) {
+      participant.position = null;
     } else if (!participant) {
       await this.gameRoomRepository.deleteRoom(gameLeaveDto.gameRoomId);
     }
