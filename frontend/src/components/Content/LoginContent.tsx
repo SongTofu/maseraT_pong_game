@@ -25,7 +25,7 @@ function LoginContent(): JSX.Element {
       </div>
       <div className="img__wrap bg-yellow-400 flex justify-center">
         <img
-          src={`${process.env.REACT_APP_LOCAL_SERVER}${userInfo.profileImg}`}
+          src={`${process.env.REACT_APP_SERVER}${userInfo.profileImg}`}
           alt="profileImg"
           className="p-8 rounded-full w-[400px] h-[400px]"
         />
