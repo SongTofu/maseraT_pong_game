@@ -4,7 +4,7 @@ import { UserRepository } from "./user.repository";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 import { BlockRepository } from "../block/block.repository";
-import { FriendsRepository } from "src/friend/friend.repository";
+import { FriendRepository } from "src/friend/friend.repository";
 import { UserGateway } from "./user.gateway";
 import { ChatParticipantsRepository } from "src/chat/repository/chat-participants.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
@@ -19,7 +19,7 @@ import { RecordRepository } from "src/record/record.repository";
     TypeOrmModule.forFeature([
       UserRepository,
       BlockRepository,
-      FriendsRepository,
+      FriendRepository,
       ChatParticipantsRepository,
       ChatRoomRepository,
       GameParticipantRepository,

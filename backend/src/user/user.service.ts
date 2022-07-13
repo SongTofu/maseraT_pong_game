@@ -7,7 +7,7 @@ import {
 import { UserRepository } from "./user.repository";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { User } from "./user.entity";
-import { FriendsRepository } from "../friend/friend.repository";
+import { FriendRepository } from "../friend/friend.repository";
 import { BlockRepository } from "../block/block.repository";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
@@ -18,7 +18,7 @@ import { join } from "path";
 export class UserService {
   constructor(
     private userRepository: UserRepository,
-    private friendsRepository: FriendsRepository,
+    private friendsRepository: FriendRepository,
     private blockRepository: BlockRepository,
   ) {}
 
@@ -69,14 +69,14 @@ export class UserService {
     const isFriend = await this.isFriend(user, target);
     const isBlocked = await this.isBlocked(user, target);
     const targetUserInfoDto: TargetUserInfoDto = {
-      nickname: user.nickname,
-      personalWin: user.personalWin,
-      personalLose: user.personalLose,
-      ladderWin: user.ladderWin,
-      ladderLose: user.ladderLose,
-      profileImg: user.profileImg,
-      state: user.state,
-      level: user.level,
+      nickname: target.nickname,
+      personalWin: target.personalWin,
+      personalLose: target.personalLose,
+      ladderWin: target.ladderWin,
+      ladderLose: target.ladderLose,
+      profileImg: target.profileImg,
+      state: target.state,
+      level: target.level,
       isFriend,
       isBlocked,
     };
@@ -117,7 +117,7 @@ export class UserService {
       await this.friendsRepository.findOne({
         where: {
           ownId: user,
-          friendsId: target,
+          friendId: target,
         },
       })
     ) {
