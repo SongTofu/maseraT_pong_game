@@ -2,10 +2,15 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Block } from "./block.entity";
 import { BlockRepository } from "./block.repository";
 import { GetAllBlockDto } from "./dto/get-all-block.dto";
+import { UserRepository } from "src/user/user.repository";
+import { User } from "src/user/user.entity";
 
 @Injectable()
 export class BlockService {
-  constructor(private blockRepository: BlockRepository) {}
+  constructor(
+    private blockRepository: BlockRepository,
+    private userRepository: UserRepository,
+  ) {}
 
   async getAllBlock(id): Promise<GetAllBlockDto[]> {
     const getAllBlockDto: GetAllBlockDto[] = [];
@@ -25,5 +30,19 @@ export class BlockService {
     });
 
     return getAllBlockDto;
+  }
+
+  async addBlock(id: number, targetId: number) {
+    const user: User = await this.userRepository.findOne(id);
+    const target: User = await this.userRepository.findOne(targetId);
+
+    const block: Block = this.blockRepository.create({
+      ownId: user,
+      blockId: target,
+    });
+
+    await block.save();
+
+    return { isSuccess: true };
   }
 }
