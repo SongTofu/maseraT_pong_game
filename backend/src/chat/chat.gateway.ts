@@ -20,6 +20,8 @@ import * as bcrypt from "bcryptjs";
 import { ChatLeaveDto } from "./dto/chat-leave.dto";
 import { ChatMessageDto } from "./dto/chat-message.dto";
 import { ChatKickDto } from "./dto/chat-kick.dto";
+import { ChatRoomDto } from "./dto/chat-room.dto";
+import { NotFoundException } from "@nestjs/common";
 
 @WebSocketGateway({
   cors: {
@@ -112,6 +114,7 @@ export class ChatGateway {
         });
       if (isCreate) {
         chatParticipants.authority = Authority.owner;
+        this.handleConnectChatRoom(chatJoinDto);
       }
       await chatParticipants.save();
       return true;
@@ -182,5 +185,22 @@ export class ChatGateway {
 
     const chatTitle = "chat-" + chatKickDto.chatRoomId;
     this.server.in(target.socketId).socketsLeave(chatTitle);
+  }
+  @SubscribeMessage("connect-chat-room")
+  async handleConnectChatRoom(@MessageBody() chatJoinDto: ChatJoinDto) {
+    const chatTitle = "chat-" + chatJoinDto.chatRoomId;
+    const numParticipant: number =
+      this.server.sockets.adapter.rooms.get(chatTitle).size;
+    if (!numParticipant)
+      throw new NotFoundException(
+        `Can't find ChatRoom with ${chatJoinDto.title}`,
+      );
+    const chatRoomDto: ChatRoomDto = {
+      chatRoomId: chatJoinDto.chatRoomId,
+      title: chatJoinDto.title,
+      password: chatJoinDto.password,
+      numParticipant,
+    };
+    this.server.emit("connect-chat-room", chatRoomDto);
   }
 }

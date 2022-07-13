@@ -43,7 +43,7 @@ export class UserService {
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
     const user: User = await this.userRepository.findOne(id);
     if (!user) {
-      throw new NotFoundException(`Can't find Board with id ${id}`);
+      throw new NotFoundException(`Can't find User with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
       id: user.id,
@@ -145,7 +145,7 @@ export class UserService {
   async initUserInfo(id: number, updateUserInfoDto: UpdateUserInfoDto) {
     const user = await this.userRepository.findOne(id);
     if (!user) {
-      throw new NotFoundException(`Can't find Board with id ${id}`);
+      throw new NotFoundException(`Can't find User with id ${id}`);
     } //나중에 접속한 사람 확인되면 삭제가능
 
     if (updateUserInfoDto.nickname) {
