@@ -8,11 +8,12 @@ import { FtStrategy } from "./42-auth.strategy";
 import { ConfigModule } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./jwt.strategy";
+import { AchievementRepository } from "src/achievement/achievement.repository";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([UserRepository]),
+    TypeOrmModule.forFeature([UserRepository, AchievementRepository]),
     PassportModule.register({ defaultStrategy: "42" }),
     JwtModule.register({
       secret: "1234", // need for create token

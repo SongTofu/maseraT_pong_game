@@ -18,6 +18,9 @@ export class ChatService {
       await this.chatParticipantsRepository.find({
         where: { chatRoom: chatRoomId },
         relations: ["user"],
+        order: {
+          authority: -1,
+        },
       });
 
     const chatParticipantDto: ChatParticipantDto[] = [];
