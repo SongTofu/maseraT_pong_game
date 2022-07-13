@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { selector } from "recoil";
 import { getApi } from "../api/getApi";
 
 export interface IRecord {
@@ -7,11 +7,6 @@ export interface IRecord {
   isLadder: boolean;
   gameWin: boolean;
 }
-
-export const gameRecordAtom = atom<IRecord[]>({
-  key: "gameRecord",
-  default: [],
-});
 
 export const getRecordSelector = selector({
   key: "record/get",
