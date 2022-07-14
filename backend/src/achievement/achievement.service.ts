@@ -27,6 +27,7 @@ export class AchievementService {
       firstWin: achievement.firstWin,
       firstLose: achievement.firstLose,
       thirdWin: achievement.thirdWin,
+      consecThree: achievement.consecThree,
     };
     return achievementDto;
   }
@@ -67,6 +68,7 @@ export class AchievementService {
       firstWin: achievement.firstWin,
       firstLose: achievement.firstLose,
       thirdWin: achievement.thirdWin,
+      consecThree: achievement.consecThree,
     };
 
     return targetAchievementDto;
