@@ -55,9 +55,11 @@ export class AchievementService {
     if (!target)
       throw new NotFoundException(`Can't find Target with id ${targetId}`); //나중에 접속한 사람 확인되면 삭제가능
 
-    const achievement: Achievement = await this.achievementRepository.findOne(
-      target,
-    );
+    const achievement: Achievement = await this.achievementRepository.findOne({
+      where: {
+        user: target.id,
+      },
+    });
 
     const targetAchievementDto: AchievementDto = {
       userId: targetId,
