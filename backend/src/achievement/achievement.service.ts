@@ -17,7 +17,7 @@ export class AchievementService {
     if (!user) throw new NotFoundException(`Can't find User with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
 
     const achievement: Achievement = await this.achievementRepository.findOne(
-      user,
+      user.id,
     );
     const achievementDto: AchievementDto = {
       userId: user.id,
@@ -26,6 +26,7 @@ export class AchievementService {
       firstLose: achievement.firstLose,
       thirdWin: achievement.thirdWin,
     };
+    console.log("bb");
     return achievementDto;
   }
 
