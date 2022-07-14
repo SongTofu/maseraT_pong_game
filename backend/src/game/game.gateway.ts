@@ -83,11 +83,9 @@ export class GameGateway {
     gameJoinDto: GameJoinDto,
     user: User,
   ): Promise<boolean> {
-    const gameRoom: GameRoom = await this.gameRoomRepository.findOne({
-      where: {
-        id: gameJoinDto.gameRoomId,
-      },
-    });
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameJoinDto.gameRoomId,
+    );
 
     // 게임 첫 참여자는 무조건 leftUser인지?
     if (!gameJoinDto.gameRoomId) {
@@ -98,14 +96,28 @@ export class GameGateway {
           gameRoom,
         });
 
-      // participant id에 따라 position 결정
-      if (gameParticipant.id === 2) {
+      const participant = this.gameParticipantRepository.find({
+        where: {
+          gameRoom,
+        },
+        order: {
+          position: "ASC",
+        },
+      });
+
+      if (!participant[0]) {
+        gameParticipant = this.gameParticipantRepository.create({
+          position: GamePosition.leftUser,
+          user,
+          gameRoom,
+        });
+      } else if (!participant[1]) {
         gameParticipant = this.gameParticipantRepository.create({
           position: GamePosition.rightUser,
           user,
           gameRoom,
         });
-      } else {
+      } else if (!participant[2]) {
         gameParticipant = this.gameParticipantRepository.create({
           position: GamePosition.spectator,
           user,
@@ -125,11 +137,7 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() gameLeaveDto: GameLeaveDto,
   ): Promise<void> {
-    const user: User = await this.userRepository.findOne({
-      where: {
-        id: gameLeaveDto.userId,
-      },
-    });
+    const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
 
     const gameParticipantDto: GameParticipantDto = {
       gameRoomId: gameLeaveDto.gameRoomId,
