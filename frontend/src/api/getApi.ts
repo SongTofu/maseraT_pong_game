@@ -1,7 +1,7 @@
 import { getCookie } from "./../cookie/cookie";
 import axios from "axios";
 
-export async function getApi(api: string, id?: number) {
+export async function getApi(api: string, id?: number, code?: string) {
   // const accessToken = getCookie("token");
   // console.log(accessToken);
   const config = {
@@ -19,6 +19,12 @@ export async function getApi(api: string, id?: number) {
   if (id) {
     const response = await axios.get(
       process.env.REACT_APP_SERVER + api + id,
+      config,
+    );
+    return response.data;
+  } else if (code) {
+    const response = await axios.get(
+      process.env.REACT_APP_SERVER + api + code,
       config,
     );
     return response.data;
