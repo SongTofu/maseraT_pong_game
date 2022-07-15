@@ -12,6 +12,7 @@ import {
 } from "../../state/getUserInfo";
 import { imgUploadOnC } from "../../utils/imgUploadOnC";
 import { getRecordSelector, IRecord } from "../../state/getRecord";
+import { getAchieveSel, IAchieve } from "../../state/getAchieve";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
@@ -19,6 +20,7 @@ function PopUpProfile(): JSX.Element {
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
   const records = useRecoilValue<IRecord[]>(getRecordSelector);
+  const achieve = useRecoilValue<IAchieve>(getAchieveSel);
 
   const handleMouseEnter = () => setDisplay(true);
 
@@ -69,7 +71,7 @@ function PopUpProfile(): JSX.Element {
             <h1 className="font-main text-2xl">{userInfo.nickname}</h1>
             <h1 className="font-main text-2xl flex justify-between">
               Lv.{userInfo.level}
-              <Achievement />
+              <Achievement achieve={achieve} />
             </h1>
           </div>
         </div>

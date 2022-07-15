@@ -8,6 +8,7 @@ import PopUpNick from "./PopUp/PopUpNick";
 import PopUpSecAuth from "./PopUp/PopUpSecAuth";
 import { getUserInfoSelector } from "../state/getUserInfo";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { getAchieveSel, IAchieve } from "../state/getAchieve";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -18,6 +19,7 @@ function TopBar({ children }: Props) {
   const [btnTag, setBtnTag] = useState("");
 
   const userInfo = useRecoilValue(getUserInfoSelector);
+  const achieve = useRecoilValue<IAchieve>(getAchieveSel);
   const reqApi = useSetRecoilState(getUserInfoSelector);
 
   const handleOptionChange = (val: boolean) => {
@@ -76,7 +78,7 @@ function TopBar({ children }: Props) {
               <div className="h-12 w-[800px] bg-main-light flex justify-between px-3 items-center border-b-2 border-main">
                 <div className="text-main-text flex flex-row">
                   <p className="pr-2">{userInfo.nickname}</p>
-                  <Achievement />
+                  <Achievement achieve={achieve} />
                 </div>
                 <div className="w-[500px] text-main-text flex justify-between items-center">
                   <p className="inline">lv. {userInfo.level}</p>
