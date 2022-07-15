@@ -99,7 +99,7 @@ export class UserService {
       }
       user.profileImg = updateUserInfoDto.profileImg;
     }
-    if (updateUserInfoDto.secondAuth) {
+    if (updateUserInfoDto.secondAuth !== undefined) {
       user.secondAuth = updateUserInfoDto.secondAuth;
     }
     try {
