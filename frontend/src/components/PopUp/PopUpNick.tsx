@@ -6,7 +6,11 @@ import { patchApi } from "../../api/patchApi";
 import { useSetRecoilState } from "recoil";
 import { reqUserInfo } from "../../state/getUserInfo";
 
-function PopUpNick(): JSX.Element {
+interface PopNickProps {
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+function PopUpNick({ onClick }: PopNickProps): JSX.Element {
   const [nickname, setNickname] = useState("");
   const [displayRed, setDisplayRed] = useState(false);
   const [displayGreen, setDisplayGreen] = useState(false);
@@ -28,7 +32,10 @@ function PopUpNick(): JSX.Element {
       });
   };
 
-  const submitNick = async (nickname: string) => {
+  const submitNick = async (
+    nickname: string,
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     if (nickname.length) {
       getApi(`nickname/${nickname}`)
         .then((response) => {
@@ -44,6 +51,7 @@ function PopUpNick(): JSX.Element {
               .then(() => {
                 setDisplayGreen(false);
                 setDisplayRed(false);
+                onClick(event);
                 setReqUserInfo((prev) => prev + 1);
               })
               .catch((err) => {
@@ -85,7 +93,7 @@ function PopUpNick(): JSX.Element {
       <div className="btn__wrap flex justify-center">
         <BtnPopUp
           tag="변경하기"
-          onClick={() => submitNick(nickname)}
+          onClick={(event) => submitNick(nickname, event)}
           nickDeactivate={!displayGreen}
         />
       </div>

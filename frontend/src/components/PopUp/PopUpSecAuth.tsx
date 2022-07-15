@@ -9,17 +9,27 @@ import {
 } from "../../state/getUserInfo";
 import BtnPopUp from "../Button/BtnPopUp";
 
-function PopUpSecAuth(): JSX.Element {
+interface PopSecAuthProps {
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const [changeTag, setChangeTag] = useState(false);
+  const [timeOut, setTimeOut] = useState(false);
   const [code, setCode] = useState("");
   const [displayRed, setDisplayRed] = useState(false);
   const [displayGreen, setDisplayGreen] = useState(false);
+  const [displayBlack, setDisplayBlack] = useState(false);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
 
   const btnCodeOnC = async () => {
     return await getApi("second-auth/")
-      .then(() => setChangeTag(true))
+      .then(() => {
+        setChangeTag(true);
+        setTimeOut(true);
+        setTimeout(() => setTimeOut(false), 30000);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -35,14 +45,22 @@ function PopUpSecAuth(): JSX.Element {
   };
 
   const btnCheckValidateOnC = async (code: string) => {
+    if (code === "") {
+      setDisplayRed(false);
+      setDisplayGreen(false);
+      setDisplayBlack(true);
+      return;
+    }
     return await getApi("second-auth/", undefined, code)
       .then((response) => {
         console.log("success", response);
         const { matchCode } = response;
         if (matchCode) {
+          setDisplayBlack(false);
           setDisplayRed(false);
           setDisplayGreen(true);
         } else {
+          setDisplayBlack(false);
           setDisplayGreen(false);
           setDisplayRed(true);
         }
@@ -81,9 +99,9 @@ function PopUpSecAuth(): JSX.Element {
             <button
               className={`rounded font-main text-white text-sm w-[60px] h-[28px] bg-button ${
                 displayGreen ? "opacity-25" : ""
-              }`}
+              } ${timeOut ? "opacity-25" : ""}`}
               onClick={btnCodeOnC}
-              disabled={displayGreen}
+              disabled={timeOut ? true : displayGreen}
             >
               {changeTag ? "재전송" : "코드전송"}
             </button>
@@ -107,9 +125,9 @@ function PopUpSecAuth(): JSX.Element {
             <button
               className={`rounded font-main text-white text-sm w-[60px] h-[28px] bg-button ${
                 displayGreen ? "opacity-25" : ""
-              }`}
+              } ${changeTag ? "" : "opacity-25"}`}
               onClick={() => btnCheckValidateOnC(code)}
-              disabled={displayGreen}
+              disabled={changeTag ? displayGreen : true}
             >
               확인
             </button>
@@ -120,7 +138,10 @@ function PopUpSecAuth(): JSX.Element {
         <BtnPopUp
           tag="활성화"
           codeValidate={!displayGreen}
-          onClick={btnActivateOnC}
+          onClick={(event) => {
+            btnActivateOnC();
+            onClick(event);
+          }}
         />
       </div>
       {displayRed && (
@@ -131,6 +152,16 @@ function PopUpSecAuth(): JSX.Element {
       {displayGreen && (
         <div className="absolute bottom-[90px] left-[185px] w-[140px] h-[20px] text-green-600 text-center font-main">
           코드가 일치합니다!
+        </div>
+      )}
+      {displayBlack && (
+        <div className="absolute bottom-[90px] left-[185px] w-[140px] h-[20px] text-black text-center font-main">
+          코드를 입력해주세요!
+        </div>
+      )}
+      {timeOut && (
+        <div className="absolute bottom-[155px] left-[135px] w-[210px] h-[20px] text-black text-center font-main">
+          30초 후 다시 요청할 수 있습니다!
         </div>
       )}
     </>
