@@ -16,6 +16,8 @@ import { getFriend, IFriend } from "../../state/getFriend";
 import { getBlockSelector, IBlock } from "../../state/getBlock";
 import { btnFriendOnC } from "../../utils/btnFriendOnC";
 import { btnBlockOnC } from "../../utils/btnBlockOnC";
+import { IAchieve } from "../../state/getAchieve";
+import { getOtherAchieveSel } from "../../state/getOtherAchieve";
 
 interface PopUpOthProfProps {
   targetId: number;
@@ -47,6 +49,8 @@ function PopUpOtherProfile({ targetId }: PopUpOthProfProps): JSX.Element {
 
   console.log("my block = ", isBlocked);
 
+  const targetAchieve = useRecoilValue<IAchieve>(getOtherAchieveSel);
+
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
   };
@@ -68,7 +72,7 @@ function PopUpOtherProfile({ targetId }: PopUpOthProfProps): JSX.Element {
             <h1 className="font-main text-2xl">{targetInfo?.nickname}</h1>
             <h1 className="font-main text-2xl flex justify-between">
               Lv.{targetInfo?.level}
-              <Achievement />
+              <Achievement achieve={targetAchieve} />
             </h1>
           </div>
         </div>
