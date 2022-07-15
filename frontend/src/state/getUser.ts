@@ -4,7 +4,7 @@ import { getApi } from "../api/getApi";
 export interface IUser {
   userId: number;
   nickname: string;
-  state: 0;
+  state: number;
 }
 
 export const getUser = selector({
