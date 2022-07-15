@@ -6,8 +6,14 @@ import PopUpParent from "./PopUp/PopUpParent";
 import PopUpProfile from "./PopUp/PopUpProfile";
 import PopUpNick from "./PopUp/PopUpNick";
 import PopUpSecAuth from "./PopUp/PopUpSecAuth";
-import { getUserInfoSelector } from "../state/getUserInfo";
+import {
+  getUserInfoSelector,
+  IUserInfo,
+  reqUserInfo,
+} from "../state/getUserInfo";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import PopUpCheck from "./PopUp/PopUpCheck";
+import { patchApi } from "../api/patchApi";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -17,8 +23,20 @@ function TopBar({ children }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const [btnTag, setBtnTag] = useState("");
 
-  const userInfo = useRecoilValue(getUserInfoSelector);
-  const reqApi = useSetRecoilState(getUserInfoSelector);
+  const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
+  const setReqUserInfo = useSetRecoilState(reqUserInfo);
+
+  const onClickConfirm = async () => {
+    const secondAuth = false;
+    return await patchApi("user/info", { secondAuth })
+      .then((response) => {
+        console.log("success", response);
+        setReqUserInfo((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -45,7 +63,10 @@ function TopBar({ children }: Props) {
                     : "text-gray-300"
                 }`}
               >
-                <NavLink to="/game" onClick={reqApi}>
+                <NavLink
+                  to="/game"
+                  onClick={() => setReqUserInfo((prev) => prev + 1)}
+                >
                   게임
                 </NavLink>
               </h1>
@@ -67,7 +88,10 @@ function TopBar({ children }: Props) {
                     : "text-gray-300"
                 }`}
               >
-                <NavLink to="/chat" onClick={reqApi}>
+                <NavLink
+                  to="/chat"
+                  onClick={() => setReqUserInfo((prev) => prev + 1)}
+                >
                   채팅
                 </NavLink>
               </h1>
@@ -106,14 +130,25 @@ function TopBar({ children }: Props) {
                         setBtnTag("닉네임");
                       }}
                     />
-                    <ButtonTwo
-                      tag="2차 인증 활성화"
-                      className="inline font-main text-sm "
-                      onClick={() => {
-                        handleOptionChange(openModal);
-                        setBtnTag("2차인증");
-                      }}
-                    />
+                    {userInfo.secondAuth ? (
+                      <ButtonTwo
+                        tag="2차인증 비활성화"
+                        className="inline font-main text-sm "
+                        onClick={() => {
+                          handleOptionChange(openModal);
+                          setBtnTag("비활성화");
+                        }}
+                      />
+                    ) : (
+                      <ButtonTwo
+                        tag="2차 인증 활성화"
+                        className="inline font-main text-sm "
+                        onClick={() => {
+                          handleOptionChange(openModal);
+                          setBtnTag("2차인증");
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -152,6 +187,22 @@ function TopBar({ children }: Props) {
                 onClick={() => handleOptionChange(openModal)}
               >
                 <PopUpSecAuth />
+              </PopUpParent>
+            </div>
+          )}
+          {openModal && btnTag === "비활성화" && (
+            <div className="flex justify-center">
+              <PopUpParent
+                width={"w-[300px]"}
+                height={"h-[200px]"}
+                mainText="2차인증 비활성화"
+                onClick={() => handleOptionChange(openModal)}
+              >
+                <PopUpCheck
+                  text="정말 해제하시겠습니까?"
+                  onClickConfirm={onClickConfirm}
+                  onClickCancel={() => handleOptionChange(openModal)}
+                />
               </PopUpParent>
             </div>
           )}
