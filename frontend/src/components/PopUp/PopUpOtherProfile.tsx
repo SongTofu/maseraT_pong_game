@@ -18,6 +18,7 @@ import { btnFriendOnC } from "../../utils/btnFriendOnC";
 import { btnBlockOnC } from "../../utils/btnBlockOnC";
 import { IAchieve } from "../../state/getAchieve";
 import { getOtherAchieveSel } from "../../state/getOtherAchieve";
+import PopUpCheck from "./PopUpCheck";
 
 interface PopUpOthProfProps {
   targetId: number;
@@ -25,6 +26,7 @@ interface PopUpOthProfProps {
 
 function PopUpOtherProfile({ targetId }: PopUpOthProfProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
+  const [btnTag, setBtnTag] = useState("");
   const setUserIdInfo = useSetRecoilState(userIdInfoAtom);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
 
@@ -91,14 +93,17 @@ function PopUpOtherProfile({ targetId }: PopUpOthProfProps): JSX.Element {
             >
               전적
             </button>
-            {openModal && (
+            {openModal && btnTag === "전적" && (
               <ClickAwayListener onClickAway={() => setOpenModal(false)}>
                 <div className="relative bottom-[200px] left-[-500px]">
                   <PopUpParent
                     width="w-[600px]"
                     height="h-[400px]"
                     mainText="게임 전적"
-                    onClick={() => handleOptionChange(openModal)}
+                    onClick={() => {
+                      handleOptionChange(openModal);
+                      setBtnTag("전적");
+                    }}
                   >
                     <PopUpRecord records={targetRecords} />
                   </PopUpParent>
@@ -122,9 +127,28 @@ function PopUpOtherProfile({ targetId }: PopUpOthProfProps): JSX.Element {
           <BtnPopUp
             tag="차단 하기"
             isBlocked={isBlocked >= 0}
-            onClick={() => btnBlockOnC(targetId, setReqUserInfo)}
+            onClick={() => {
+              handleOptionChange(openModal);
+              setBtnTag("차단");
+            }}
           />
         </div>
+        {openModal && btnTag === "차단" && (
+          <div className="relative bottom-[200px] left-[-500px]">
+            <PopUpParent
+              width={"w-[300px]"}
+              height={"h-[200px]"}
+              mainText="차단 하기"
+              onClick={() => handleOptionChange(openModal)}
+            >
+              <PopUpCheck
+                text="정말 차단하시겠습니까?"
+                onClickConfirm={() => btnBlockOnC(targetId, setReqUserInfo)}
+                onClickCancel={() => handleOptionChange(openModal)}
+              />
+            </PopUpParent>
+          </div>
+        )}
       </div>
     </div>
   );

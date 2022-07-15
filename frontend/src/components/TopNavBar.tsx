@@ -176,7 +176,7 @@ function TopBar({ children }: Props) {
                 mainText="닉네임 변경"
                 onClick={() => handleOptionChange(openModal)}
               >
-                <PopUpNick />
+                <PopUpNick onClick={() => handleOptionChange(openModal)} />
               </PopUpParent>
             </div>
           )}
@@ -188,7 +188,7 @@ function TopBar({ children }: Props) {
                 mainText="2차 인증 활성화"
                 onClick={() => handleOptionChange(openModal)}
               >
-                <PopUpSecAuth />
+                <PopUpSecAuth onClick={() => handleOptionChange(openModal)} />
               </PopUpParent>
             </div>
           )}
