@@ -47,6 +47,7 @@ export class UserService {
     } //나중에 접속한 사람 확인되면 삭제가능
     const myUserInfoDto: MyUserInfoDto = {
       id: user.id,
+      email: user.email,
       nickname: user.nickname,
       secondAuth: user.secondAuth,
       personalWin: user.personalWin,
@@ -98,7 +99,7 @@ export class UserService {
       }
       user.profileImg = updateUserInfoDto.profileImg;
     }
-    if (updateUserInfoDto.secondAuth) {
+    if (updateUserInfoDto.secondAuth !== undefined) {
       user.secondAuth = updateUserInfoDto.secondAuth;
     }
     try {
