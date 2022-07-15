@@ -10,7 +10,7 @@ function PopUpBlock(): JSX.Element {
     <div className="block__list bg-blue-500 h-[200px] overflow-auto">
       {blocks.map((block) => (
         <div key={shortid.generate()}>
-          <BlockList nickname={block.nickname} />
+          <BlockList nickname={block.nickname} targetId={block.userId} />
         </div>
       ))}
     </div>

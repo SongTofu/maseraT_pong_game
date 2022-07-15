@@ -13,11 +13,6 @@ export interface IUserInfo {
   secondAuth: boolean;
 }
 
-// export const userInfoAtom = atom<IUserInfo[]>({
-//   key: "userInfo",
-//   default: [],
-// });
-
 export const reqUserInfo = atom({
   key: "reqUserInfo",
   default: 0,
@@ -27,7 +22,7 @@ export const getUserInfoSelector = selector({
   key: "userInfo/get",
   get: async ({ get }) => {
     get(reqUserInfo);
-    return await getApi("user/info");
+    return await getApi("user/info").catch((err) => console.log(err));
   },
   set: ({ set }) => {
     set(reqUserInfo, (prev) => prev + 1);

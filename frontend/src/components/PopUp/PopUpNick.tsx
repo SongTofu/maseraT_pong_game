@@ -10,12 +10,16 @@ function PopUpNick(): JSX.Element {
   const [nickname, setNickname] = useState("");
   const [displayRed, setDisplayRed] = useState(false);
   const [displayGreen, setDisplayGreen] = useState(false);
+  const [displayBlack, setDisplayBlack] = useState(false);
+  const [nickLength, setNickLength] = useState(0);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
 
   const alreadyExistBtn = (nickname: string) => {
     getApi(`nickname/${nickname}`)
       .then((response) => {
         const { isValidNickname } = response;
+        setDisplayBlack(false);
+        isValidNickname === true && setNickLength(nickname.length);
         isValidNickname ? setDisplayGreen(true) : setDisplayGreen(false);
         isValidNickname ? setDisplayRed(false) : setDisplayRed(true);
       })
@@ -30,6 +34,12 @@ function PopUpNick(): JSX.Element {
         .then((response) => {
           const { isValidNickname } = response;
           if (isValidNickname) {
+            if (nickLength !== nickname.length) {
+              setDisplayGreen(false);
+              setDisplayRed(false);
+              setDisplayBlack(true);
+              return;
+            }
             patchApi("user/info", { nickname })
               .then(() => {
                 setDisplayGreen(false);
@@ -76,7 +86,7 @@ function PopUpNick(): JSX.Element {
         <BtnPopUp
           tag="변경하기"
           onClick={() => submitNick(nickname)}
-          nickActivate={displayGreen}
+          nickDeactivate={!displayGreen}
         />
       </div>
       {displayRed && (
@@ -87,6 +97,11 @@ function PopUpNick(): JSX.Element {
       {displayGreen && (
         <div className="absolute bottom-[130px] left-[185px] w-[140px] h-[20px] text-green-600 text-center font-main">
           사용 가능합니다!
+        </div>
+      )}
+      {displayBlack && (
+        <div className="absolute bottom-[130px] left-[185px] w-[140px] h-[20px] text-black text-center font-main">
+          중복체크 눌러주세요!
         </div>
       )}
     </>
