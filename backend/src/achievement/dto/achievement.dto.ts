@@ -4,4 +4,5 @@ export class AchievementDto {
   firstWin: boolean;
   firstLose: boolean;
   thirdWin: boolean;
+  consecThree: boolean;
 }

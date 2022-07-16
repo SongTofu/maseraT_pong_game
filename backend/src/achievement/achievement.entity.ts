@@ -25,6 +25,9 @@ export class Achievement extends BaseEntity {
   @Column({ default: false })
   thirdWin: boolean;
 
+  @Column({ default: false })
+  consecThree: boolean;
+
   @OneToOne((type) => User, (user) => user.achievement)
   @JoinColumn()
   user: User;
