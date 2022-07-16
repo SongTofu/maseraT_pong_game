@@ -3,10 +3,14 @@ import { AuthService } from "./auth.service";
 import { UserDto } from "./dto/user.dto";
 import { ftAuthGuard } from "./guard/ft-auth.guard";
 import { Response } from "express";
+import { SecondAuthService } from "src/second-auth/second-auth.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private secondAuthService: SecondAuthService,
+  ) {}
 
   @Get("/login")
   @UseGuards(ftAuthGuard)
@@ -23,6 +27,7 @@ export class AuthController {
         res.redirect("http://localhost:3001/login");
       } else {
         if (data.secondAuth) {
+          this.secondAuthService.requestAuth(data.id);
           res.redirect("http://localhost:3001/second-auth");
         } else {
           res.redirect("http://localhost:3001/game");

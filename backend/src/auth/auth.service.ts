@@ -40,6 +40,7 @@ export class AuthService {
       secondAuth: user.secondAuth,
       nickname: user.nickname,
       token: accessToken,
+      id: user.id,
     };
   }
   private autoSetNickName(userDto: UserDto) {
