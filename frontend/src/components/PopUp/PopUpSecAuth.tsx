@@ -82,12 +82,12 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
 
   return (
     <>
-      <div className="line__wrap flex justify-between bg-blue-500">
-        <div className="text__wrap bg-red-500">
+      <div className="line__wrap flex justify-between">
+        <div className="text__wrap">
           <h1 className="text-xl font-main">이메일</h1>
         </div>
         <div className="wrap flex">
-          <form className="input__wrap w-[290px] h-[28px] bg-slate-400">
+          <form className="input__wrap w-[290px] h-[28px]">
             <input
               type="email"
               value={userInfo.email}
@@ -108,12 +108,12 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
           </div>
         </div>
       </div>
-      <div className="line__wrap flex justify-between bg-blue-500">
-        <div className="text__wrap bg-red-500">
+      <div className="line__wrap flex justify-between">
+        <div className="text__wrap">
           <h1 className="text-xl font-main">인증코드</h1>
         </div>
         <div className="line__wrap flex">
-          <form className="input__wrap w-[290px] h-[28px] bg-slate-400 flex justify-between">
+          <form className="input__wrap w-[290px] h-[28px] flex justify-between">
             <input
               type="text"
               value={code}

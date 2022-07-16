@@ -11,11 +11,11 @@ function PopUpCheck({
   onClickCancel,
 }: PopUpChkProps): JSX.Element {
   return (
-    <div className="wrap bg-blue-500 h-[80px] flex flex-col justify-between mb-4">
+    <div className="wrap h-[80px] flex flex-col justify-between mb-4">
       <span className="font-main text-lg font-semibold flex justify-center">
         {text}
       </span>
-      <div className="btn__wrap bg-yellow-400 flex justify-evenly">
+      <div className="btn__wrap flex justify-evenly">
         <button
           className="bg-button font-main text-sm text-white rounded w-[60px] h-[28px]"
           onClick={(event) => {
