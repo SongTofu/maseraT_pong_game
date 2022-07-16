@@ -49,19 +49,16 @@ export class GameGateway {
   async handleJoinGameRoom(
     @ConnectedSocket() socket: Socket,
     @MessageBody() gameJoinDto: GameJoinDto,
-  ) {
+  ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameJoinDto.userId);
     const position: GamePosition = await this.joinGameRoom(gameJoinDto, user);
 
-    // id가 0이여서 방을 새로 만드는 경우
     if (!gameJoinDto.gameRoomId) {
       gameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         gameJoinDto,
       );
     }
 
-    // 방에 들어올 때 무조건 관전자로 들어오는지?
-    // leftUser, rightUser 체크해서 없으면 거기 넣어야할거같은데?
     const gameParticipantDto: GameParticipantDto = {
       gameRoomId: gameJoinDto.gameRoomId,
       title: gameJoinDto.title,
@@ -73,7 +70,6 @@ export class GameGateway {
     const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
 
     this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
-
     socket.join(joinGameTitle);
   }
 
@@ -134,25 +130,12 @@ export class GameGateway {
     return gameParticipant.position;
   }
 
-  // gameRoomId, userId
   @SubscribeMessage("game-room-leave")
   async handleGameRoomLeave(
     @ConnectedSocket() socket: Socket,
     @MessageBody() gameLeaveDto: GameLeaveDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
-
-    const gameParticipantDto: GameParticipantDto = {
-      gameRoomId: gameLeaveDto.gameRoomId,
-      title: gameLeaveDto.title,
-      userId: user.id,
-      nickname: user.nickname,
-      position: GamePosition.spectator,
-    };
-
-    const leaveGameTitle = "game-" + gameParticipantDto.gameRoomId;
-
-    socket.leave(leaveGameTitle);
 
     const delUser: GameParticipant =
       await this.gameParticipantRepository.findOne({
@@ -164,22 +147,10 @@ export class GameGateway {
 
     await this.gameParticipantRepository.delete(delUser);
 
-    const participant: GameParticipant =
-      await this.gameParticipantRepository.findOne(gameLeaveDto.userId);
+    const leaveGameTitle = "game-" + gameLeaveDto.gameRoomId;
 
     this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
-
-    // spactator가 나가면 무시
-    // leftUser 혹은 rightUser가 나가면 게임 중지 후 대기?
-    // 전부 다 나가면 gameRoom 폭파
-    if (
-      participant.position === GamePosition.leftUser ||
-      participant.position === GamePosition.rightUser
-    ) {
-      participant.position = null;
-    } else if (!participant) {
-      await this.gameRoomRepository.deleteRoom(gameLeaveDto.gameRoomId);
-    }
+    socket.leave(leaveGameTitle);
   }
 
   //// test 게임방 참여, game room join으로 바꿔야함
