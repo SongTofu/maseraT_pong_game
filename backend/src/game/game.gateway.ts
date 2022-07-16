@@ -51,7 +51,7 @@ export class GameGateway {
     @MessageBody() gameJoinDto: GameJoinDto,
   ) {
     const user: User = await this.userRepository.findOne(gameJoinDto.userId);
-    const isJoin: boolean = await this.joinGameRoom(gameJoinDto, user);
+    const position: GamePosition = await this.joinGameRoom(gameJoinDto, user);
 
     // id가 0이여서 방을 새로 만드는 경우
     if (!gameJoinDto.gameRoomId) {
@@ -60,8 +60,6 @@ export class GameGateway {
       );
     }
 
-    if (!isJoin) return;
-
     // 방에 들어올 때 무조건 관전자로 들어오는지?
     // leftUser, rightUser 체크해서 없으면 거기 넣어야할거같은데?
     const gameParticipantDto: GameParticipantDto = {
@@ -69,7 +67,7 @@ export class GameGateway {
       title: gameJoinDto.title,
       userId: user.id,
       nickname: user.nickname,
-      position: GamePosition.spectator,
+      position,
     };
 
     const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
@@ -82,53 +80,58 @@ export class GameGateway {
   private async joinGameRoom(
     gameJoinDto: GameJoinDto,
     user: User,
-  ): Promise<boolean> {
+  ): Promise<GamePosition> {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameJoinDto.gameRoomId,
     );
+    let gameParticipant: GameParticipant;
 
-    // 게임 첫 참여자는 무조건 leftUser인지?
     if (!gameJoinDto.gameRoomId) {
+      gameParticipant = this.gameParticipantRepository.create({
+        position: GamePosition.leftUser,
+        user,
+        gameRoom,
+      });
+      await gameParticipant.save();
+
+      return gameParticipant.position;
+    }
+
+    const existLeftUser = this.gameParticipantRepository.findOne({
+      position: GamePosition.leftUser,
+    });
+
+    const existRightUser = this.gameParticipantRepository.findOne({
+      position: GamePosition.rightUser,
+    });
+
+    const existSpectator = this.gameParticipantRepository.findOne({
+      position: GamePosition.spectator,
+    });
+
+    if (!existLeftUser) {
+      gameParticipant = this.gameParticipantRepository.create({
+        position: GamePosition.leftUser,
+        user,
+        gameRoom,
+      });
+    } else if (!existRightUser) {
+      gameParticipant = this.gameParticipantRepository.create({
+        position: GamePosition.rightUser,
+        user,
+        gameRoom,
+      });
+    } else if (!existSpectator) {
       let gameParticipant: GameParticipant =
         this.gameParticipantRepository.create({
-          position: GamePosition.leftUser,
-          user,
-          gameRoom,
-        });
-
-      const participant = this.gameParticipantRepository.find({
-        where: {
-          gameRoom,
-        },
-        order: {
-          position: "ASC",
-        },
-      });
-
-      if (!participant[0]) {
-        gameParticipant = this.gameParticipantRepository.create({
-          position: GamePosition.leftUser,
-          user,
-          gameRoom,
-        });
-      } else if (!participant[1]) {
-        gameParticipant = this.gameParticipantRepository.create({
-          position: GamePosition.rightUser,
-          user,
-          gameRoom,
-        });
-      } else if (!participant[2]) {
-        gameParticipant = this.gameParticipantRepository.create({
           position: GamePosition.spectator,
           user,
           gameRoom,
         });
-      }
-      await gameParticipant.save();
-
-      return true;
     }
-    return false;
+    await gameParticipant.save();
+
+    return gameParticipant.position;
   }
 
   // gameRoomId, userId
