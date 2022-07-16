@@ -7,6 +7,7 @@ interface BtnProps {
   myProfile?: boolean; // profile's 4 button
   isFriend?: boolean; // other profile's add friend button
   isBlocked?: boolean; // other profile's add blocklist button
+  codeValidate?: boolean; // second-auth button
 }
 
 function BtnPopUp({
@@ -16,6 +17,7 @@ function BtnPopUp({
   myProfile,
   isFriend,
   isBlocked,
+  codeValidate,
 }: BtnProps): JSX.Element {
   return (
     <>
@@ -46,6 +48,16 @@ function BtnPopUp({
           }`}
           onClick={onClick}
           disabled={isBlocked ? true : false}
+        >
+          {tag}
+        </button>
+      ) : codeValidate ? (
+        <button
+          className={`bg-button rounded text-white font-main w-[200px] h-[40px] tracking-widest ${
+            codeValidate ? "opacity-25" : ""
+          }`}
+          onClick={onClick}
+          disabled={codeValidate ? true : false}
         >
           {tag}
         </button>

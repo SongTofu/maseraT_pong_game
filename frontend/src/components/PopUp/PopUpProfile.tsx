@@ -12,6 +12,7 @@ import {
 } from "../../state/getUserInfo";
 import { imgUploadOnC } from "../../utils/imgUploadOnC";
 import { getRecordSelector, IRecord } from "../../state/getRecord";
+import { getAchieveSel, IAchieve } from "../../state/getAchieve";
 
 function PopUpProfile(): JSX.Element {
   const [display, setDisplay] = useState(false);
@@ -19,6 +20,7 @@ function PopUpProfile(): JSX.Element {
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
   const records = useRecoilValue<IRecord[]>(getRecordSelector);
+  const achieve = useRecoilValue<IAchieve>(getAchieveSel);
 
   const handleMouseEnter = () => setDisplay(true);
 
@@ -30,8 +32,8 @@ function PopUpProfile(): JSX.Element {
 
   return (
     <div>
-      <div className="child__wrap bg-blue-400 p-2">
-        <div className="bg-violet-500 flex items-center">
+      <div className="child__wrap p-2">
+        <div className="flex items-center">
           <div
             className="img__wrap relative"
             onMouseEnter={handleMouseEnter}
@@ -65,23 +67,23 @@ function PopUpProfile(): JSX.Element {
               />
             </div>
           </div>
-          <div className="info__wrap bg-green-500 w-[280px] p-4">
+          <div className="info__wrap w-[280px] p-4">
             <h1 className="font-main text-2xl">{userInfo.nickname}</h1>
             <h1 className="font-main text-2xl flex justify-between">
               Lv.{userInfo.level}
-              <Achievement />
+              <Achievement achieve={achieve} />
             </h1>
           </div>
         </div>
         <div className="line__wrap flex">
-          <div className="record__wrap bg-slate-300 w-[400px] flex justify-between  p-2">
+          <div className="record__wrap w-[400px] flex justify-between  p-2">
             <span className="font-main block">전적/래더전적</span>
             <span className="font-main block">
               {userInfo.personalWin}승{userInfo.personalLose}패/
               {userInfo.ladderWin}승{userInfo.ladderLose}패
             </span>
           </div>
-          <div className="btn__wrap w-[50px] flex items-center bg-lime-500">
+          <div className="btn__wrap w-[50px] flex items-center">
             <button
               className="rounded font-main text-white text-sm w-[50px] h-[30px] bg-button"
               onClick={() => handleOptionChange(openModal)}
@@ -105,7 +107,7 @@ function PopUpProfile(): JSX.Element {
           </div>
         </div>
       </div>
-      <div className="btns__wrap bg-yellow-200">
+      <div className="btns__wrap">
         <div className="flex justify-between p-2">
           <BtnPopUp tag="친구 추가" myProfile={true} />
           <BtnPopUp tag="게임 신청" myProfile={true} />
