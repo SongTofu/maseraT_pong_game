@@ -4,21 +4,31 @@ import { patchApi } from "../api/patchApi";
 
 export const btnNickOnC = async (
   nickname: string,
-  setDisplay: React.Dispatch<React.SetStateAction<boolean>>,
+  setDisplayRed: React.Dispatch<React.SetStateAction<boolean>>,
+  setDisplayBlack: React.Dispatch<React.SetStateAction<boolean>>,
   setReqUserInfo: SetterOrUpdater<number>,
 ) => {
+  if (nickname === "") {
+    setDisplayRed(false);
+    setDisplayBlack(true);
+    return;
+  }
   getApi(`nickname/${nickname}`)
     .then((response) => {
       const { isValidNickname } = response;
-      isValidNickname
-        ? patchApi("user/info", { nickname })
-            .then(() => {
-              setDisplay(false);
-              setReqUserInfo((prev) => prev + 1);
-              window.location.href = `http://${window.location.host}/game`;
-            })
-            .catch((err) => console.log(err))
-        : setDisplay(true);
+      if (isValidNickname) {
+        patchApi("user/info", { nickname })
+          .then(() => {
+            setDisplayBlack(false);
+            setDisplayRed(false);
+            setReqUserInfo((prev) => prev + 1);
+            window.location.href = `http://${window.location.host}/game`;
+          })
+          .catch((err) => console.log(err));
+      } else {
+        setDisplayBlack(false);
+        setDisplayRed(true);
+      }
     })
     .catch((err) => {
       console.log(err);
