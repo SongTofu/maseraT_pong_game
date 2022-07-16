@@ -14,7 +14,8 @@ function LoginContent(): JSX.Element {
   const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
   const setReqUserInfo = useSetRecoilState(reqUserInfo);
   const [nickname, setNickname] = useState("");
-  const [display, setDisplay] = useState(false);
+  const [displayRed, setDisplayRed] = useState(false);
+  const [displayBlack, setDisplayBlack] = useState(false);
 
   return (
     <div className="w-[800px] border-main border-[2px] rounded-md">
@@ -58,9 +59,14 @@ function LoginContent(): JSX.Element {
             onChange={(event) => nicknameOnC(event, setNickname)}
           />
           <div className="flex justify-between w-[360px] h-[40px]">
-            {display && (
+            {displayRed && (
               <h1 className="text-red-600 p-2 font-main">
-                중복된 닉네임입니다.
+                중복된 닉네임입니다!
+              </h1>
+            )}
+            {displayBlack && (
+              <h1 className="text-black p-2 font-main">
+                닉네임을 입력해주세요!
               </h1>
             )}
           </div>
@@ -68,7 +74,9 @@ function LoginContent(): JSX.Element {
       </div>
       <ButtonOne
         tag="제 출"
-        onClick={() => btnNickOnC(nickname, setDisplay, setReqUserInfo)}
+        onClick={() =>
+          btnNickOnC(nickname, setDisplayRed, setDisplayBlack, setReqUserInfo)
+        }
       />
     </div>
   );
