@@ -17,7 +17,7 @@ function LoginContent(): JSX.Element {
   const [display, setDisplay] = useState(false);
 
   return (
-    <div className="w-[800px]">
+    <div className="w-[800px] border-main border-[2px] rounded-md">
       <div className="text__wrap flex justify-center">
         <h1 className="text-3xl font-main p-10">
           {userInfo.nickname}의 프로필

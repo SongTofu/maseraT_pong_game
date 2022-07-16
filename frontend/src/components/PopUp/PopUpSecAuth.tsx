@@ -160,7 +160,7 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
         </div>
       )}
       {timeOut && (
-        <div className="absolute bottom-[155px] left-[135px] w-[210px] h-[20px] text-black text-center font-main">
+        <div className="absolute bottom-[155px] left-[140px] w-[210px] h-[20px] text-black text-center font-main text-sm">
           30초 후 다시 요청할 수 있습니다!
         </div>
       )}
