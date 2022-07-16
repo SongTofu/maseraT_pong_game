@@ -21,7 +21,7 @@ function HomeContent(): JSX.Element {
             (window.location.href =
               // `https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&` +
               // `redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`)
-              `${process.env.REACT_APP_LOCAL_SERVER}auth/login`)
+              `${process.env.REACT_APP_SERVER}auth/login`)
           }
         />
       </div>

@@ -3,7 +3,6 @@ import ButtonOne from "../Button/ButtonOne";
 import Pong from "../../img/pong.png";
 import { getApi } from "../../api/getApi";
 import { codeOnChange } from "../../utils/codeOnChange";
-import { patchApi } from "../../api/patchApi";
 import { useSetRecoilState } from "recoil";
 import { reqUserInfo } from "../../state/getUserInfo";
 
@@ -35,13 +34,8 @@ function SecAuthContent(): JSX.Element {
         if (matchCode) {
           setDisplayBlack(false);
           setDisplayRed(false);
-          const secondAuth = true;
-          patchApi("user/info", { secondAuth })
-            .then(() => {
-              setReqUserInfo((prev) => prev + 1);
-              window.location.href = `http://${window.location.host}/game`;
-            })
-            .catch((err) => console.log(err));
+          setReqUserInfo((prev) => prev + 1);
+          window.location.href = `http://${window.location.host}/game`;
         } else {
           setDisplayBlack(false);
           setDisplayRed(true);
