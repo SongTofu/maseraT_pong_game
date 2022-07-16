@@ -1,8 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import ButtonOne from "../Button/ButtonOne";
 import Pong from "../../img/pong.png";
+import { getApi } from "../../api/getApi";
+import { codeOnChange } from "../../utils/codeOnChange";
+import { patchApi } from "../../api/patchApi";
+import { useSetRecoilState } from "recoil";
+import { reqUserInfo } from "../../state/getUserInfo";
 
 function SecAuthContent(): JSX.Element {
+  const [code, setCode] = useState("");
+  const [displayRed, setDisplayRed] = useState(false);
+  const [displayBlack, setDisplayBlack] = useState(false);
+  const [timeOut, setTimeOut] = useState(false);
+  const setReqUserInfo = useSetRecoilState(reqUserInfo);
+
+  const resendOnC = async () => {
+    return await getApi("second-auth/")
+      .then(() => {
+        setTimeOut(true);
+        setTimeout(() => setTimeOut(false), 30000);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const submitOnC = async (code: string) => {
+    if (code === "") {
+      setDisplayRed(false);
+      setDisplayBlack(true);
+      return;
+    }
+    return await getApi("second-auth/", undefined, code)
+      .then((response) => {
+        const { matchCode } = response;
+        if (matchCode) {
+          setDisplayBlack(false);
+          setDisplayRed(false);
+          const secondAuth = true;
+          patchApi("user/info", { secondAuth })
+            .then(() => {
+              setReqUserInfo((prev) => prev + 1);
+              window.location.href = `http://${window.location.host}/game`;
+            })
+            .catch((err) => console.log(err));
+        } else {
+          setDisplayBlack(false);
+          setDisplayRed(true);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
       <div className="img__wrap p-10 w-7/12">
@@ -22,24 +69,36 @@ function SecAuthContent(): JSX.Element {
             <input
               type="text"
               id="code"
+              value={code}
               placeholder="코드를 입력해주세요."
+              onChange={(event) => codeOnChange(event, setCode)}
               className="font-main rounded border-slate-400 border-[1px] p-2"
             />
             <div className="flex justify-between pt-2">
-              <h1 className="font-main text-red-600 pl-1">
-                코드가 일치하지 않습니다.
-              </h1>
-              {/* 
-              state 하나 넣어서 백엔드에서 일치하지 않다고 정보줄 경우
-              삼항연산자로 display 할지 말지 하는 로직 필요 */}
-              <button className="rounded font-main underline underline-offset-1">
+              {!displayBlack && !displayRed && <div></div>}
+              {displayRed && (
+                <h1 className="font-main text-red-600 pl-1">
+                  코드가 일치하지 않습니다.
+                </h1>
+              )}
+              {displayBlack && (
+                <h1 className="font-main text-black pl-1">
+                  코드를 입력해주세요.
+                </h1>
+              )}
+              <button
+                className={`rounded font-main underline underline-offset-1 ${
+                  timeOut ? "opacity-25" : ""
+                }`}
+                onClick={resendOnC}
+                disabled={timeOut ? true : false}
+              >
                 재전송
-                {/* onClick으로 재전송하는 로직 필요 */}
               </button>
             </div>
           </div>
         </div>
-        <ButtonOne tag="제 출" />
+        <ButtonOne tag="제 출" onClick={() => submitOnC(code)} />
       </div>
     </>
   );
