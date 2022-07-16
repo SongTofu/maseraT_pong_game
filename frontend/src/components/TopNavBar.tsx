@@ -6,8 +6,15 @@ import PopUpParent from "./PopUp/PopUpParent";
 import PopUpProfile from "./PopUp/PopUpProfile";
 import PopUpNick from "./PopUp/PopUpNick";
 import PopUpSecAuth from "./PopUp/PopUpSecAuth";
-import { getUserInfoSelector } from "../state/getUserInfo";
+import {
+  getUserInfoSelector,
+  IUserInfo,
+  reqUserInfo,
+} from "../state/getUserInfo";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import PopUpCheck from "./PopUp/PopUpCheck";
+import { patchApi } from "../api/patchApi";
+import { getAchieveSel, IAchieve } from "../state/getAchieve";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -17,8 +24,21 @@ function TopBar({ children }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const [btnTag, setBtnTag] = useState("");
 
-  const userInfo = useRecoilValue(getUserInfoSelector);
-  const reqApi = useSetRecoilState(getUserInfoSelector);
+  const userInfo = useRecoilValue<IUserInfo>(getUserInfoSelector);
+  const setReqUserInfo = useSetRecoilState(reqUserInfo);
+
+  const onClickConfirm = async () => {
+    const secondAuth = false;
+    return await patchApi("user/info", { secondAuth })
+      .then((response) => {
+        console.log("success", response);
+        setReqUserInfo((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const achieve = useRecoilValue<IAchieve>(getAchieveSel);
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -45,7 +65,10 @@ function TopBar({ children }: Props) {
                     : "text-gray-300"
                 }`}
               >
-                <NavLink to="/game" onClick={reqApi}>
+                <NavLink
+                  to="/game"
+                  onClick={() => setReqUserInfo((prev) => prev + 1)}
+                >
                   게임
                 </NavLink>
               </h1>
@@ -67,7 +90,10 @@ function TopBar({ children }: Props) {
                     : "text-gray-300"
                 }`}
               >
-                <NavLink to="/chat" onClick={reqApi}>
+                <NavLink
+                  to="/chat"
+                  onClick={() => setReqUserInfo((prev) => prev + 1)}
+                >
                   채팅
                 </NavLink>
               </h1>
@@ -76,7 +102,7 @@ function TopBar({ children }: Props) {
               <div className="h-12 w-[800px] bg-main-light flex justify-between px-3 items-center border-b-2 border-main">
                 <div className="text-main-text flex flex-row">
                   <p className="pr-2">{userInfo.nickname}</p>
-                  <Achievement />
+                  <Achievement achieve={achieve} />
                 </div>
                 <div className="w-[500px] text-main-text flex justify-between items-center">
                   <p className="inline">lv. {userInfo.level}</p>
@@ -106,14 +132,25 @@ function TopBar({ children }: Props) {
                         setBtnTag("닉네임");
                       }}
                     />
-                    <ButtonTwo
-                      tag="2차 인증 활성화"
-                      className="inline font-main text-sm "
-                      onClick={() => {
-                        handleOptionChange(openModal);
-                        setBtnTag("2차인증");
-                      }}
-                    />
+                    {userInfo.secondAuth ? (
+                      <ButtonTwo
+                        tag="2차인증 비활성화"
+                        className="inline font-main text-sm "
+                        onClick={() => {
+                          handleOptionChange(openModal);
+                          setBtnTag("비활성화");
+                        }}
+                      />
+                    ) : (
+                      <ButtonTwo
+                        tag="2차 인증 활성화"
+                        className="inline font-main text-sm "
+                        onClick={() => {
+                          handleOptionChange(openModal);
+                          setBtnTag("2차인증");
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -139,7 +176,7 @@ function TopBar({ children }: Props) {
                 mainText="닉네임 변경"
                 onClick={() => handleOptionChange(openModal)}
               >
-                <PopUpNick />
+                <PopUpNick onClick={() => handleOptionChange(openModal)} />
               </PopUpParent>
             </div>
           )}
@@ -151,7 +188,23 @@ function TopBar({ children }: Props) {
                 mainText="2차 인증 활성화"
                 onClick={() => handleOptionChange(openModal)}
               >
-                <PopUpSecAuth />
+                <PopUpSecAuth onClick={() => handleOptionChange(openModal)} />
+              </PopUpParent>
+            </div>
+          )}
+          {openModal && btnTag === "비활성화" && (
+            <div className="flex justify-center">
+              <PopUpParent
+                width={"w-[300px]"}
+                height={"h-[200px]"}
+                mainText="2차인증 비활성화"
+                onClick={() => handleOptionChange(openModal)}
+              >
+                <PopUpCheck
+                  text="정말 해제하시겠습니까?"
+                  onClickConfirm={onClickConfirm}
+                  onClickCancel={() => handleOptionChange(openModal)}
+                />
               </PopUpParent>
             </div>
           )}

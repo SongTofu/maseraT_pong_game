@@ -5,8 +5,13 @@ import FirstLogin from "../img/firstLogin.svg";
 import FirstLose from "../img/firstLose.svg";
 import FirstWin from "../img/firstWin.svg";
 import ThirdWin from "../img/thirdWin.svg";
+import { IAchieve } from "../state/getAchieve";
 
-function Achievement(): JSX.Element {
+interface IAchieveProps {
+  achieve: IAchieve;
+}
+
+function Achievement({ achieve }: IAchieveProps): JSX.Element {
   const [showAchievement, setShowAchievement] = useState(false);
 
   const handleMouseEnter = () => {
@@ -32,31 +37,41 @@ function Achievement(): JSX.Element {
             alt="첫 로그인"
             title="첫 로그인"
             src={FirstLogin}
-            className="w-[20px] h-[20px]"
+            className={`w-[20px] h-[20px] ${
+              achieve.firstLogin ? "" : "opacity-10"
+            }`}
           />
           <img
             alt="첫승"
             title="첫승"
             src={FirstWin}
-            className="w-[20px] h-[20px]"
+            className={`w-[20px] h-[20px] ${
+              achieve.firstWin ? "" : "opacity-10"
+            }`}
           />
           <img
             alt="3승"
             title="3승"
             src={ThirdWin}
-            className="w-[20px] h-[20px]"
+            className={`w-[20px] h-[20px] ${
+              achieve.thirdWin ? "" : "opacity-10"
+            }`}
           />
           <img
             alt="첫패"
             title="첫패"
             src={FirstLose}
-            className="w-[20px] h-[20px]"
+            className={`w-[20px] h-[20px] ${
+              achieve.firstLose ? "" : "opacity-10"
+            }`}
           />
           <img
             alt="3연승"
             title="3연승"
             src={ConsecThree}
-            className="w-[20px] h-[20px]"
+            className={`w-[20px] h-[20px] ${
+              achieve.consecThree ? "" : "opacity-10"
+            }`}
           />
         </div>
       ) : null}

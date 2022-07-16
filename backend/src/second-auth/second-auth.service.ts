@@ -16,7 +16,7 @@ export class SecondAuthService {
   async requestAuth(id: number): Promise<void> {
     const user: User = await this.userRepository.findOne(id);
 
-    this.secondAuthRepository.deleteCode(user);
+    await this.secondAuthRepository.deleteCode(user);
 
     const authCode: string = Math.random().toString(36).substr(2, 11);
     const secondAuthCode: SecondAuthCode = this.secondAuthRepository.create({

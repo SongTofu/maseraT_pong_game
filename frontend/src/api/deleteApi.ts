@@ -1,6 +1,8 @@
+import { getCookie } from "./../cookie/cookie";
 import axios from "axios";
 // eslint-disable-next-line
 export async function deleteApi(api: string, data: any) {
+  // const accessToken = getCookie("token");
   return await axios({
     // url: `${process.env.REACT_APP_LOCAL_SERVER}${api}`,
     url: `${process.env.REACT_APP_SERVER}${api}`,

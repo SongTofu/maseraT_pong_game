@@ -16,15 +16,18 @@ export class AchievementService {
     const user: User = await this.userRepository.findOne(id);
     if (!user) throw new NotFoundException(`Can't find User with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
 
-    const achievement: Achievement = await this.achievementRepository.findOne(
-      user,
-    );
+    const achievement: Achievement = await this.achievementRepository.findOne({
+      where: {
+        user: user.id,
+      },
+    });
     const achievementDto: AchievementDto = {
       userId: user.id,
       firstLogin: achievement.firstLogin,
       firstWin: achievement.firstWin,
       firstLose: achievement.firstLose,
       thirdWin: achievement.thirdWin,
+      consecThree: achievement.consecThree,
     };
     return achievementDto;
   }
@@ -53,9 +56,11 @@ export class AchievementService {
     if (!target)
       throw new NotFoundException(`Can't find Target with id ${targetId}`); //나중에 접속한 사람 확인되면 삭제가능
 
-    const achievement: Achievement = await this.achievementRepository.findOne(
-      target,
-    );
+    const achievement: Achievement = await this.achievementRepository.findOne({
+      where: {
+        user: target.id,
+      },
+    });
 
     const targetAchievementDto: AchievementDto = {
       userId: targetId,
@@ -63,6 +68,7 @@ export class AchievementService {
       firstWin: achievement.firstWin,
       firstLose: achievement.firstLose,
       thirdWin: achievement.thirdWin,
+      consecThree: achievement.consecThree,
     };
 
     return targetAchievementDto;

@@ -4,7 +4,6 @@ import {
   Param,
   Patch,
   Body,
-  Post,
   UseInterceptors,
   UseGuards,
   Req,
@@ -14,7 +13,6 @@ import { UserService } from "./user.service";
 import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { TargetUserInfoDto } from "./dto/target-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
-import { User } from "./user.entity";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { UserListDto } from "./dto/user-list.dto";
@@ -62,16 +60,4 @@ export class UserController {
     if (file) updateUserInfoDto.profileImg = file.filename;
     return this.userService.updateUser(req.user.id, updateUserInfoDto);
   }
-
-  //로그인 시 진행해서 필요 없음.(세한님과 말했음)
-  // @Post("/info")
-  // @UseInterceptors(FileInterceptor("profile", { storage }))
-  // initUserInfo(
-  //   @Body() updateUserInfoDto: UpdateUserInfoDto,
-  //   @Req() req,
-  //   @UploadedFile() file: Express.Multer.File,
-  // ) {
-  //   updateUserInfoDto.profileImg = file.filename;
-  //   return this.userService.initUserInfo(req.user.id, updateUserInfoDto); //본인아이디, 바꿀 닉네임, 바꿀 프로필
-  // }
 }
