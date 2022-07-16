@@ -131,6 +131,7 @@ export class ChatGateway {
     @MessageBody() chatLeaveDto: ChatLeaveDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatLeaveDto.userId);
+    let userAuthority: number = 0;
     chatLeaveDto.nickname = user.nickname;
 
     const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
@@ -145,15 +146,18 @@ export class ChatGateway {
           user: user.id,
         },
       });
+    userAuthority = delUser.authority;
     await this.chatParticipantsRepository.delete(delUser);
 
     this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
 
-    //방에 참여자 없으면 방 삭제!
+    //방에 참여자 없으면 방 삭제! || 오너 나가면 삭제
     const participant: ChatParticipants =
       await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
-    if (!participant)
+    if (!participant || userAuthority == 2) {
       await this.chatRoomRepository.deleteRoom(chatLeaveDto.chatRoomId);
+      this.handleDisconnectChatRoom(chatLeaveDto.chatRoomId);
+    }
   }
 
   @SubscribeMessage("chat-room-message")
@@ -189,8 +193,9 @@ export class ChatGateway {
     const chatTitle = "chat-" + chatKickDto.chatRoomId;
     this.server.in(target.socketId).socketsLeave(chatTitle);
   }
+
   @SubscribeMessage("connect-chat-room")
-  async handleConnectChatRoom(@MessageBody() chatJoinDto: ChatJoinDto) {
+  handleConnectChatRoom(@MessageBody() chatJoinDto: ChatJoinDto) {
     const chatTitle = "chat-" + chatJoinDto.chatRoomId;
     const numParticipant: number =
       this.server.sockets.adapter.rooms.get(chatTitle).size;
@@ -205,5 +210,10 @@ export class ChatGateway {
       numParticipant,
     };
     this.server.emit("connect-chat-room", chatRoomDto);
+  }
+
+  @SubscribeMessage("disconnect-chat-room")
+  handleDisconnectChatRoom(@MessageBody() chatRoomId: number) {
+    this.server.emit("disconnect-chat-room", chatRoomId); //? ㅇㅣ렇게 줘도 괜찮나?
   }
 }
