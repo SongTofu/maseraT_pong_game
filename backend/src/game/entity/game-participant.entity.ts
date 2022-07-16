@@ -14,7 +14,7 @@ export class GameParticipant extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: GamePosition.spectator })
   position: GamePosition;
 
   @ManyToOne((type) => User, (user) => user.gameParticipant)

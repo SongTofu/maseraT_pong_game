@@ -7,6 +7,7 @@ import {
   IUserInfo,
   reqUserInfo,
 } from "../../state/getUserInfo";
+import { codeOnChange } from "../../utils/codeOnChange";
 import BtnPopUp from "../Button/BtnPopUp";
 
 interface PopSecAuthProps {
@@ -31,17 +32,6 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
         setTimeout(() => setTimeOut(false), 30000);
       })
       .catch((err) => console.log(err));
-  };
-
-  const codeOnChange = (
-    event: React.ChangeEvent<HTMLInputElement> & { target: HTMLInputElement },
-  ) => {
-    const { target } = event;
-    if (target.value.length) {
-      setCode(target.value);
-    } else {
-      setCode("");
-    }
   };
 
   const btnCheckValidateOnC = async (code: string) => {
@@ -118,7 +108,7 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
               type="text"
               value={code}
               className="w-[250px] h-full font-main border-black border-b-2 focus:outline-none"
-              onChange={(event) => codeOnChange(event)}
+              onChange={(event) => codeOnChange(event, setCode)}
             />
           </form>
           <div className="btn__wrap">
@@ -160,7 +150,7 @@ function PopUpSecAuth({ onClick }: PopSecAuthProps): JSX.Element {
         </div>
       )}
       {timeOut && (
-        <div className="absolute bottom-[155px] left-[135px] w-[210px] h-[20px] text-black text-center font-main">
+        <div className="absolute bottom-[155px] left-[140px] w-[210px] h-[20px] text-black text-center font-main text-sm">
           30초 후 다시 요청할 수 있습니다!
         </div>
       )}
