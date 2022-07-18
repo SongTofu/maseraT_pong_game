@@ -19,6 +19,8 @@ import { GameParticipant } from "src/game/entity/game-participant.entity";
 import { GameRoomRepository } from "src/game/repository/game-room.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
 import { UserState } from "./user-state.enum";
+import { GameLeaveDto } from "../game/dto/game-room.dto";
+import { GameGateway } from "src/game/game.gateway";
 
 @WebSocketGateway({
   cors: {
@@ -33,6 +35,7 @@ export class UserGateway {
     private chatGateway: ChatGateway,
     private gameParticipantsRepository: GameParticipantRepository,
     private gameRoomRepository: GameRoomRepository,
+    private gameGateway: GameGateway,
   ) {}
 
   @WebSocketServer()
@@ -86,9 +89,14 @@ export class UserGateway {
     const leaveGameRooms: GameParticipant[] =
       await this.gameParticipantsRepository.find(user);
 
-    // leaveGameRooms.forEach((leaveGameRoom) => {
-    // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
-    // })
+    leaveGameRooms.forEach((leaveGameRoom) => {
+      let gameLeaveDto: GameLeaveDto = {
+        userId: user.id,
+        title: "", //나중에 타이틀 뺄수도?
+        gameRoomId: leaveGameRoom.id,
+      };
+      this.gameGateway.handleGameRoomLeave(socket, gameLeaveDto);
+    });
     this.server.emit("disconnect-user", { success: true }); //뭐 보내줄 거 있나,,,?
   }
 }
