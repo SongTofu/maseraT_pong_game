@@ -106,20 +106,23 @@ export class ChatGateway {
       chatJoinDto.chatRoomId,
     );
 
+    const chatParticipants: ChatParticipants =
+      this.chatParticipantsRepository.create({
+        user,
+        chatRoom,
+      });
+
     if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {
-      const chatParticipants: ChatParticipants =
-        this.chatParticipantsRepository.create({
-          user,
-          chatRoom,
-        });
       if (isCreate) {
         chatParticipants.authority = Authority.owner;
-        this.handleConnectChatRoom(chatJoinDto);
       }
-      await chatParticipants.save();
       return true;
+    } else if (chatJoinDto.password) {
+      return false;
     }
-    return false;
+    this.handleConnectChatRoom(chatJoinDto);
+    await chatParticipants.save();
+    return true;
   }
 
   @SubscribeMessage("chat-room-leave")

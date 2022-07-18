@@ -9,10 +9,10 @@ function PopUpRoomSet(): JSX.Element {
   return (
     <>
       <div>
-        <div className="text__wrap bg-lime-400 mb-2">
+        <div className="text__wrap mb-2">
           <span className="font-main text-2xl">방 제목</span>
         </div>
-        <div className="input__wrap bg-blue-300">
+        <div className="input__wrap">
           {/* 방 설정의 경우 value로 이미 설정된 방 이름 갖고 있어야함 */}
           <input
             type="text"
@@ -21,12 +21,12 @@ function PopUpRoomSet(): JSX.Element {
         </div>
       </div>
       <div>
-        <div className="text__wrap bg-lime-400 mb-2">
+        <div className="text__wrap mb-2">
           <span className={`font-main text-2xl ${!isSelect && "opacity-25"}`}>
             비밀번호
           </span>
         </div>
-        <div className="input__wrap bg-blue-300">
+        <div className="input__wrap">
           <input
             type="password"
             className={`w-[320px] h-[32px] font-main border-black border-b-2 focus:outline-none ${

@@ -12,5 +12,6 @@ import { UserRepository } from "src/user/user.repository";
   ],
   providers: [SecondAuthService],
   controllers: [SecondAuthController],
+  exports: [SecondAuthService],
 })
 export class SecondAuthModule {}

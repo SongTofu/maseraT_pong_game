@@ -9,6 +9,6 @@ export class SecondAuthRepository extends Repository<SecondAuthCode> {
       where: { user: user.id },
     });
 
-    this.remove(secondAuthFound);
+    await this.remove(secondAuthFound);
   }
 }

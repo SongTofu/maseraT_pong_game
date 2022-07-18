@@ -18,6 +18,7 @@ import { ChatGateway } from "src/chat/chat.gateway";
 import { GameParticipant } from "src/game/entity/game-participant.entity";
 import { GameRoomRepository } from "src/game/repository/game-room.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
+import { UserState } from "./user-state.enum";
 
 @WebSocketGateway({
   cors: {
@@ -40,26 +41,30 @@ export class UserGateway {
   @SubscribeMessage("connect-user")
   async handleConnectUser(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() userId: number,
+    @MessageBody() data: { userId: number },
   ) {
-    let user: User = await this.userRepository.findOne(userId);
+    const user: User = await this.userRepository.findOne(data.userId);
     user.socketId = socket.id;
 
     const userListDto: UserListDto = {
       userId: user.id,
       nickname: user.nickname,
-      state: user.state,
+      state: UserState.CONNECT,
       socketId: user.socketId,
     };
 
+    await user.save();
+
     this.server.emit("connect-user", userListDto);
   }
-  @SubscribeMessage("disconnect-user")
-  async handleDisconnectUser(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() userId: number,
-  ) {
-    let user: User = await this.userRepository.findOne(userId);
+
+  @SubscribeMessage("disconnect")
+  async handleDisconnectUser(@ConnectedSocket() socket: Socket) {
+    const user: User = await this.userRepository.findOne({
+      where: {
+        socketId: socket.id,
+      },
+    });
 
     //user table에서 비활성화 시키기(이따구로 야매로 해도 괜찮은걸까?)
     user.state = 0;

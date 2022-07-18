@@ -4,6 +4,7 @@ import PopUpParent from "./PopUpParent";
 import PopUpProfile from "./PopUpProfile";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import PopUpOtherProfile from "./PopUpOtherProfile";
+import PopUpCheck from "./PopUpCheck";
 
 interface ChatMenuProps {
   myAuth: number;
@@ -11,7 +12,6 @@ interface ChatMenuProps {
   targetAuth?: number;
   targetId: number;
   isYourself: boolean;
-  name?: string;
 }
 
 function PopUpChatMenu({
@@ -20,10 +20,10 @@ function PopUpChatMenu({
   targetAuth,
   targetId,
   isYourself,
-  name,
 }: ChatMenuProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [btnTag, setBtnTag] = useState("");
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -79,7 +79,10 @@ function PopUpChatMenu({
               className="font-main my-1"
               tag="프로필 보기"
               disabled={false}
-              onClick={() => handleOptionChange(openModal)}
+              onClick={() => {
+                setBtnTag("프로필");
+                handleOptionChange(openModal);
+              }}
             />
           </div>
           <hr className="w-[100px] border-black border-[1px] my-1" />
@@ -97,13 +100,16 @@ function PopUpChatMenu({
                 className="font-main my-1"
                 tag="강퇴하기"
                 disabled={handleDisabled(isYourself)}
-                onClick={() => 1}
+                onClick={() => {
+                  setBtnTag("강퇴하기");
+                  handleOptionChange(openModal);
+                }}
               />
             </>
           ) : null}
         </div>
       </div>
-      {openModal && myId === targetId && (
+      {openModal && myId === targetId && btnTag === "프로필" && (
         <ClickAwayListener onClickAway={() => setOpenModal(false)}>
           <div className="fixed top-[100px] left-auto">
             <PopUpParent
@@ -117,7 +123,7 @@ function PopUpChatMenu({
           </div>
         </ClickAwayListener>
       )}
-      {openModal && myId !== targetId && (
+      {openModal && myId !== targetId && btnTag === "프로필" && (
         <ClickAwayListener onClickAway={() => setOpenModal(false)}>
           <div className="fixed top-[100px] left-auto">
             <PopUpParent
@@ -130,6 +136,22 @@ function PopUpChatMenu({
             </PopUpParent>
           </div>
         </ClickAwayListener>
+      )}
+      {openModal && btnTag === "강퇴하기" && (
+        <div className="fixed top-[100px] left-auto">
+          <PopUpParent
+            width={"w-[300px]"}
+            height={"h-[200px]"}
+            mainText="강퇴하기"
+            onClick={() => handleOptionChange(openModal)}
+          >
+            <PopUpCheck
+              text="정말 강퇴하시겠습니까?"
+              onClickConfirm={() => 1}
+              onClickCancel={() => handleOptionChange(openModal)}
+            />
+          </PopUpParent>
+        </div>
       )}
     </div>
   );

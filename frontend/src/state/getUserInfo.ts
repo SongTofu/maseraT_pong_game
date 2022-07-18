@@ -3,6 +3,7 @@ import { getApi } from "../api/getApi";
 
 export interface IUserInfo {
   id: number;
+  email: string;
   ladderWin: number;
   ladderLose: number;
   personalWin: number;

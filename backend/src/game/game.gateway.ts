@@ -17,6 +17,9 @@ import { GameParticipant } from "./entity/game-participant.entity";
 import { RecordRepository } from "src/record/record.repository";
 import { GameDataDto } from "./dto/game-data.dto";
 import { UserRepository } from "src/user/user.repository";
+import { GameJoinDto, GameLeaveDto } from "./dto/game-room.dto";
+import { User } from "src/user/user.entity";
+import { GameParticipantDto } from "./dto/game-participant.dto";
 
 const cvs = {
   width: 600,
@@ -41,6 +44,104 @@ export class GameGateway {
 
   @WebSocketServer()
   server;
+
+  @SubscribeMessage("game-room-join")
+  async handleJoinGameRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() gameJoinDto: GameJoinDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(gameJoinDto.userId);
+    const position: GamePosition = await this.joinGameRoom(gameJoinDto, user);
+
+    if (!gameJoinDto.gameRoomId) {
+      gameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
+        gameJoinDto,
+      );
+    }
+
+    const gameParticipantDto: GameParticipantDto = {
+      gameRoomId: gameJoinDto.gameRoomId,
+      title: gameJoinDto.title,
+      userId: user.id,
+      nickname: user.nickname,
+      position,
+    };
+
+    const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
+
+    this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
+    socket.join(joinGameTitle);
+  }
+
+  private async joinGameRoom(
+    gameJoinDto: GameJoinDto,
+    user: User,
+  ): Promise<GamePosition> {
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameJoinDto.gameRoomId,
+    );
+    let gameParticipant: GameParticipant;
+
+    if (!gameJoinDto.gameRoomId) {
+      gameParticipant = this.gameParticipantRepository.create({
+        position: GamePosition.leftUser,
+        user,
+        gameRoom,
+      });
+      await gameParticipant.save();
+
+      return gameParticipant.position;
+    }
+
+    const existLeftUser = this.gameParticipantRepository.findOne({
+      id: gameJoinDto.gameRoomId,
+      position: GamePosition.leftUser,
+    });
+
+    const existRightUser = this.gameParticipantRepository.findOne({
+      id: gameJoinDto.gameRoomId,
+      position: GamePosition.rightUser,
+    });
+
+    gameParticipant = this.gameParticipantRepository.create({
+      user,
+      gameRoom,
+    });
+
+    if (!existLeftUser) {
+      gameParticipant.position = GamePosition.leftUser;
+    } else if (!existRightUser) {
+      gameParticipant.position = GamePosition.rightUser;
+    } else {
+      gameParticipant.position = GamePosition.spectator;
+    }
+    await gameParticipant.save();
+
+    return gameParticipant.position;
+  }
+
+  @SubscribeMessage("game-room-leave")
+  async handleGameRoomLeave(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() gameLeaveDto: GameLeaveDto,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
+
+    const delUser: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: {
+          gameRoom: gameLeaveDto.gameRoomId,
+          user: user.id,
+        },
+      });
+
+    await this.gameParticipantRepository.delete(delUser);
+
+    const leaveGameTitle = "game-" + gameLeaveDto.gameRoomId;
+
+    this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
+    socket.leave(leaveGameTitle);
+  }
 
   //// test 게임방 참여, game room join으로 바꿔야함
   @SubscribeMessage("test")
