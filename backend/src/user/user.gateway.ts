@@ -41,7 +41,7 @@ export class UserGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: { userId: number },
   ) {
-    const user: User = await this.userRepository.findOne(data.userId);
+    let user: User = await this.userRepository.findOne(data.userId);
     user.socketId = socket.id;
 
     const userListDto: UserListDto = {
@@ -58,14 +58,14 @@ export class UserGateway {
 
   @SubscribeMessage("disconnect")
   async handleDisconnectUser(@ConnectedSocket() socket: Socket) {
-    const user: User = await this.userRepository.findOne({
+    let user: User = await this.userRepository.findOne({
       where: {
         socketId: socket.id,
       },
     });
 
     //user table에서 비활성화 시키기(이따구로 야매로 해도 괜찮은걸까?)
-    user.state = 0;
+    user.state = UserState.DISCONNECT;
 
     // 채팅방 떠남
     const leaveChatRooms: ChatParticipants[] =
