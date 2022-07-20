@@ -17,17 +17,24 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
       //   "f0ba627754f81ff87766dcc79e008b1836f039ae754ae189cb857f5e45457018",
       // callbackURL: "http://localhost:3000/auth/login",
 
-      authorizationURL: `https://api.intra.42.fr/oauth/authorize?client_id=${configService.get<string>(
-        "CLIENT_ID",
+      // authorizationURL: `https://api.intra.42.fr/oauth/authorize?client_id=${configService.get<string>(
+      //   "CLIENT_ID",
+      // )}`,
+      // // )}
+      // // &redirect_uri=${configService.get<string>(
+      // //   "REDIRECT_URI",
+      // // )}&response_type=code`,
+      // tokenURL: configService.get<string>("TOKEN_URI"),
+      // clientID: configService.get<string>("CLIENT_ID"),
+      // clientSecret: configService.get<string>("CLIENT_SECRET"),
+      // callbackURL: configService.get<string>("CB_URI"),
+
+      authorizationURL: `https://api.intra.42.fr/oauth/authorize?client_id=${process.env.CLIENT_ID},
       )}`,
-      // )}
-      // &redirect_uri=${configService.get<string>(
-      //   "REDIRECT_URI",
-      // )}&response_type=code`,
-      tokenURL: configService.get<string>("TOKEN_URI"),
-      clientID: configService.get<string>("CLIENT_ID"),
-      clientSecret: configService.get<string>("CLIENT_SECRET"),
-      callbackURL: configService.get<string>("CB_URI"),
+      tokenURL: process.env.TOKEN_URI,
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: process.env.CB_URI,
     });
   }
 
