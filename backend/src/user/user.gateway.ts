@@ -8,15 +8,12 @@ import {
 import { Socket } from "socket.io";
 import { User } from "../user/user.entity";
 import { UserRepository } from "../user/user.repository";
-import { Req } from "@nestjs/common";
 import { UserListDto } from "././dto/user-list.dto";
 import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
-import { ChatRoomRepository } from "src/chat/repository/chat-room.repository";
 import { ChatParticipantsRepository } from "src/chat/repository/chat-participants.repository";
 import { ChatLeaveDto } from "src/chat/dto/chat-leave.dto";
 import { ChatGateway } from "src/chat/chat.gateway";
 import { GameParticipant } from "src/game/entity/game-participant.entity";
-import { GameRoomRepository } from "src/game/repository/game-room.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
 import { UserState } from "./user-state.enum";
 import { GameLeaveDto } from "../game/dto/game-room.dto";
@@ -31,10 +28,8 @@ export class UserGateway {
   constructor(
     private userRepository: UserRepository,
     private chatParticipantsRepository: ChatParticipantsRepository,
-    private chatRoomRepository: ChatRoomRepository,
     private chatGateway: ChatGateway,
     private gameParticipantsRepository: GameParticipantRepository,
-    private gameRoomRepository: GameRoomRepository,
     private gameGateway: GameGateway,
   ) {}
 
