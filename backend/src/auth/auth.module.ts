@@ -22,7 +22,7 @@ import { SecondAuthRepository } from "src/second-auth/second-auth.repository";
     ]),
     PassportModule.register({ defaultStrategy: "42" }),
     JwtModule.register({
-      secret: "1234", // need for create token
+      secret: process.env.JWT_SECRET_KEY, // need for create token
       signOptions: { expiresIn: 3600 },
     }),
   ],

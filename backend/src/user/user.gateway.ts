@@ -8,17 +8,16 @@ import {
 import { Socket } from "socket.io";
 import { User } from "../user/user.entity";
 import { UserRepository } from "../user/user.repository";
-import { Req } from "@nestjs/common";
 import { UserListDto } from "././dto/user-list.dto";
 import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
-import { ChatRoomRepository } from "src/chat/repository/chat-room.repository";
 import { ChatParticipantsRepository } from "src/chat/repository/chat-participants.repository";
 import { ChatLeaveDto } from "src/chat/dto/chat-leave.dto";
 import { ChatGateway } from "src/chat/chat.gateway";
 import { GameParticipant } from "src/game/entity/game-participant.entity";
-import { GameRoomRepository } from "src/game/repository/game-room.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
 import { UserState } from "./user-state.enum";
+import { GameLeaveDto } from "../game/dto/game-room.dto";
+import { GameGateway } from "src/game/game.gateway";
 
 @WebSocketGateway({
   cors: {
@@ -29,10 +28,9 @@ export class UserGateway {
   constructor(
     private userRepository: UserRepository,
     private chatParticipantsRepository: ChatParticipantsRepository,
-    private chatRoomRepository: ChatRoomRepository,
     private chatGateway: ChatGateway,
     private gameParticipantsRepository: GameParticipantRepository,
-    private gameRoomRepository: GameRoomRepository,
+    private gameGateway: GameGateway,
   ) {}
 
   @WebSocketServer()
@@ -43,7 +41,7 @@ export class UserGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: { userId: number },
   ) {
-    const user: User = await this.userRepository.findOne(data.userId);
+    let user: User = await this.userRepository.findOne(data.userId);
     user.socketId = socket.id;
 
     const userListDto: UserListDto = {
@@ -60,14 +58,14 @@ export class UserGateway {
 
   @SubscribeMessage("disconnect")
   async handleDisconnectUser(@ConnectedSocket() socket: Socket) {
-    const user: User = await this.userRepository.findOne({
+    let user: User = await this.userRepository.findOne({
       where: {
         socketId: socket.id,
       },
     });
 
     //user table에서 비활성화 시키기(이따구로 야매로 해도 괜찮은걸까?)
-    user.state = 0;
+    user.state = UserState.DISCONNECT;
 
     // 채팅방 떠남
     const leaveChatRooms: ChatParticipants[] =
@@ -86,9 +84,14 @@ export class UserGateway {
     const leaveGameRooms: GameParticipant[] =
       await this.gameParticipantsRepository.find(user);
 
-    // leaveGameRooms.forEach((leaveGameRoom) => {
-    // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
-    // })
+    leaveGameRooms.forEach((leaveGameRoom) => {
+      let gameLeaveDto: GameLeaveDto = {
+        userId: user.id,
+        title: "", //나중에 타이틀 뺄수도?
+        gameRoomId: leaveGameRoom.id,
+      };
+      this.gameGateway.handleGameRoomLeave(socket, gameLeaveDto);
+    });
     this.server.emit("disconnect-user", { success: true }); //뭐 보내줄 거 있나,,,?
   }
 }
