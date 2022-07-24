@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getToken } from "../func/get-token";
+import { getCookie } from "../func/get-cookie";
 import { useNavigate } from "react-router-dom";
 
 export function SecondAuth() {
@@ -10,7 +10,7 @@ export function SecondAuth() {
     fetch("http://localhost:3000/second-auth/", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getToken()
+        Authorization: "Bearer " + getCookie("token")
       }
     });
   };
@@ -19,7 +19,7 @@ export function SecondAuth() {
     fetch("http://localhost:3000/second-auth/" + code, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getToken()
+        Authorization: "Bearer " + getCookie("token")
       }
     })
       .then(response => response.json())
