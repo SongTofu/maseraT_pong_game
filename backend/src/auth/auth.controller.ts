@@ -23,6 +23,7 @@ export class AuthController {
     await this.authService.logIn(userDto).then((data) => {
       res.cookie("token", data.token);
       res.cookie("nickname", data.nickname);
+      res.cookie("id", data.id);
       if (data.firstLogin) {
         res.redirect("http://localhost:3001/login");
       } else {

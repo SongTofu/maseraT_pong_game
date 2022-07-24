@@ -9,15 +9,16 @@ import { Socket } from "socket.io";
 import { User } from "../user/user.entity";
 import { UserRepository } from "../user/user.repository";
 import { UserListDto } from "././dto/user-list.dto";
-import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
-import { ChatParticipantsRepository } from "src/chat/repository/chat-participants.repository";
+import { ChatParticipant } from "src/chat/entity/chat-participant.entity";
+import { ChatParticipantRepository } from "src/chat/repository/chat-participant.repository";
 import { ChatLeaveDto } from "src/chat/dto/chat-leave.dto";
 import { ChatGateway } from "src/chat/chat.gateway";
 import { GameParticipant } from "src/game/entity/game-participant.entity";
+import { GameRoomRepository } from "src/game/repository/game-room.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
 import { UserState } from "./user-state.enum";
-import { GameLeaveDto } from "../game/dto/game-room.dto";
-import { GameGateway } from "src/game/game.gateway";
+import { Friend } from "src/friend/friend.entity";
+import { FriendRepository } from "src/friend/friend.repository";
 
 @WebSocketGateway({
   cors: {
@@ -27,10 +28,11 @@ import { GameGateway } from "src/game/game.gateway";
 export class UserGateway {
   constructor(
     private userRepository: UserRepository,
-    private chatParticipantsRepository: ChatParticipantsRepository,
+    private chatParticipantsRepository: ChatParticipantRepository,
     private chatGateway: ChatGateway,
     private gameParticipantsRepository: GameParticipantRepository,
-    private gameGateway: GameGateway,
+    private gameRoomRepository: GameRoomRepository,
+    private friendRepository: FriendRepository,
   ) {}
 
   @WebSocketServer()
@@ -41,34 +43,41 @@ export class UserGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: { userId: number },
   ) {
-    let user: User = await this.userRepository.findOne(data.userId);
+    console.log(socket.id);
+    const user: User = await this.userRepository.findOne(data.userId);
     user.socketId = socket.id;
-
-    const userListDto: UserListDto = {
-      userId: user.id,
-      nickname: user.nickname,
-      state: UserState.CONNECT,
-      socketId: user.socketId,
-    };
+    user.state = UserState.CONNECT;
 
     await user.save();
 
-    this.server.emit("connect-user", userListDto);
+    this.userAll();
+    this.handleFriend(socket, { userId: data.userId });
+    this.chatGateway.handleChatRoomAll(socket);
+  }
+
+  @SubscribeMessage("friend-all")
+  async handleFriend(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: { userId: number },
+  ) {
+    this.friendAll(socket.id, data.userId);
   }
 
   @SubscribeMessage("disconnect")
   async handleDisconnectUser(@ConnectedSocket() socket: Socket) {
-    let user: User = await this.userRepository.findOne({
+    const user: User = await this.userRepository.findOne({
       where: {
         socketId: socket.id,
       },
     });
 
     //user table에서 비활성화 시키기(이따구로 야매로 해도 괜찮은걸까?)
-    user.state = UserState.DISCONNECT;
+    user.state = 0;
+
+    await user.save();
 
     // 채팅방 떠남
-    const leaveChatRooms: ChatParticipants[] =
+    const leaveChatRooms: ChatParticipant[] =
       await this.chatParticipantsRepository.find(user);
 
     leaveChatRooms.forEach((leaveChatRoom) => {
@@ -84,14 +93,40 @@ export class UserGateway {
     const leaveGameRooms: GameParticipant[] =
       await this.gameParticipantsRepository.find(user);
 
-    leaveGameRooms.forEach((leaveGameRoom) => {
-      let gameLeaveDto: GameLeaveDto = {
-        userId: user.id,
-        title: "", //나중에 타이틀 뺄수도?
-        gameRoomId: leaveGameRoom.id,
-      };
-      this.gameGateway.handleGameRoomLeave(socket, gameLeaveDto);
-    });
+    // leaveGameRooms.forEach((leaveGameRoom) => {
+    // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
+    // })
     this.server.emit("disconnect-user", { success: true }); //뭐 보내줄 거 있나,,,?
+  }
+
+  async userAll() {
+    const users: User[] = await this.userRepository.find();
+
+    const userListDto: UserListDto[] = [];
+
+    users.forEach((user) => {
+      userListDto.push(new UserListDto(user));
+    });
+
+    console.log("user-all");
+    this.server.emit("user-all", userListDto);
+  }
+
+  async friendAll(socketId: string, userId: number): Promise<void> {
+    const friends: Friend[] = await this.friendRepository.find({
+      where: {
+        ownId: userId,
+      },
+      relations: ["friendId"],
+    });
+    const userListDto: UserListDto[] = [];
+
+    friends.forEach((friend) => {
+      userListDto.push(new UserListDto(friend.friendId));
+    });
+
+    const user: User = await this.userRepository.findOne(userId);
+    this.server.in(socketId).emit("friend-all", userListDto);
+    console.log("user list dto", userListDto);
   }
 }
