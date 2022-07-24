@@ -1,21 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
-import { ChatParticipantsRepository } from "./repository/chat-participants.repository";
-import { ChatParticipants } from "./entity/chat-participants.entity";
+import { ChatParticipantRepository } from "./repository/chat-participant.repository";
+import { ChatParticipant } from "./entity/chat-participant.entity";
 import { ChatRoom } from "./entity/chat-room.entity";
 import { ChatRoomRepository } from "./repository/chat-room.repository";
 import { ChatRoomDto } from "./dto/chat-room.dto";
+import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
 
 @Injectable()
 export class ChatService {
   constructor(
-    private chatParticipantsRepository: ChatParticipantsRepository,
+    private chatParticipantRepository: ChatParticipantRepository,
     private chatRoomRepository: ChatRoomRepository,
   ) {}
 
   async participantList(chatRoomId: number): Promise<ChatParticipantDto[]> {
-    const chatParticipants: ChatParticipants[] =
-      await this.chatParticipantsRepository.find({
+    const chatParticipants: ChatParticipant[] =
+      await this.chatParticipantRepository.find({
         where: { chatRoom: chatRoomId },
         relations: ["user"],
         order: {
@@ -26,25 +27,35 @@ export class ChatService {
     const chatParticipantDto: ChatParticipantDto[] = [];
 
     chatParticipants.forEach((chatParticipant) => {
-      chatParticipantDto.push(
-        new ChatParticipantDto(chatParticipant, chatRoomId),
-      );
+      chatParticipantDto.push(new ChatParticipantDto(chatParticipant));
     });
     return chatParticipantDto;
   }
 
   async chatRoomList(): Promise<ChatRoomDto[]> {
     const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
-      relations: ["chatParticipants"],
+      relations: ["chatParticipant"],
     });
     const chatRoomDto: ChatRoomDto[] = [];
 
     chatRooms.forEach((chatRoom) => {
-      chatRoomDto.push(
-        new ChatRoomDto(chatRoom, chatRoom.chatParticipants.length),
-      );
+      chatRoomDto.push(new ChatRoomDto(chatRoom));
     });
 
     return chatRoomDto;
+  }
+
+  async chatRoomDetail(id: number): Promise<ChatRoomDetailDto> {
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(id);
+    const chatParticipant: ChatParticipant[] =
+      await this.chatParticipantRepository.find({
+        where: { chatRoom: id },
+        relations: ["user"],
+      });
+    const chatRoomDetailDto: ChatRoomDetailDto = new ChatRoomDetailDto(
+      chatRoom,
+      chatParticipant,
+    );
+    return chatRoomDetailDto;
   }
 }

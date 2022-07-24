@@ -30,6 +30,7 @@ export class AuthService {
       });
       user = await user.save();
       this.achievementRepository.createDefaultAchievement(user);
+      firstLogin = true;
     }
 
     const id = user.id;
@@ -37,6 +38,7 @@ export class AuthService {
     const accessToken = await this.jwtService.sign(payload);
 
     return {
+      firstLogin,
       secondAuth: user.secondAuth,
       nickname: user.nickname,
       token: accessToken,

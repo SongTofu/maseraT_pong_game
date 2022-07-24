@@ -4,12 +4,14 @@ import { Friend } from "./friend.entity";
 import { FriendRepository } from "./friend.repository";
 import { UserRepository } from "src/user/user.repository";
 import { User } from "src/user/user.entity";
+import { UserGateway } from "src/user/user.gateway";
 
 @Injectable()
 export class FriendService {
   constructor(
     private friendRepository: FriendRepository,
     private userRepository: UserRepository,
+    private userGateway: UserGateway,
   ) {}
 
   async getAllFriends(id): Promise<GetAllFriendsDto[]> {
@@ -45,6 +47,7 @@ export class FriendService {
 
     await friend.save();
 
+    this.userGateway.friendAll(user.socketId, id);
     return { isSuccess: true };
   }
 }
