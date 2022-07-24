@@ -1,7 +1,7 @@
 import { Cookies } from "react-cookie";
 
-export function getToken(): string {
+export function getCookie(key: string): string {
   const cookeis = new Cookies();
 
-  return cookeis.get("token");
+  return cookeis.get(key);
 }

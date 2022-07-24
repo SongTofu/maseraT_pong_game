@@ -1,6 +1,6 @@
 import { getApi } from "../func/get-api";
 import { useState, useEffect, useRef } from "react";
-import { getToken } from "../func/get-token";
+import { getCookie } from "../func/get-cookie";
 import { useNavigate } from "react-router-dom";
 
 export function Login() {
@@ -53,7 +53,7 @@ export function Login() {
     fetch("http://localhost:3000/user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getToken()
+        Authorization: "Bearer " + getCookie("token")
       },
       body: data
     });
