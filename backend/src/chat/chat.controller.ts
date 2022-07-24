@@ -12,7 +12,7 @@ export class ChatController {
   async participantList(
     @Param("chatRoomId") chatRoomId: number,
   ): Promise<ChatParticipantDto[]> {
-    return this.chatService.participantList(chatRoomId);
+    return this.chatService.chatParticipantList(chatRoomId);
   }
 
   @Get("/room")
