@@ -1,4 +1,5 @@
 import { User } from "../user.entity";
+import { UserState } from "../user-state.enum";
 
 export class UserListDto {
   constructor(user: User) {
@@ -8,5 +9,5 @@ export class UserListDto {
   }
   userId: number;
   nickname: string;
-  state: number;
+  state: UserState;
 }
