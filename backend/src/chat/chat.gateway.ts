@@ -22,6 +22,7 @@ import { ChatMessageDto } from "./dto/chat-message.dto";
 import { ChatKickDto } from "./dto/chat-kick.dto";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatSettingDto } from "./dto/chat-setting.dto";
+import { ChatAuthorityDto } from "./dto/chat-authority.dto";
 
 @WebSocketGateway({
   cors: {
@@ -154,7 +155,14 @@ export class ChatGateway {
     }
 
     await chatParticipant.save();
-    this.chatParticipantAll(setAdminDto.chatRoomId);
+    // this.chatParticipantAll(setAdminDto.chatRoomId);
+    const chatAuthorityDto: ChatAuthorityDto = {
+      userId: chatParticipant.user.id,
+      authority: chatParticipant.authority,
+    };
+    this.server
+      .in("chat-" + setAdminDto.chatRoomId)
+      .emit("chat-room-set-admin", chatAuthorityDto);
   }
 
   @SubscribeMessage("chat-room-kick")
