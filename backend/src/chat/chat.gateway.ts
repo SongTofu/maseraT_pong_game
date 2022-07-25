@@ -15,7 +15,7 @@ import { User } from "src/user/user.entity";
 import { UserRepository } from "src/user/user.repository";
 import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
-import { SetAuthorityDto } from "./dto/set-authority.dto";
+import { SetAdminDto } from "./dto/set-admin.dto";
 import * as bcrypt from "bcryptjs";
 import { ChatLeaveDto } from "./dto/chat-leave.dto";
 import { ChatMessageDto } from "./dto/chat-message.dto";
@@ -132,39 +132,29 @@ export class ChatGateway {
       .emit("chat-room-message", chatMessageDto);
   }
 
-  @SubscribeMessage("chat-room-set-authority")
+  @SubscribeMessage("chat-room-set-admin")
   async handleChatRoomSetAdmin(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() setAuthorityDto: SetAuthorityDto,
+    @MessageBody() setAdminDto: SetAdminDto,
   ): Promise<void> {
-    console.log("chat-room-set-authority");
+    console.log("chat-room-set-admin");
     const chatParticipant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
         where: {
-          user: setAuthorityDto.userId,
-          chatRoom: setAuthorityDto.chatRoomId,
+          user: setAdminDto.userId,
+          chatRoom: setAdminDto.chatRoomId,
         },
         relations: ["user"],
       });
 
-    if (setAuthorityDto.authority === Authority.ADMIN) {
+    if (setAdminDto.isAdmin) {
       chatParticipant.authority = Authority.ADMIN;
-    } else if (setAuthorityDto.authority === Authority.PARTICIPANT) {
+    } else {
       chatParticipant.authority = Authority.PARTICIPANT;
     }
 
-    const returnAuthorityDto: SetAuthorityDto = {
-      chatRoomId: setAuthorityDto.chatRoomId,
-      userId: chatParticipant.user.id,
-      authority: chatParticipant.authority,
-    };
-
     await chatParticipant.save();
-    this.server
-      .in("chat-" + setAuthorityDto.chatRoomId)
-      .emit("chat-room-set-authority", returnAuthorityDto);
-    // emit (유저 아이디, 권한)
-    // this.chatParticipantAll(setAdminDto.chatRoomId);
+    this.chatParticipantAll(setAdminDto.chatRoomId);
   }
 
   @SubscribeMessage("chat-room-kick")
