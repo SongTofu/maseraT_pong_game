@@ -18,9 +18,4 @@ export class GameController {
   ): Promise<GameParticipantDto[]> {
     return this.gameService.gameParticipantList(gameRoomId);
   }
-
-  @Get("/room/:id")
-  async gameRoomDetail(@Param("id") id: number): Promise<GameRoomDetailDto> {
-    return await this.gameService.gameRoomDetail(id);
-  }
 }

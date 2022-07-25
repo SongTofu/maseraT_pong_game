@@ -44,18 +44,4 @@ export class ChatService {
 
     return chatRoomDto;
   }
-
-  async chatRoomDetail(id: number): Promise<ChatRoomDetailDto> {
-    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(id);
-    const chatParticipant: ChatParticipant[] =
-      await this.chatParticipantRepository.find({
-        where: { chatRoom: id },
-        relations: ["user"],
-      });
-    const chatRoomDetailDto: ChatRoomDetailDto = new ChatRoomDetailDto(
-      chatRoom,
-      chatParticipant,
-    );
-    return chatRoomDetailDto;
-  }
 }
