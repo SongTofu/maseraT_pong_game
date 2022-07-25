@@ -14,7 +14,7 @@ export class ChatService {
     private chatRoomRepository: ChatRoomRepository,
   ) {}
 
-  async participantList(chatRoomId: number): Promise<ChatParticipantDto[]> {
+  async chatParticipantList(chatRoomId: number): Promise<ChatParticipantDto[]> {
     const chatParticipants: ChatParticipant[] =
       await this.chatParticipantRepository.find({
         where: { chatRoom: chatRoomId },

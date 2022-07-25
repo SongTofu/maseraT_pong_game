@@ -195,22 +195,23 @@ export class ChatGateway {
           user: user.id,
         },
       });
-    const userAuthority = delUser.authority;
+    // const userAuthority = delUser.authority;
     await this.chatParticipantsRepository.delete(delUser);
 
     // this.chatParticipantAll(chatLeaveDto.chatRoomId);
     this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
     socket.leave(chatTitle); //방을 떠난다.
 
-    ////////////////////////////////////////////////////////////////////
-
-    // 참여자도 삭제해야함
     const participant: ChatParticipant =
       await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
-    if (!participant || userAuthority == 2) {
+    // if (!participant || userAuthority == Authority.owner) {
+    if (!participant) {
       this.server.emit("chat-room-destroy", {
         chatRoomId: chatLeaveDto.chatRoomId,
       });
+      await this.chatParticipantsRepository.deleteAllParticipants(
+        chatLeaveDto.chatRoomId,
+      );
       await this.chatRoomRepository.deleteRoom(chatLeaveDto.chatRoomId);
       // this.handleDisconnectChatRoom(chatLeaveDto.chatRoomId);
     }
