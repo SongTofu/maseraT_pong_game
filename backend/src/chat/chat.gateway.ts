@@ -195,7 +195,7 @@ export class ChatGateway {
           user: user.id,
         },
       });
-    const userAuthority = delUser.authority;
+    // const userAuthority = delUser.authority;
     await this.chatParticipantsRepository.delete(delUser);
 
     // this.chatParticipantAll(chatLeaveDto.chatRoomId);
@@ -204,7 +204,8 @@ export class ChatGateway {
 
     const participant: ChatParticipant =
       await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
-    if (!participant || userAuthority == Authority.owner) {
+    // if (!participant || userAuthority == Authority.owner) {
+    if (!participant) {
       this.server.emit("chat-room-destroy", {
         chatRoomId: chatLeaveDto.chatRoomId,
       });
