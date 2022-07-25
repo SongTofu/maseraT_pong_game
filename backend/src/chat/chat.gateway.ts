@@ -145,9 +145,9 @@ export class ChatGateway {
       });
 
     if (setAdminDto.isAdmin) {
-      chatParticipant.authority = Authority.admin;
+      chatParticipant.authority = Authority.ADMIN;
     } else {
-      chatParticipant.authority = Authority.participant;
+      chatParticipant.authority = Authority.PARTICIPANT;
     }
 
     await chatParticipant.save();
@@ -203,7 +203,9 @@ export class ChatGateway {
     socket.leave(chatTitle); //방을 떠난다.
 
     const participant: ChatParticipant =
-      await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
+      await this.chatParticipantsRepository.findOne({
+        where: { chatRoom: chatLeaveDto.chatRoomId },
+      });
     // if (!participant || userAuthority == Authority.owner) {
     if (!participant) {
       this.server.emit("chat-room-destroy", {
@@ -266,7 +268,7 @@ export class ChatGateway {
         chatRoom,
       });
 
-    if (isCreate) chatParticipants.authority = Authority.owner;
+    if (isCreate) chatParticipants.authority = Authority.OWNER;
 
     if (chatJoinDto.password) {
       if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {
