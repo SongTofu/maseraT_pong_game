@@ -6,13 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { Popup } from "reactjs-popup";
 // import "reactjs-popup/dist/index.css";
 import { ChatCreatePopup } from "../popup/chat-create-popup";
+import { UserList } from "../component/user-list";
 
 export function ChatMain() {
   const [rooms, setRooms] = useState<ChatRoomInfo[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/chat/room", {
+    fetch(process.env.REACT_APP_API_URL + "chat/room", {
       method: "GET"
     })
       .then(res => res.json())
@@ -65,6 +66,8 @@ export function ChatMain() {
           />
         );
       })}
+      <h1>user list</h1>
+      <UserList isChatRoom={false} />
     </div>
   );
 }
