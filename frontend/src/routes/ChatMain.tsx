@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Popup } from "reactjs-popup";
 // import "reactjs-popup/dist/index.css";
 import { ChatCreatePopup } from "../popup/chat-create-popup";
-import { UserList } from "../component/user-list";
+import { UserList } from "../component/list/user-list";
 
 export function ChatMain() {
   const [rooms, setRooms] = useState<ChatRoomInfo[]>([]);

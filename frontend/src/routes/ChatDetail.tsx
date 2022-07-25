@@ -6,7 +6,7 @@ import { ChatType } from "../type/chat-type";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
 import { Authority } from "../type/enum/authority.enum";
-import { UserList } from "../component/user-list";
+import { UserList } from "../component/list/user-list";
 
 export function ChatDetail() {
   const { chatRoomId } = useParams();
