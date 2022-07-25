@@ -15,7 +15,7 @@ import { User } from "src/user/user.entity";
 import { UserRepository } from "src/user/user.repository";
 import { Authority } from "./enum/authority.enum";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
-import { SetAdminDto } from "./dto/set-admin.dto";
+import { SetAuthorityDto } from "./dto/set-authority.dto";
 import * as bcrypt from "bcryptjs";
 import { ChatLeaveDto } from "./dto/chat-leave.dto";
 import { ChatMessageDto } from "./dto/chat-message.dto";
@@ -132,26 +132,39 @@ export class ChatGateway {
       .emit("chat-room-message", chatMessageDto);
   }
 
-  @SubscribeMessage("chat-room-set-admin")
+  @SubscribeMessage("chat-room-set-authority")
   async handleChatRoomSetAdmin(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() setAdminDto: SetAdminDto,
+    @MessageBody() setAuthorityDto: SetAuthorityDto,
   ): Promise<void> {
-    console.log("chat-room-set-admin");
+    console.log("chat-room-set-authority");
     const chatParticipant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
-        where: { user: setAdminDto.userId, chatRoom: setAdminDto.chatRoomId },
+        where: {
+          user: setAuthorityDto.userId,
+          chatRoom: setAuthorityDto.chatRoomId,
+        },
         relations: ["user"],
       });
 
-    if (setAdminDto.isAdmin) {
-      chatParticipant.authority = Authority.admin;
-    } else {
-      chatParticipant.authority = Authority.participant;
+    if (setAuthorityDto.authority === Authority.ADMIN) {
+      chatParticipant.authority = Authority.ADMIN;
+    } else if (setAuthorityDto.authority === Authority.PARTICIPANT) {
+      chatParticipant.authority = Authority.PARTICIPANT;
     }
 
+    const returnAuthorityDto: SetAuthorityDto = {
+      chatRoomId: setAuthorityDto.chatRoomId,
+      userId: chatParticipant.user.id,
+      authority: chatParticipant.authority,
+    };
+
     await chatParticipant.save();
-    this.chatParticipantAll(setAdminDto.chatRoomId);
+    this.server
+      .in("chat-" + setAuthorityDto.chatRoomId)
+      .emit(returnAuthorityDto);
+    // emit (유저 아이디, 권한)
+    // this.chatParticipantAll(setAdminDto.chatRoomId);
   }
 
   @SubscribeMessage("chat-room-kick")
@@ -203,7 +216,9 @@ export class ChatGateway {
     socket.leave(chatTitle); //방을 떠난다.
 
     const participant: ChatParticipant =
-      await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
+      await this.chatParticipantsRepository.findOne({
+        where: { chatRoom: chatLeaveDto.chatRoomId },
+      });
     // if (!participant || userAuthority == Authority.owner) {
     if (!participant) {
       this.server.emit("chat-room-destroy", {
@@ -266,7 +281,7 @@ export class ChatGateway {
         chatRoom,
       });
 
-    if (isCreate) chatParticipants.authority = Authority.owner;
+    if (isCreate) chatParticipants.authority = Authority.OWNER;
 
     if (chatJoinDto.password) {
       if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {
