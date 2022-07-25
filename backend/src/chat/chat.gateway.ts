@@ -162,7 +162,7 @@ export class ChatGateway {
     await chatParticipant.save();
     this.server
       .in("chat-" + setAuthorityDto.chatRoomId)
-      .emit(returnAuthorityDto);
+      .emit("chat-room-set-authority", returnAuthorityDto);
     // emit (유저 아이디, 권한)
     // this.chatParticipantAll(setAdminDto.chatRoomId);
   }
