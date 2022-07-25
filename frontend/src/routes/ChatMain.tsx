@@ -67,7 +67,7 @@ export function ChatMain() {
         );
       })}
       <h1>user list</h1>
-      <UserList />
+      <UserList isChatRoom={false} />
     </div>
   );
 }
