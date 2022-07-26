@@ -14,7 +14,6 @@ export class AchievementService {
 
   async getMyAchievement(id: number): Promise<AchievementDto> {
     const user: User = await this.userRepository.findOne(id);
-    if (!user) throw new NotFoundException(`Can't find User with id ${id}`); //나중에 접속한 사람 확인되면 삭제가능
 
     const achievement: Achievement = await this.achievementRepository.findOne({
       where: {
@@ -53,8 +52,6 @@ export class AchievementService {
 
   async getTargetAchievement(targetId: number): Promise<AchievementDto> {
     const target = await this.userRepository.findOne(targetId);
-    if (!target)
-      throw new NotFoundException(`Can't find Target with id ${targetId}`); //나중에 접속한 사람 확인되면 삭제가능
 
     const achievement: Achievement = await this.achievementRepository.findOne({
       where: {

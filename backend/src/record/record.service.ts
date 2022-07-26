@@ -5,9 +5,7 @@ import { Record } from "./record.entity";
 
 @Injectable()
 export class RecordService {
-  constructor(
-    private recordRepository: RecordRepository,
-  ): Promise<RecordDto[]> {}
+  constructor(private recordRepository: RecordRepository) {}
 
   async getRecord(id: number): Promise<RecordDto[]> {
     const records: Record[] = await this.recordRepository.find({

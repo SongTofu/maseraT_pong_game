@@ -2,7 +2,6 @@ import { Controller, Get, Param } from "@nestjs/common";
 import { ChatService } from "./chat.service";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { ChatRoomDto } from "./dto/chat-room.dto";
-import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
 
 @Controller("chat")
 export class ChatController {
