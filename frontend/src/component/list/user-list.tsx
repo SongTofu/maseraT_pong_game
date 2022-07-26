@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Select } from "../type/enum/select.enum";
-import { AllUser } from "./list/all-user";
-import { Friend } from "./list/freind";
-import { ChatUser } from "./list/chat-user";
+import { Select } from "../../type/enum/select.enum";
+import { AllUser } from "./all-user";
+import { Friend } from "./freind";
+import { ChatUser } from "./chat-user";
 
 export function UserList({ isChatRoom }) {
   const [select, setSelect] = useState<Select>(Select.FREIND);
