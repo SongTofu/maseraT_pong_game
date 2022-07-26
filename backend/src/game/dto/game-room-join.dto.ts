@@ -4,9 +4,3 @@ export class GameJoinDto {
   userId: number;
   nickname: string;
 }
-
-export class GameLeaveDto {
-  userId: number;
-  title: string;
-  gameRoomId: number;
-}

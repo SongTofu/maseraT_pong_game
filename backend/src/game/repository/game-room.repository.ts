@@ -1,7 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Repository, EntityRepository } from "typeorm";
-import { GameJoinDto, GameLeaveDto } from "../dto/game-room.dto";
 import { GameRoom } from "../entity/game-room.entity";
+import { GameJoinDto } from "../dto/game-room-join.dto";
 
 @EntityRepository(GameRoom)
 export class GameRoomRepository extends Repository<GameRoom> {

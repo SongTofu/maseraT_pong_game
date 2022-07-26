@@ -17,7 +17,8 @@ import { GameParticipant } from "./entity/game-participant.entity";
 import { RecordRepository } from "src/record/record.repository";
 import { GameDataDto } from "./dto/game-data.dto";
 import { UserRepository } from "src/user/user.repository";
-import { GameJoinDto, GameLeaveDto } from "./dto/game-room.dto";
+import { GameJoinDto } from "./dto/game-room-join.dto";
+import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantDto } from "./dto/game-participant.dto";
 

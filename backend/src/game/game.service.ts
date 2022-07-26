@@ -13,7 +13,7 @@ export class GameService {
     private gameParticipantRepository: GameParticipantRepository,
   ) {}
 
-  async gameRoomList() {
+  async gameRoomList(): Promise<GameRoom[]> {
     return await this.gameRoomRepository.find();
   }
 

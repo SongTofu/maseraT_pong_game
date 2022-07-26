@@ -91,7 +91,10 @@ export class UserService {
     return targetUserInfoDto;
   }
 
-  async updateUser(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
+  async updateUser(
+    userId: number,
+    updateUserInfoDto: UpdateUserInfoDto,
+  ): Promise<{ success: boolean }> {
     const user: User = await this.userRepository.findOne(userId);
 
     if (updateUserInfoDto.nickname) {
