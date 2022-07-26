@@ -168,7 +168,6 @@ export class ChatGateway {
     }
 
     await chatParticipant.save();
-    // this.chatParticipantAll(setAdminDto.chatRoomId);
     const chatAuthorityDto: ChatAuthorityDto = {
       userId: chatParticipant.user.id,
       authority: chatParticipant.authority,
@@ -192,9 +191,8 @@ export class ChatGateway {
       });
     await this.chatParticipantsRepository.delete(delUser);
 
+    this.server.in("chat-" + chatRoomId).emit("chat-room-kick", { targetId });
     this.server.in(target.socketId).socketsLeave("chat-" + chatRoomId);
-    this.server.in(target.socketId).emit("chat-room-kick", { chatRoomId });
-    this.chatParticipantAll(chatRoomId);
   }
 
   ///////////////////////////
