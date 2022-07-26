@@ -23,6 +23,8 @@ import { ChatKickDto } from "./dto/chat-kick.dto";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatSettingDto } from "./dto/chat-setting.dto";
 import { ChatAuthorityDto } from "./dto/chat-authority.dto";
+import { Block } from "src/block/block.entity";
+import { BlockRepository } from "src/block/block.repository";
 
 @WebSocketGateway({
   cors: {
@@ -34,6 +36,7 @@ export class ChatGateway {
     private chatRoomRepository: ChatRoomRepository,
     private chatParticipantsRepository: ChatParticipantRepository,
     private userRepository: UserRepository,
+    private blockRepository: BlockRepository,
   ) {}
 
   @WebSocketServer()
@@ -130,13 +133,17 @@ export class ChatGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() chatMessageDto: ChatMessageDto,
   ): Promise<void> {
-    // console.log("chat room message");
     const user: User = await this.userRepository.findOne(chatMessageDto.userId);
-
+    const blocks: Block[] = await this.blockRepository.find({
+      where: { blockId: user.id },
+      relations: ["ownId"],
+    });
+    let temp = this.server.in("chat-" + chatMessageDto.chatRoomId);
+    blocks.forEach((block) => {
+      temp = temp.except(block.ownId.socketId);
+    });
     chatMessageDto.nickname = user.nickname;
-    this.server
-      .in("chat-" + chatMessageDto.chatRoomId)
-      .emit("chat-room-message", chatMessageDto);
+    temp.emit("chat-room-message", chatMessageDto);
   }
 
   @SubscribeMessage("chat-room-set-admin")

@@ -50,9 +50,9 @@ export class UserGateway {
 
     await user.save();
 
-    this.userAll();
-    this.handleFriend(socket, { userId: data.userId });
-    this.chatGateway.handleChatRoomAll(socket);
+    // this.userAll(); 안쓸거임!
+    // this.handleFriend(socket, { userId: data.userId });
+    // this.chatGateway.handleChatRoomAll(socket);
   }
 
   @SubscribeMessage("friend-all")
