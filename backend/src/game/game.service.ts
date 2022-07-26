@@ -32,18 +32,4 @@ export class GameService {
 
     return gameParticipantDto;
   }
-
-  async gameRoomDetail(id: number): Promise<GameRoomDetailDto> {
-    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(id);
-    const gameParticipant: GameParticipant[] =
-      await this.gameParticipantRepository.find({
-        where: { gameRoom: id },
-        relations: ["user"],
-      });
-    const gameRoomDetailDto: GameRoomDetailDto = new GameRoomDetailDto(
-      gameRoom,
-      gameParticipant,
-    );
-    return gameRoomDetailDto;
-  }
 }

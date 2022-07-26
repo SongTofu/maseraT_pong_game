@@ -22,6 +22,7 @@ import { ChatMessageDto } from "./dto/chat-message.dto";
 import { ChatKickDto } from "./dto/chat-kick.dto";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatSettingDto } from "./dto/chat-setting.dto";
+import { ChatAuthorityDto } from "./dto/chat-authority.dto";
 
 @WebSocketGateway({
   cors: {
@@ -77,8 +78,14 @@ export class ChatGateway {
       return;
     }
 
+    const chatRoomDto: ChatRoomDto = {
+      chatRoomId: chatJoinDto.chatRoomId,
+      title: chatJoinDto.title,
+      isPassword: chatJoinDto.password ? true : false,
+    };
+
     if (isCreate) {
-      this.server.emit("chat-room-create", chatJoinDto);
+      this.server.emit("chat-room-create", chatRoomDto);
     }
 
     socket.join("chat-" + chatJoinDto.chatRoomId);
@@ -140,18 +147,28 @@ export class ChatGateway {
     console.log("chat-room-set-admin");
     const chatParticipant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
-        where: { user: setAdminDto.userId, chatRoom: setAdminDto.chatRoomId },
+        where: {
+          user: setAdminDto.userId,
+          chatRoom: setAdminDto.chatRoomId,
+        },
         relations: ["user"],
       });
 
     if (setAdminDto.isAdmin) {
-      chatParticipant.authority = Authority.admin;
+      chatParticipant.authority = Authority.ADMIN;
     } else {
-      chatParticipant.authority = Authority.participant;
+      chatParticipant.authority = Authority.PARTICIPANT;
     }
 
     await chatParticipant.save();
-    this.chatParticipantAll(setAdminDto.chatRoomId);
+    // this.chatParticipantAll(setAdminDto.chatRoomId);
+    const chatAuthorityDto: ChatAuthorityDto = {
+      userId: chatParticipant.user.id,
+      authority: chatParticipant.authority,
+    };
+    this.server
+      .in("chat-" + setAdminDto.chatRoomId)
+      .emit("chat-room-set-admin", chatAuthorityDto);
   }
 
   @SubscribeMessage("chat-room-kick")
@@ -203,7 +220,9 @@ export class ChatGateway {
     socket.leave(chatTitle); //방을 떠난다.
 
     const participant: ChatParticipant =
-      await this.chatParticipantsRepository.findOne(chatLeaveDto.chatRoomId);
+      await this.chatParticipantsRepository.findOne({
+        where: { chatRoom: chatLeaveDto.chatRoomId },
+      });
     // if (!participant || userAuthority == Authority.owner) {
     if (!participant) {
       this.server.emit("chat-room-destroy", {
@@ -266,7 +285,7 @@ export class ChatGateway {
         chatRoom,
       });
 
-    if (isCreate) chatParticipants.authority = Authority.owner;
+    if (isCreate) chatParticipants.authority = Authority.OWNER;
 
     if (chatJoinDto.password) {
       if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {

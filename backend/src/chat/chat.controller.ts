@@ -19,9 +19,4 @@ export class ChatController {
   async chatRoomList(): Promise<ChatRoomDto[]> {
     return this.chatService.chatRoomList();
   }
-
-  @Get("/room/:id")
-  async chatRoomDetail(@Param("id") id: number): Promise<ChatRoomDetailDto> {
-    return await this.chatService.chatRoomDetail(id);
-  }
 }
