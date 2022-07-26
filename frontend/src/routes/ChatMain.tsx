@@ -4,15 +4,17 @@ import { ChatRoomInfo } from "../type/chat-room-info";
 import { socket } from "../App";
 import { useNavigate } from "react-router-dom";
 import { Popup } from "reactjs-popup";
-// import "reactjs-popup/dist/index.css";
 import { ChatCreatePopup } from "../popup/chat-create-popup";
 import { UserList } from "../component/list/user-list";
+import { getCookie } from "../func/get-cookie";
 
 export function ChatMain() {
   const [rooms, setRooms] = useState<ChatRoomInfo[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    socket.emit("connect-user", { userId: getCookie("id") });
+
     fetch(process.env.REACT_APP_API_URL + "chat/room", {
       method: "GET"
     })

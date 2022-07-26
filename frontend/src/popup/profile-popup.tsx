@@ -21,7 +21,7 @@ export function ProfilePopup({ userId }) {
         setIsFriend(json.isFriend);
         setIsBlock(json.isBlocked);
       });
-  }, []);
+  }, [userId]);
 
   const onAddFriend = () => {
     setIsFriend(true);
@@ -83,7 +83,6 @@ export function ProfilePopup({ userId }) {
             <button disabled={isFriend} onClick={onAddFriend}>
               친구 추가
             </button>
-            <button>게임 신청</button>
             <button>DM 보내기</button>
             {isBlock ? (
               <button onClick={onDeleteBlock}>차단 해제</button>
