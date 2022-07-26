@@ -78,8 +78,14 @@ export class ChatGateway {
       return;
     }
 
+    const chatRoomDto: ChatRoomDto = {
+      chatRoomId: chatJoinDto.chatRoomId,
+      title: chatJoinDto.title,
+      isPassword: chatJoinDto.password ? true : false,
+    };
+
     if (isCreate) {
-      this.server.emit("chat-room-create", chatJoinDto);
+      this.server.emit("chat-room-create", chatRoomDto);
     }
 
     socket.join("chat-" + chatJoinDto.chatRoomId);
