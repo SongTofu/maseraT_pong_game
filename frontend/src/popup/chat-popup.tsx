@@ -1,7 +1,6 @@
 import { Authority } from "../type/enum/authority.enum";
 import { getCookie } from "../func/get-cookie";
 import { socket } from "../App";
-// import { SetAdminType } from "../type/set-admin-type";
 import { ChatPopupType } from "../type/chat-popup-type";
 import { Dispatch, SetStateAction } from "react";
 import Popup from "reactjs-popup";
@@ -9,15 +8,14 @@ import { ProfilePopup } from "./profile-popup";
 
 type userProps = {
   user: ChatPopupType;
-  setIsClick: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export function ChatPopup({ user, setIsClick }: userProps) {
+export function ChatPopup({ user, setIsOpen }: userProps) {
   const { id, authority } = user;
   const chatRoomId = +localStorage.getItem("chatRoomId");
   const myAuthority = +localStorage.getItem("authority");
 
-  console.log("my authority", myAuthority);
   // 내 프로필 넣기
   if (id === +getCookie("id")) return <div></div>;
 
@@ -29,7 +27,7 @@ export function ChatPopup({ user, setIsClick }: userProps) {
       isAdmin,
       userId: id
     });
-    setIsClick(false);
+    setIsOpen(false);
   };
 
   const onKick = () => {
@@ -37,9 +35,8 @@ export function ChatPopup({ user, setIsClick }: userProps) {
       targetId: id,
       chatRoomId: +localStorage.getItem("chatRoomId")
     });
-    setIsClick(false);
+    setIsOpen(false);
   };
-
   return (
     <div>
       {myAuthority >= Authority.OWNER ? (

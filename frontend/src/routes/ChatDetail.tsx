@@ -1,11 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChatParticipantType } from "../type/chat-participant-type";
 import { Chat } from "../component/chat";
 import { ChatType } from "../type/chat-type";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
 import { UserList } from "../component/list/user-list";
+import { Authority } from "../type/enum/authority.enum";
+import { ChatRoomSetPopup } from "../popup/chat-room-set-popup";
 
 export function ChatDetail() {
   const { chatRoomId } = useParams();
@@ -13,8 +15,16 @@ export function ChatDetail() {
   const [title, setTitle] = useState("");
   const [chats, setChats] = useState<ChatType[]>([]);
   const [message, setMessage] = useState("");
+  const [authority, setAuthority] = useState(Authority.PARTICIPANT);
+  const [isRoomSet, setIsRoomSet] = useState(false);
 
   const navigate = useNavigate();
+
+  const ref = useRef(null);
+
+  const onSideClick = e => {
+    if (!ref.current.contains(e.target)) setIsRoomSet(false);
+  };
 
   useEffect(() => {
     localStorage.setItem("chatRoomId", chatRoomId);
@@ -24,23 +34,22 @@ export function ChatDetail() {
     })
       .then(res => res.json())
       .then(json => {
-        setParticipants(json);
-        json.forEach(participant => {
+        setParticipants(json.chatParticipant);
+        json.chatParticipant.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", participant.authority);
+            setAuthority(participant.authority);
           }
         });
         setTitle(json.title);
       });
 
-    // socket.on("chat-room-destroy", data => {
-    //   if (data.chatRoomId === chatRoomId) navigate("/chat");
-    // });
+    window.addEventListener("click", onSideClick);
 
     return () => {
       socket.emit("chat-room-leave", { chatRoomId, userId: getCookie("id") });
-      // socket.off("chat-room-destroy");
       localStorage.removeItem("authority");
+      window.removeEventListener("click", onSideClick);
     };
   }, [chatRoomId, navigate]);
 
@@ -88,8 +97,10 @@ export function ChatDetail() {
     });
 
     socket.on("chat-room-set-admin", ({ userId, authority }) => {
-      if (userId === +getCookie("id"))
+      if (userId === +getCookie("id")) {
         localStorage.setItem("authority", authority);
+        setAuthority(authority);
+      }
 
       setParticipants(curr => {
         curr.forEach(participant => {
@@ -105,6 +116,10 @@ export function ChatDetail() {
         navigate("/chat");
       }
       setParticipants(curr => curr.filter(c => c.userId !== targetId));
+    });
+
+    socket.on("chat-room-setting", ({ title }) => {
+      setTitle(title);
     });
 
     return () => {
@@ -129,12 +144,29 @@ export function ChatDetail() {
     setMessage(e.target.value);
   };
 
+  const onRoomSet = () => {
+    setIsRoomSet(true);
+  };
+
   return (
     <div>
       <h1>{title}</h1>
       <div>
         <h2>Participant</h2>
         <UserList isChatRoom={true} participants={participants} />
+        <div ref={ref}>
+          {authority >= Authority.ADMIN ? (
+            <button onClick={onRoomSet}>설정</button>
+          ) : null}
+          {isRoomSet ? (
+            <ChatRoomSetPopup
+              chatRoomId={chatRoomId}
+              roomTitle={title}
+              setIsRoomSet={setIsRoomSet}
+            />
+          ) : null}
+        </div>
+        <button>나가기</button>
         <h2>채팅</h2>
         <ul>
           {chats.map((chat, index) => {

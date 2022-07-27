@@ -1,4 +1,3 @@
-import { getApi } from "../func/get-api";
 import { useState, useEffect, useRef } from "react";
 import { getCookie } from "../func/get-cookie";
 import { useNavigate } from "react-router-dom";
@@ -18,12 +17,20 @@ export function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getApi("user/info").then(json => {
-      setNickname(json.nickname);
-      setImgUrl(process.env.REACT_APP_API_URL + json.profileImg);
-      setIsSecondAuth(json.secondAuth);
-      setEmail(json.email);
-    });
+    // getApi("user/info").then(json => {
+    fetch(process.env.REACT_APP_API_URL + "user/info", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then(json => {
+        setNickname(json.nickname);
+        setImgUrl(process.env.REACT_APP_API_URL + json.profileImg);
+        setIsSecondAuth(json.secondAuth);
+        setEmail(json.email);
+      });
   }, []);
 
   const imageInput = useRef(null);
@@ -42,15 +49,23 @@ export function Login() {
   };
 
   const onCheckNickname = () => {
-    getApi("nickname/" + nickname).then(json => {
-      if (json.isValidNickname) {
-        setBtnEnable(false);
-        setCheckMsg("사용 가능한 닉네임입니다.");
-      } else {
-        setBtnEnable(true);
-        setCheckMsg("사용 불가능한 닉네임입니다.");
+    // getApi("nickname/" + nickname).then(json => {
+    fetch(process.env.REACT_APP_API_URL + "nickname" + nickname, {
+      method: "GET",
+      headers: {
+        Authorization: getCookie("token")
       }
-    });
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.isValidNickname) {
+          setBtnEnable(false);
+          setCheckMsg("사용 가능한 닉네임입니다.");
+        } else {
+          setBtnEnable(true);
+          setCheckMsg("사용 불가능한 닉네임입니다.");
+        }
+      });
   };
 
   const onProfileUpdate = () => {

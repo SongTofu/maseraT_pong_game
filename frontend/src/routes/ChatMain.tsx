@@ -46,9 +46,19 @@ export function ChatMain() {
       );
     });
 
+    socket.on("chat-room-setting", ({ chatRoomId, title }) => {
+      setRooms(currRooms => {
+        return currRooms.map(currRoom => {
+          if (currRoom.chatRoomId === +chatRoomId) currRoom.title = title;
+          return currRoom;
+        });
+      });
+    });
+
     return () => {
       socket.off("chat-room-create");
       socket.off("chat-room-destroy");
+      socket.off("chat-room-setting");
     };
   }, [rooms]);
 
@@ -69,7 +79,7 @@ export function ChatMain() {
         );
       })}
       <h1>user list</h1>
-      <UserList isChatRoom={false} />
+      <UserList isChatRoom={false} participants="" />
     </div>
   );
 }

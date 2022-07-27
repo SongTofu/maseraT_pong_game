@@ -2,11 +2,19 @@ import { useState, useEffect } from "react";
 import { UserInfoType } from "../type/user-info-type";
 import { getCookie } from "../func/get-cookie";
 import { Record } from "./record";
+import { AchievementType } from "../type/achievement-type";
 
 export function ProfilePopup({ userId }) {
   const [info, setInfo] = useState<UserInfoType>();
   const [isFriend, setIsFriend] = useState(false);
   const [isBlock, setIsBlock] = useState(false);
+  const [achievement, setAchievement] = useState<AchievementType>({
+    firstLogin: false,
+    firstWin: false,
+    firstLose: false,
+    thiredWin: false,
+    consecThree: false
+  });
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info/" + userId, {
@@ -21,6 +29,15 @@ export function ProfilePopup({ userId }) {
         setIsFriend(json.isFriend);
         setIsBlock(json.isBlocked);
       });
+
+    fetch(process.env.REACT_APP_API_URL + "achievement/" + userId, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then(json => setAchievement(json));
   }, [userId]);
 
   const onAddFriend = () => {
@@ -72,7 +89,14 @@ export function ProfilePopup({ userId }) {
         <div>
           <img src={process.env.REACT_APP_API_URL + info.profileImg} alt="" />
           <p>{info.nickname}</p>
-          <p>{info.level}</p>
+          <p>level: {info.level}</p>
+          <p>
+            {achievement.firstLogin ? "firstLogin, " : null}
+            {achievement.firstWin ? "firstWin, " : null}
+            {achievement.firstLose ? "firstLose, " : null}
+            {achievement.thiredWin ? "thirdWin, " : null}
+            {achievement.consecThree ? "consecThree" : null}
+          </p>
           <span>전적/래더전적</span>
           <span>
             {info.personalWin}승 {info.personalLose}패 / {info.ladderWin}승{" "}
