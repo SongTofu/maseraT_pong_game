@@ -185,12 +185,6 @@ export class ChatGateway {
     const { chatRoomId, targetId } = chatKickDto;
     const target: User = await this.userRepository.findOne(targetId);
 
-    const delUser: ChatParticipant =
-      await this.chatParticipantsRepository.findOne({
-        where: { chatRoom: chatRoomId, user: targetId },
-      });
-    await this.chatParticipantsRepository.delete(delUser);
-
     this.server.in("chat-" + chatRoomId).emit("chat-room-kick", { targetId });
     this.server.in(target.socketId).socketsLeave("chat-" + chatRoomId);
   }
