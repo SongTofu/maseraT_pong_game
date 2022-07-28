@@ -20,7 +20,6 @@ import { UserRepository } from "src/user/user.repository";
 import { GameJoinDto } from "./dto/game-room-join.dto";
 import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
-import { GameParticipantDto } from "./dto/game-participant.dto";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
 
 const cvs = {
@@ -83,7 +82,9 @@ export class GameGateway {
     const joinGameTitle = "game-" + gameJoinDto.gameRoomId;
 
     socket.join(joinGameTitle);
-    this.server.in(joinGameTitle).emit("game-room-join", gameUser);
+    this.server
+      .in(joinGameTitle)
+      .emit("game-room-join", { gameRoomId: gameJoinDto.gameRoomId, gameUser });
   }
 
   private async joinGameRoom(

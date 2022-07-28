@@ -1,5 +1,4 @@
 import { Controller, Get, Param } from "@nestjs/common";
-import { GameParticipantDto } from "./dto/game-participant.dto";
 import { GameService } from "./game.service";
 import { GameRoomDetailDto } from "./dto/game-room-detail.dto";
 import { GameRoom } from "./entity/game-room.entity";
