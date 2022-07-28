@@ -21,6 +21,7 @@ import { GameJoinDto } from "./dto/game-room-join.dto";
 import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantDto } from "./dto/game-participant.dto";
+import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
 
 const cvs = {
   width: 600,
@@ -52,7 +53,10 @@ export class GameGateway {
     @MessageBody() gameJoinDto: GameJoinDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameJoinDto.userId);
-    const position: GamePosition = await this.joinGameRoom(gameJoinDto, user);
+    const gameUser: GameParticipantProfile = await this.joinGameRoom(
+      gameJoinDto,
+      user,
+    );
     let isCreate: Boolean = false;
 
     if (!gameJoinDto.gameRoomId) {
@@ -65,42 +69,42 @@ export class GameGateway {
       gameJoinDto.gameRoomId,
     );
 
-    const gameParticipantDto: GameParticipantDto = {
-      gameRoomId: gameJoinDto.gameRoomId,
-      title: gameJoinDto.title,
-      userId: user.id,
-      nickname: user.nickname,
-      position,
-    };
+    // const gameParticipantDto: GameParticipantDto = {
+    //   gameRoomId: gameJoinDto.gameRoomId,
+    //   title: gameJoinDto.title,
+    //   userId: user.id,
+    //   nickname: user.nickname,
+    //   position,
+    // };
 
     if (isCreate) {
       this.server.emit("game-room-create", gameRoom);
     }
-    const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
+    const joinGameTitle = "game-" + gameJoinDto.gameRoomId;
 
     socket.join(joinGameTitle);
-    this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
+    this.server.in(joinGameTitle).emit("game-room-join", gameUser);
   }
 
   private async joinGameRoom(
     gameJoinDto: GameJoinDto,
     user: User,
-  ): Promise<GamePosition> {
+  ): Promise<GameParticipantProfile> {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameJoinDto.gameRoomId,
     );
     let gameParticipant: GameParticipant;
 
-    if (!gameJoinDto.gameRoomId) {
-      gameParticipant = this.gameParticipantRepository.create({
-        position: GamePosition.leftUser,
-        user,
-        gameRoom,
-      });
-      await gameParticipant.save();
+    // if (!gameJoinDto.gameRoomId) {
+    //   gameParticipant = this.gameParticipantRepository.create({
+    //     position: GamePosition.leftUser,
+    //     user,
+    //     gameRoom,
+    //   });
+    //   await gameParticipant.save();
 
-      return gameParticipant.position;
-    }
+    //   return gameParticipant.position;
+    // }
 
     const existLeftUser = this.gameParticipantRepository.findOne({
       id: gameJoinDto.gameRoomId,
@@ -126,7 +130,10 @@ export class GameGateway {
     }
     await gameParticipant.save();
 
-    return gameParticipant.position;
+    const gameParticipantProfile: GameParticipantProfile =
+      new GameParticipantProfile(user, gameParticipant.position);
+
+    return gameParticipantProfile;
   }
 
   @SubscribeMessage("game-room-leave")
@@ -150,6 +157,21 @@ export class GameGateway {
 
     this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
     socket.leave(leaveGameTitle);
+
+    //게임방 유저 모두 나가면 방 폭파
+    const participant: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameLeaveDto.gameRoomId },
+      });
+    if (!participant) {
+      this.server.emit("game-room-destroy", {
+        gameRoomId: gameLeaveDto.gameRoomId,
+      });
+      await this.gameParticipantRepository.deleteAllParticipants(
+        gameLeaveDto.gameRoomId,
+      );
+      await this.gameRoomRepository.deleteRoom(gameLeaveDto.gameRoomId);
+    }
   }
 
   //// test 게임방 참여, game room join으로 바꿔야함
