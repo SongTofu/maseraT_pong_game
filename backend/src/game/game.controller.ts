@@ -15,7 +15,7 @@ export class GameController {
 
   @Get("/room/:gameRoomId")
   async gameRoomDetail(
-    @Param("gameRoodId") gameRoomId: number,
+    @Param("gameRoomId") gameRoomId: number,
   ): Promise<GameRoomDetailDto> {
     return this.gameService.gameRoomDetail(gameRoomId);
   }
