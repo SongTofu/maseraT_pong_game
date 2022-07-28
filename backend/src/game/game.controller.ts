@@ -13,10 +13,10 @@ export class GameController {
     return this.gameService.gameRoomList();
   }
 
-  @Get("/participant/:gameRoomId")
-  async gameParticipantList(
+  @Get("/room/:gameRoomId")
+  async gameRoomDetail(
     @Param("gameRoodId") gameRoomId: number,
-  ): Promise<GameParticipantDto[]> {
-    return this.gameService.gameParticipantList(gameRoomId);
+  ): Promise<GameRoomDetailDto> {
+    return this.gameService.gameRoomDetail(gameRoomId);
   }
 }
