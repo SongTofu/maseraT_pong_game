@@ -35,6 +35,7 @@ export class ChatService {
     const chatRoomDetailDto: ChatRoomDetailDto = {
       chatRoomId: chatRoomId,
       title: chatRoom.title,
+      isPassword: chatRoom.password ? true : false,
       chatParticipant: chatParticipantDto,
     };
 
