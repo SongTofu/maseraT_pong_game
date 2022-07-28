@@ -52,10 +52,7 @@ export class GameGateway {
     @MessageBody() gameJoinDto: GameJoinDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameJoinDto.userId);
-    const gameUser: GameParticipantProfile = await this.joinGameRoom(
-      gameJoinDto,
-      user,
-    );
+
     let isCreate: Boolean = false;
 
     if (!gameJoinDto.gameRoomId) {
@@ -66,6 +63,11 @@ export class GameGateway {
     }
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameJoinDto.gameRoomId,
+    );
+
+    const gameUser: GameParticipantProfile = await this.joinGameRoom(
+      gameJoinDto,
+      user,
     );
 
     // const gameParticipantDto: GameParticipantDto = {
@@ -108,13 +110,17 @@ export class GameGateway {
     // }
 
     const existLeftUser = this.gameParticipantRepository.findOne({
-      id: gameJoinDto.gameRoomId,
-      position: GamePosition.leftUser,
+      where: {
+        gameRoom: gameJoinDto.gameRoomId,
+        position: GamePosition.leftUser,
+      },
     });
 
     const existRightUser = this.gameParticipantRepository.findOne({
-      id: gameJoinDto.gameRoomId,
-      position: GamePosition.rightUser,
+      where: {
+        gameRoom: gameJoinDto.gameRoomId,
+        position: GamePosition.rightUser,
+      },
     });
 
     gameParticipant = this.gameParticipantRepository.create({
