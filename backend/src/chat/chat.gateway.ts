@@ -91,10 +91,10 @@ export class ChatGateway {
       this.server.emit("chat-room-create", chatRoomDto);
     }
 
-    socket.join("chat-" + chatJoinDto.chatRoomId);
     this.server
       .in("chat-" + chatJoinDto.chatRoomId)
       .emit("chat-room-join", chatJoinDto);
+    socket.join("chat-" + chatJoinDto.chatRoomId);
   }
 
   // setting

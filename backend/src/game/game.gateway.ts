@@ -53,12 +53,17 @@ export class GameGateway {
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameJoinDto.userId);
     const position: GamePosition = await this.joinGameRoom(gameJoinDto, user);
+    let isCreate: Boolean = false;
 
     if (!gameJoinDto.gameRoomId) {
       gameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         gameJoinDto,
       );
+      isCreate = true;
     }
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameJoinDto.gameRoomId,
+    );
 
     const gameParticipantDto: GameParticipantDto = {
       gameRoomId: gameJoinDto.gameRoomId,
@@ -68,6 +73,9 @@ export class GameGateway {
       position,
     };
 
+    if (isCreate) {
+      this.server.emit("game-room-create", gameRoom);
+    }
     const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
 
     this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
