@@ -5,6 +5,7 @@ import { GameParticipant } from "./entity/game-participant.entity";
 import { GameRoomDetailDto } from "./dto/game-room-detail.dto";
 import { GameRoom } from "./entity/game-room.entity";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
+import { GamePosition } from "./game-position.enum";
 
 @Injectable()
 export class GameService {
@@ -26,13 +27,13 @@ export class GameService {
 
     const leftgameParticipant: GameParticipant =
       await this.gameParticipantRepository.findOne({
-        where: { gameRoom: gameRoomId, position: 0 },
+        where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
         relations: ["user"],
       });
 
     const rightgameParticipant: GameParticipant =
       await this.gameParticipantRepository.findOne({
-        where: { gameRoom: gameRoomId, position: 1 },
+        where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
         relations: ["user"],
       });
 
@@ -52,17 +53,27 @@ export class GameService {
     };
 
     if (!leftgameParticipant)
-      gameRoomDetailDto.gameUser.push(new GameParticipantProfile(null, 0));
+      gameRoomDetailDto.gameUser.push(
+        new GameParticipantProfile(null, GamePosition.leftUser),
+      );
     else {
       gameRoomDetailDto.gameUser.push(
-        new GameParticipantProfile(leftgameParticipant.user, 0),
+        new GameParticipantProfile(
+          leftgameParticipant.user,
+          GamePosition.leftUser,
+        ),
       );
     }
     if (!rightgameParticipant)
-      gameRoomDetailDto.gameUser.push(new GameParticipantProfile(null, 0));
+      gameRoomDetailDto.gameUser.push(
+        new GameParticipantProfile(null, GamePosition.rightUser),
+      );
     else {
       gameRoomDetailDto.gameUser.push(
-        new GameParticipantProfile(rightgameParticipant.user, 1),
+        new GameParticipantProfile(
+          rightgameParticipant.user,
+          GamePosition.rightUser,
+        ),
       );
     }
 

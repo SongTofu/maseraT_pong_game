@@ -109,14 +109,14 @@ export class GameGateway {
     //   return gameParticipant.position;
     // }
 
-    const existLeftUser = this.gameParticipantRepository.findOne({
+    const existLeftUser = await this.gameParticipantRepository.findOne({
       where: {
         gameRoom: gameJoinDto.gameRoomId,
         position: GamePosition.leftUser,
       },
     });
 
-    const existRightUser = this.gameParticipantRepository.findOne({
+    const existRightUser = await this.gameParticipantRepository.findOne({
       where: {
         gameRoom: gameJoinDto.gameRoomId,
         position: GamePosition.rightUser,
