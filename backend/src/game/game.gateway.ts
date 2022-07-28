@@ -78,8 +78,8 @@ export class GameGateway {
     }
     const joinGameTitle = "game-" + gameParticipantDto.gameRoomId;
 
-    this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
     socket.join(joinGameTitle);
+    this.server.in(joinGameTitle).emit("game-room-join", gameParticipantDto);
   }
 
   private async joinGameRoom(
