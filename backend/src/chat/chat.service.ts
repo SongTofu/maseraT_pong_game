@@ -14,7 +14,7 @@ export class ChatService {
     private chatRoomRepository: ChatRoomRepository,
   ) {}
 
-  async chatParticipantList(chatRoomId: number): Promise<ChatParticipantDto[]> {
+  async chatRoomDetail(chatRoomId: number): Promise<ChatRoomDetailDto> {
     const chatParticipants: ChatParticipant[] =
       await this.chatParticipantRepository.find({
         where: { chatRoom: chatRoomId },
@@ -23,13 +23,22 @@ export class ChatService {
           authority: -1,
         },
       });
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatRoomId,
+    );
 
     const chatParticipantDto: ChatParticipantDto[] = [];
 
     chatParticipants.forEach((chatParticipant) => {
       chatParticipantDto.push(new ChatParticipantDto(chatParticipant));
     });
-    return chatParticipantDto;
+    const chatRoomDetailDto: ChatRoomDetailDto = {
+      chatRoomId: chatRoomId,
+      title: chatRoom.title,
+      chatParticipant: chatParticipantDto,
+    };
+
+    return chatRoomDetailDto;
   }
 
   async chatRoomList(): Promise<ChatRoomDto[]> {

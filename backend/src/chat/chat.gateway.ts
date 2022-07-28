@@ -42,21 +42,21 @@ export class ChatGateway {
   @WebSocketServer()
   server;
 
-  //////////////////////
-  @SubscribeMessage("chat-room-all")
-  async handleChatRoomAll(@ConnectedSocket() socket: Socket): Promise<void> {
-    console.log("chat room all");
-    const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
-      order: { id: 1 },
-    });
+  // //////////////////////
+  // @SubscribeMessage("chat-room-all")
+  // async handleChatRoomAll(@ConnectedSocket() socket: Socket): Promise<void> {
+  //   console.log("chat room all");
+  //   const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
+  //     order: { id: 1 },
+  //   });
 
-    const chatRoomDto: ChatRoomDto[] = [];
+  //   const chatRoomDto: ChatRoomDto[] = [];
 
-    chatRooms.forEach((chatRoom) => {
-      chatRoomDto.push(new ChatRoomDto(chatRoom));
-    });
-    this.server.emit("chat-room-all", chatRoomDto);
-  }
+  //   chatRooms.forEach((chatRoom) => {
+  //     chatRoomDto.push(new ChatRoomDto(chatRoom));
+  //   });
+  //   this.server.emit("chat-room-all", chatRoomDto);
+  // }
 
   @SubscribeMessage("chat-room-join")
   async handleJoinChatRoom(
@@ -119,9 +119,9 @@ export class ChatGateway {
 
     await chatRoom.save();
 
-    await this.handleChatRoomAll(socket);
+    // await this.handleChatRoomAll(socket);
     this.server
-      .in("chat-" + chatSettingDto.chatRoomId)
+      // .in("chat-" + chatSettingDto.chatRoomId)
       .emit("chat-room-setting", {
         chatRoomId: chatSettingDto.chatRoomId,
         title: chatSettingDto.title,
