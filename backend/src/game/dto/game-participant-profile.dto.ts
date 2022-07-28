@@ -5,7 +5,6 @@ export class GameParticipantProfile {
   constructor(gameParticipant: User, position: GamePosition) {
     if (gameParticipant) {
       this.userId = gameParticipant.id;
-      this.position = position;
       this.nickname = gameParticipant.nickname;
       this.level = gameParticipant.level;
       this.personalWin = gameParticipant.personalWin;
@@ -14,6 +13,7 @@ export class GameParticipantProfile {
       this.ladderLose = gameParticipant.ladderLose;
       this.profileImg = gameParticipant.profileImg;
     }
+    this.position = position;
   }
   userId: number = 0;
   position: GamePosition = 2;
