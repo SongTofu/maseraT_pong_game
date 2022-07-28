@@ -1,8 +1,8 @@
-import { ChatRoomInfo } from "../type/chat-room-info";
-import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { ChatRoomInfo } from "../../type/chat-room-info";
+import { socket } from "../../App";
+import { getCookie } from "../../func/get-cookie";
 import Popup from "reactjs-popup";
-import { ChatPasswordPopup } from "../popup/chat-password-popup";
+import { ChatPasswordPopup } from "../../popup/chat-password-popup";
 
 export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
   const onClick = () => {

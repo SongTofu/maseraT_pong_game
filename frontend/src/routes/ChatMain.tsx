@@ -1,4 +1,4 @@
-import { ChatRoomList } from "../component/chat-room-list";
+import { ChatRoomList } from "../component/list/chat-room-list";
 import { useState, useEffect } from "react";
 import { ChatRoomInfo } from "../type/chat-room-info";
 import { socket } from "../App";
