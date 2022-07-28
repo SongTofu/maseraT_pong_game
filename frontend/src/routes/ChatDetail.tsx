@@ -29,7 +29,7 @@ export function ChatDetail() {
   useEffect(() => {
     localStorage.setItem("chatRoomId", chatRoomId);
 
-    fetch(process.env.REACT_APP_API_URL + "chat/participant/" + chatRoomId, {
+    fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
       method: "GET"
     })
       .then(res => res.json())
