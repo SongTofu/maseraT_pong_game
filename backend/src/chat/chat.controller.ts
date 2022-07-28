@@ -7,8 +7,7 @@ import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
-  // @Get("/participant/:chatRoomId") //ㅊㅐ팅방 제목, 참여자 리스트 보내줄 수 있게
-  @Get("/chatRoom/:chatRoomId") //ㅊㅐ팅방 제목, 참여자 리스트 보내줄 수 있게
+  @Get("/room/:chatRoomId") //ㅊㅐ팅방 제목, 참여자 리스트 보내줄 수 있게
   async chatRoomDetail(
     @Param("chatRoomId") chatRoomId: number,
   ): Promise<ChatRoomDetailDto> {

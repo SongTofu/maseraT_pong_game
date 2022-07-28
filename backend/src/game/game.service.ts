@@ -17,19 +17,27 @@ export class GameService {
     return await this.gameRoomRepository.find();
   }
 
-  async gameParticipantList(gameRoomId: number): Promise<GameParticipantDto[]> {
+  async gameRoomDetail(gameRoomId: number): Promise<GameRoomDetailDto> {
     const gameParticipants: GameParticipant[] =
       await this.gameParticipantRepository.find({
         where: { gameRoom: gameRoomId },
         relations: ["user"],
       });
 
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomId,
+    );
     const gameParticipantDto: GameParticipantDto[] = [];
 
     gameParticipants.forEach((gameParticipant) => {
       gameParticipantDto.push(new GameParticipantDto(gameParticipant));
     });
 
-    return gameParticipantDto;
+    const gameRoomDetailDto: GameRoomDetailDto = {
+      gameRoomId: gameRoomId,
+      title: gameRoom.title,
+      gameParticipant: gameParticipantDto,
+    };
+    return gameRoomDetailDto;
   }
 }
