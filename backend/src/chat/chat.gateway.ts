@@ -134,6 +134,18 @@ export class ChatGateway {
     @MessageBody() chatMessageDto: ChatMessageDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatMessageDto.userId);
+    //채팅 금지 확인
+
+    const chatParticipant: ChatParticipant =
+      await this.chatParticipantsRepository.findOne({ where: { user } });
+    const now = new Date();
+    const time = now.getTime() - chatParticipant.chatBlock.getTime();
+    if (time < 30) {
+      socket.emit("chat-room-message", {
+        message: "채팅 금지 " + (30 - time) + "남았습니다.",
+      });
+      return;
+    }
     const blocks: Block[] = await this.blockRepository.find({
       where: { blockId: user.id },
       relations: ["ownId"],
@@ -322,5 +334,20 @@ export class ChatGateway {
     this.server
       .in("chat-" + roomId)
       .emit("chat-particip-all", chatParticipantDto);
+  }
+
+  //채팅금지 30초
+  @SubscribeMessage("chat-block")
+  async handleChatBlock(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() targetId: number,
+  ) {
+    const target: ChatParticipant =
+      await this.chatParticipantsRepository.findOne({
+        where: { user: targetId },
+        relations: ["user"],
+      });
+    target.chatBlock = new Date();
+    target.save();
   }
 }
