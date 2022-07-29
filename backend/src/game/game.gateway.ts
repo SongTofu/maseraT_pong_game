@@ -246,6 +246,15 @@ export class GameGateway {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       ladderGameJoinDto.gameRoomId,
     );
+
+    if (isCreate) {
+      this.gameData[gameRoom.id] = {};
+      this.gameData[gameRoom.id].ball = new BallData();
+      this.gameData[gameRoom.id].leftUser = new UserData(true);
+      this.gameData[gameRoom.id].rightUser = new UserData(false);
+      this.gameData[gameRoom.id].isLadder = gameRoom.isLadder;
+      this.gameData[gameRoom.id].isSpeedMode = gameRoom.isSpeedMode;
+    }
     // 게임 참여자
     await this.joinGameRoom(ladderGameJoinDto, readyUser);
     const joinGameTitle = "game-" + ladderGameJoinDto.gameRoomId;
