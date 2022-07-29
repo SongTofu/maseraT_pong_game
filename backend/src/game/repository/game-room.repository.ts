@@ -22,9 +22,5 @@ export class GameRoomRepository extends Repository<GameRoom> {
 
   async deleteRoom(gameRoomId: number): Promise<void> {
     const result = await this.delete(gameRoomId);
-
-    if (!result.affected) {
-      throw new NotFoundException(`Can't find GameRoom with id ${gameRoomId}`);
-    }
   }
 }
