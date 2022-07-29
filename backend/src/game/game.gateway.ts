@@ -231,7 +231,7 @@ export class GameGateway {
   //   this.gameData[data.gameRoomId].rightUser.y = data.y;
   // }
 
-  @SubscribeMessage("user")
+  @SubscribeMessage("user-paddle")
   handleGame(
     @ConnectedSocket() socket: Socket,
     // @MessageBody() data: { gameRoomId: number; position: number; y: number },
@@ -370,8 +370,16 @@ export class GameGateway {
 
       delete this.gameData[gameRoomId];
 
-      // 게임 끝날 시 보내줄 정보 정하기
-      this.server.to("game-" + gameRoomId).emit("end-game", {});
+      const endGameInfo: GameParticipantProfile[] = [];
+      endGameInfo.push(
+        new GameParticipantProfile(leftUser.user, GamePosition.leftUser),
+      );
+      endGameInfo.push(
+        new GameParticipantProfile(rightUser.user, GamePosition.rightUser),
+      );
+
+      // 게임 끝날 시 보내줄 정보 정하기 (유저 아이디랑, 승패) 왼, 오 순서, 레벨!
+      this.server.to("game-" + gameRoomId).emit("end-game", endGameInfo);
     }
   }
 }
