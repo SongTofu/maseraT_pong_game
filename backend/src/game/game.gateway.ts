@@ -288,7 +288,7 @@ export class GameGateway {
       ball.velocityX = ball.speed * Math.cos(angleRad) * direction;
       ball.velocityY = ball.speed * Math.sin(angleRad);
 
-      if (this.gameData[gameRoomId].mode && ball.speed < 25) {
+      if (this.gameData[gameRoomId].isSpeedMode && ball.speed < 25) {
         ball.speed += 2;
       }
     }
