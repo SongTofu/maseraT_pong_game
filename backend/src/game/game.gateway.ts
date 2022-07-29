@@ -215,17 +215,46 @@ export class GameGateway {
   }
 
   @SubscribeMessage("match")
-  handleMatch(@ConnectedSocket() socket: Socket) {
-    // this.userRepository.findOne({
-    //   where: {
-    //   },
-    // });
-    // this.match.push(data.userId);
-    if (this.match.length >= 2) {
-      //게임방 join 추가
-      const startGameDto: StartGameDto = { isLadder: true, gameRoomId: 1 };
-      this.handleGameStart(startGameDto);
+  async handleMatch(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() userId: number,
+  ) {
+    // 유저 찾고
+    const readyUser: User = await this.userRepository.findOne(userId);
+    // 시작 안한 래더 게임방
+    const ladderGameRoom: GameRoom = await this.gameRoomRepository.findOne({
+      where: { isLadder: true, isStart: false },
+    });
+    let isCreate: Boolean = false;
+    const ladderGameJoinDto: GameJoinDto = {
+      gameRoomId: null,
+      title: null,
+      userId: readyUser.id,
+      isSpeedMode: true,
+      isLadder: true,
+    };
+    // 게임방 없으면 만들고
+    if (!ladderGameRoom) {
+      ladderGameRoom.id = await this.gameRoomRepository.createRoom(
+        ladderGameJoinDto,
+      );
+      isCreate = true;
     }
+    // 만들어진 게임방, 기존 게임방
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      ladderGameRoom.id,
+    );
+    const gameUser: GameParticipantProfile = await this.joinGameRoom(
+      ladderGameJoinDto,
+      readyUser,
+    );
+    const joinGameTitle = "game-" + ladderGameRoom.id;
+    socket.join(joinGameTitle);
+
+    if (!isCreate) {
+      this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
+    }
+    // this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
   }
 
   // ladder 게임과 일반 게임 차이 추가 해야함!
