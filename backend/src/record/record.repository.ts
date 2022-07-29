@@ -38,7 +38,7 @@ export class RecordRepository extends Repository<Record> {
       currentDate.getMonth() +
       1 +
       "." +
-      currentDate.getDate() +
+      currentDate.getDay() +
       " " +
       currentDate.getHours() +
       ":" +
