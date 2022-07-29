@@ -14,7 +14,7 @@ export class AchievementService {
 
   async getMyAchievement(id: number): Promise<AchievementDto> {
     const user: User = await this.userRepository.findOne(id);
-
+    this.updateAchievement(user);
     const achievement: Achievement = await this.achievementRepository.findOne({
       where: {
         user: user.id,
@@ -31,8 +31,7 @@ export class AchievementService {
     return achievementDto;
   }
 
-  async updateAchievement(id: number): Promise<Achievement> {
-    const user: User = await this.userRepository.findOne(id);
+  async updateAchievement(user: User): Promise<Achievement> {
     const achievement: Achievement = await this.achievementRepository.findOne({
       where: { user },
     });
@@ -47,12 +46,13 @@ export class AchievementService {
       achievement.firstLose = true;
     if (achievement.thirdWin == false && user.personalWin + user.ladderWin >= 3)
       achievement.thirdWin = true;
-    achievement.save();
+    await achievement.save();
     return achievement;
   }
 
   async getTargetAchievement(targetId: number): Promise<AchievementDto> {
     const target = await this.userRepository.findOne(targetId);
+    this.updateAchievement(target);
 
     const achievement: Achievement = await this.achievementRepository.findOne({
       where: {
