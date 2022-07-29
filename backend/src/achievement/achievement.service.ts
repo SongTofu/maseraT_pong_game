@@ -33,7 +33,7 @@ export class AchievementService {
 
   async updateAchievement(id: number): Promise<Achievement> {
     const user: User = await this.userRepository.findOne(id);
-    let achievement: Achievement = await this.achievementRepository.findOne({
+    const achievement: Achievement = await this.achievementRepository.findOne({
       where: { user },
     });
     // 게임 생기면 조건 추가
@@ -47,6 +47,7 @@ export class AchievementService {
       achievement.firstLose = true;
     if (achievement.thirdWin == false && user.personalWin + user.ladderWin >= 3)
       achievement.thirdWin = true;
+    achievement.save();
     return achievement;
   }
 

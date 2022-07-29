@@ -362,7 +362,7 @@ export class GameGateway {
           leftUser.user.personalWin++;
           rightUser.user.personalLose++;
         }
-        leftUser.user.level += 0.7;
+        leftUser.user.level = +leftUser.user.level + 0.7;
       } else if (this.gameData[gameRoomId].rightUser.score >= 1) {
         gameWin = false;
         if (this.gameData[gameRoomId].isLadder) {
@@ -372,7 +372,7 @@ export class GameGateway {
           rightUser.user.personalWin++;
           leftUser.user.personalLose++;
         }
-        rightUser.user.level += 0.7;
+        rightUser.user.level = +rightUser.user.level + 0.7;
       }
 
       this.recordRepository.gameEnd(
