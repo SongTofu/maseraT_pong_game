@@ -217,7 +217,7 @@ export class GameGateway {
   @SubscribeMessage("match")
   async handleMatch(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() userId: number,
+    @MessageBody() { userId },
   ) {
     // 유저 찾고
     const readyUser: User = await this.userRepository.findOne(userId);
@@ -228,27 +228,27 @@ export class GameGateway {
     let isCreate: Boolean = false;
     const ladderGameJoinDto: GameJoinDto = {
       gameRoomId: null,
-      title: null,
+      title: "",
       userId: readyUser.id,
       isSpeedMode: true,
       isLadder: true,
     };
     // 게임방 없으면 만들고
     if (!ladderGameRoom) {
-      ladderGameRoom.id = await this.gameRoomRepository.createRoom(
+      ladderGameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         ladderGameJoinDto,
       );
       isCreate = true;
+    } else {
+      ladderGameJoinDto.gameRoomId = ladderGameRoom.id;
     }
     // 만들어진 게임방, 기존 게임방
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-      ladderGameRoom.id,
+      ladderGameJoinDto.gameRoomId,
     );
-    const gameUser: GameParticipantProfile = await this.joinGameRoom(
-      ladderGameJoinDto,
-      readyUser,
-    );
-    const joinGameTitle = "game-" + ladderGameRoom.id;
+    // 게임 참여자
+    await this.joinGameRoom(ladderGameJoinDto, readyUser);
+    const joinGameTitle = "game-" + ladderGameJoinDto.gameRoomId;
     socket.join(joinGameTitle);
 
     if (!isCreate) {

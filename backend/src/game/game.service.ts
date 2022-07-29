@@ -49,6 +49,7 @@ export class GameService {
     const gameRoomDetailDto: GameRoomDetailDto = {
       gameRoomId: gameRoomId,
       title: gameRoom.title,
+      isLadder: gameRoom.isLadder,
       gameUser: [],
     };
 
