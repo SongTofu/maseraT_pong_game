@@ -6,12 +6,13 @@ import { GameJoinDto } from "../dto/game-room-join.dto";
 @EntityRepository(GameRoom)
 export class GameRoomRepository extends Repository<GameRoom> {
   async createRoom(gameJoinDto: GameJoinDto): Promise<number> {
-    const { title } = gameJoinDto;
+    const { title, isSpeedMode, isLadder } = gameJoinDto;
 
     const gameRoom: GameRoom = this.create({
       title,
       isStart: false,
-      isLadder: false,
+      isSpeedMode: isSpeedMode,
+      isLadder: isLadder,
     });
 
     const saveRoom = await gameRoom.save();

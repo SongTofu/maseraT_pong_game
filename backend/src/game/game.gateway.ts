@@ -51,18 +51,28 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() gameJoinDto: GameJoinDto,
   ): Promise<void> {
-    const user: User = await this.userRepository.findOne(gameJoinDto.userId);
+    const { userId, isLadder, isSpeedMode } = gameJoinDto;
+    let gameRoomId = gameJoinDto.gameRoomId;
+    const user: User = await this.userRepository.findOne(userId);
 
     let isCreate: Boolean = false;
 
-    if (!gameJoinDto.gameRoomId) {
-      gameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
-        gameJoinDto,
-      );
+    if (!gameRoomId) {
+      gameRoomId = await this.gameRoomRepository.createRoom(gameJoinDto);
       isCreate = true;
     }
+
+    if (isCreate) {
+      this.gameData[gameRoomId] = {};
+      this.gameData[gameRoomId].ball = new BallData();
+      this.gameData[gameRoomId].leftUser = new UserData(true);
+      this.gameData[gameRoomId].rightUser = new UserData(false);
+      this.gameData[gameRoomId].isLadder = isLadder;
+      this.gameData[gameRoomId].isSpeedMode = isSpeedMode;
+    }
+
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-      gameJoinDto.gameRoomId,
+      gameRoomId,
     );
 
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
@@ -81,12 +91,12 @@ export class GameGateway {
     if (isCreate) {
       this.server.emit("game-room-create", gameRoom);
     }
-    const joinGameTitle = "game-" + gameJoinDto.gameRoomId;
+    const joinGameTitle = "game-" + gameRoomId;
 
     socket.join(joinGameTitle);
     this.server
       .in(joinGameTitle)
-      .emit("game-room-join", { gameRoomId: gameJoinDto.gameRoomId, gameUser });
+      .emit("game-room-join", { gameRoomId, gameUser });
   }
 
   private async joinGameRoom(
@@ -199,12 +209,7 @@ export class GameGateway {
     // await gameRoom.save();
 
     // 방 생성, 방 수정으로 이동할 예정
-    this.gameData[gameRoomId] = {};
-    this.gameData[gameRoomId].ball = new BallData();
-    this.gameData[gameRoomId].leftUser = new UserData(true);
-    this.gameData[gameRoomId].rightUser = new UserData(false);
-    this.gameData[gameRoomId].isLadder = isLadder;
-    this.gameData[gameRoomId].mode = 1;
+
     this.server.in("game-" + gameRoomId).emit("game-start");
 
     this.gameData[gameRoomId].interval = setInterval(() => {
@@ -338,17 +343,27 @@ export class GameGateway {
       relations: ["user"],
     });
 
+    // if (
+    //   this.gameData[gameRoomId].leftUser.score >= 5 || 테스트 용으로 1으로 해놓음 나중에 5로 다시!
+    //   this.gameData[gameRoomId].rightUser.score >= 5
+    // ) {
     if (
-      this.gameData[gameRoomId].leftUser.score >= 5 ||
-      this.gameData[gameRoomId].rightUser.score >= 5
+      this.gameData[gameRoomId].leftUser.score >= 1 ||
+      this.gameData[gameRoomId].rightUser.score >= 1
     ) {
       clearInterval(this.gameData[gameRoomId].interval);
       let gameWin: boolean;
 
-      if (this.gameData[gameRoomId].leftUser.score >= 5) {
+      // if (this.gameData[gameRoomId].leftUser.score >= 5) {위 주석과 동일
+      //   leftUser.user.personalWin++;
+      //   rightUser.user.personalLose++;
+      // } else if (this.gameData[gameRoomId].rightUser >= 5) {
+      if (this.gameData[gameRoomId].leftUser.score >= 1) {
+        gameWin = true;
         leftUser.user.personalWin++;
         rightUser.user.personalLose++;
-      } else if (this.gameData[gameRoomId].rightUser >= 5) {
+      } else if (this.gameData[gameRoomId].rightUser >= 1) {
+        gameWin = false;
         rightUser.user.personalWin++;
         leftUser.user.personalLose++;
       }
