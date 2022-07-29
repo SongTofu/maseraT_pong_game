@@ -6,6 +6,7 @@ import { socket } from "../App";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { GameCreatePopup } from "../popup/game-create-popup";
+import { MatchPopup } from "../popup/match-popup";
 
 export type GameRoomType = {
   id: number;
@@ -16,6 +17,7 @@ export type GameRoomType = {
 
 export function GameMain() {
   const [gameRooms, setGameRooms] = useState<GameRoomType[]>([]);
+  const [isMatching, setIsMatching] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,14 +40,24 @@ export function GameMain() {
       navigate("/game/" + gameRoomId);
     });
 
+    socket.on("game-room-destroy", ({ gameRoomId }) => {
+      setGameRooms(rooms => rooms.filter(room => room.id !== +gameRoomId));
+    });
+
+    socket.on("match", ({ gameRoomId }) => {
+      navigate("/game/" + gameRoomId);
+    });
+
     return () => {
       socket.off("game-room-create");
       socket.off("game-room-join");
+      socket.off("game-room-destroy");
+      socket.off("match");
     };
   }, [gameRooms, navigate]);
 
-  const onCreate = () => {
-    // socket.emit("game-room-join", {gameRoomId: 0, title});
+  const onMatch = () => {
+    setIsMatching(true);
   };
 
   return (
@@ -66,6 +78,8 @@ export function GameMain() {
       ))}
       <h1>UserList</h1>
       <UserList isChatRoom={false} participants="" />
+      <button onClick={onMatch}>래더 매칭</button>
+      {isMatching ? <MatchPopup setIsMatching={setIsMatching} /> : null}
     </div>
   );
 }

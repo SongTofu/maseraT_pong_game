@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { render } from "../func/draw";
 import { socket } from "../App";
+
 const leftUser = {
   x: 0,
   y: 400 / 2 - 100 / 2,

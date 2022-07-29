@@ -1,4 +1,5 @@
 import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { GameProfile } from "../component/game-profile";
 import { useEffect, useState } from "react";
 import { socket } from "../App";
@@ -23,6 +24,9 @@ export function GameDetail() {
   const [title, setTitle] = useState("");
   const [position, setPosition] = useState(2);
   const [start, setStart] = useState(false);
+  const [isLadder, setIsLadder] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "game/room/" + gameRoomId, {
@@ -37,11 +41,13 @@ export function GameDetail() {
             setPosition(user.position);
           }
         });
+        setIsLadder(json.isLadder);
       });
+
     return () => {
       socket.emit("game-room-leave", { gameRoomId, userId: getCookie("id") });
     };
-  }, [gameRoomId]);
+  }, [gameRoomId, navigate]);
 
   useEffect(() => {
     socket.on("game-room-join", ({ gameUser }) => {
@@ -72,11 +78,38 @@ export function GameDetail() {
         })
       );
     });
+
+    socket.on("end-game", data => {
+      if (isLadder) {
+        navigate("/game");
+      } else {
+        setGameUsers(currUsers =>
+          currUsers.map(currUser => {
+            if (currUser.position === 0) {
+              currUser = data[0];
+            } else if (currUser.position === 1) {
+              currUser = data[1];
+            }
+            return currUser;
+          })
+        );
+
+        setStart(false);
+      }
+    });
+
     return () => {
       socket.off("game-room-leave");
       socket.off("game-room-join");
+      socket.off("end-game");
     };
-  }, [gameUsers]);
+  }, [gameUsers, gameRoomId, isLadder, navigate]);
+
+  useEffect(() => {
+    if (isLadder && gameUsers[0].userId === +getCookie("id")) {
+      socket.emit("start-game", { gameRoomId, isLadder });
+    }
+  }, [isLadder, gameRoomId, gameUsers]);
 
   const onStart = () => {
     socket.emit("start-game", { gameRoomId, isLadder: false });
@@ -93,7 +126,7 @@ export function GameDetail() {
             userId={gameUsers[0].userId}
             nickname={gameUsers[0].nickname}
             profileImg={gameUsers[0].profileImg}
-            level={gameUsers[0].level}
+            level={Math.floor(gameUsers[0].level)}
             personalWin={gameUsers[0].personalWin}
             personalLose={gameUsers[0].personalLose}
             ladderWin={gameUsers[0].ladderWin}
@@ -107,7 +140,7 @@ export function GameDetail() {
             userId={gameUsers[1].userId}
             nickname={gameUsers[1].nickname}
             profileImg={gameUsers[1].profileImg}
-            level={gameUsers[1].level}
+            level={Math.floor(gameUsers[1].level)}
             personalWin={gameUsers[1].personalWin}
             personalLose={gameUsers[1].personalLose}
             ladderWin={gameUsers[1].ladderWin}
@@ -116,7 +149,9 @@ export function GameDetail() {
           />
         ) : null}
       </div>
-      {gameUsers.length && gameUsers[0].userId === +getCookie("id") ? (
+      {gameUsers.length &&
+      gameUsers[0].userId === +getCookie("id") &&
+      !isLadder ? (
         <button
           onClick={onStart}
           disabled={
