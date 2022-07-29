@@ -80,14 +80,6 @@ export class GameGateway {
       user,
     );
 
-    // const gameParticipantDto: GameParticipantDto = {
-    //   gameRoomId: gameJoinDto.gameRoomId,
-    //   title: gameJoinDto.title,
-    //   userId: user.id,
-    //   nickname: user.nickname,
-    //   position,
-    // };
-
     if (isCreate) {
       this.server.emit("game-room-create", gameRoom);
     }
@@ -107,17 +99,6 @@ export class GameGateway {
       gameJoinDto.gameRoomId,
     );
     let gameParticipant: GameParticipant;
-
-    // if (!gameJoinDto.gameRoomId) {
-    //   gameParticipant = this.gameParticipantRepository.create({
-    //     position: GamePosition.leftUser,
-    //     user,
-    //     gameRoom,
-    //   });
-    //   await gameParticipant.save();
-
-    //   return gameParticipant.position;
-    // }
 
     const existLeftUser = await this.gameParticipantRepository.findOne({
       where: {
@@ -210,7 +191,7 @@ export class GameGateway {
 
     // 방 생성, 방 수정으로 이동할 예정
 
-    this.server.in("game-" + gameRoomId).emit("game-start");
+    // this.server.in("game-" + gameRoomId).emit("game-start");
 
     this.gameData[gameRoomId].interval = setInterval(() => {
       this.update(gameRoomId);
@@ -219,22 +200,6 @@ export class GameGateway {
         .emit("game", this.gameData[gameRoomId]);
     }, 30);
   }
-
-  // @SubscribeMessage("left-user")
-  // handleLeftUser(
-  //   @ConnectedSocket() socket: Socket,
-  //   @MessageBody() data: { gameRoomId: number; y: number },
-  // ) {
-  //   this.gameData[data.gameRoomId].leftUser.y = data.y;
-  // }
-
-  // @SubscribeMessage("right-user")
-  // handleRightUser(
-  //   @ConnectedSocket() socket: Socket,
-  //   @MessageBody() data: { gameRoomId: number; y: number },
-  // ) {
-  //   this.gameData[data.gameRoomId].rightUser.y = data.y;
-  // }
 
   @SubscribeMessage("user-paddle")
   handleGame(
@@ -383,7 +348,9 @@ export class GameGateway {
       rightUser.user.save();
       leftUser.user.save();
 
-      delete this.gameData[gameRoomId];
+      // delete this.gameData[gameRoomId];
+      this.gameData[gameRoomId].leftUser.score = 0;
+      this.gameData[gameRoomId].rightUser.score = 0;
 
       const endGameInfo: GameParticipantProfile[] = [];
       endGameInfo.push(
