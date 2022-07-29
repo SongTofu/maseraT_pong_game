@@ -16,7 +16,7 @@ export class GameRoomRepository extends Repository<GameRoom> {
     });
 
     const saveRoom = await gameRoom.save();
-
+    gameJoinDto.gameRoomId = saveRoom.id;
     return saveRoom.id;
   }
 
