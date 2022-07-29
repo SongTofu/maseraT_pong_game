@@ -55,7 +55,7 @@ export class User extends BaseEntity {
   @Column({ default: 0 })
   state: UserState;
 
-  @Column({ default: 1 })
+  @Column({ type: "decimal", default: 1, precision: 5, scale: 2 })
   level: number;
 
   @OneToMany(
