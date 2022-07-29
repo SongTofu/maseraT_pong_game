@@ -338,17 +338,27 @@ export class GameGateway {
       relations: ["user"],
     });
 
+    // if (
+    //   this.gameData[gameRoomId].leftUser.score >= 5 || 테스트 용으로 1으로 해놓음 나중에 5로 다시!
+    //   this.gameData[gameRoomId].rightUser.score >= 5
+    // ) {
     if (
-      this.gameData[gameRoomId].leftUser.score >= 5 ||
-      this.gameData[gameRoomId].rightUser.score >= 5
+      this.gameData[gameRoomId].leftUser.score >= 1 ||
+      this.gameData[gameRoomId].rightUser.score >= 1
     ) {
       clearInterval(this.gameData[gameRoomId].interval);
       let gameWin: boolean;
 
-      if (this.gameData[gameRoomId].leftUser.score >= 5) {
+      // if (this.gameData[gameRoomId].leftUser.score >= 5) {위 주석과 동일
+      //   leftUser.user.personalWin++;
+      //   rightUser.user.personalLose++;
+      // } else if (this.gameData[gameRoomId].rightUser >= 5) {
+      if (this.gameData[gameRoomId].leftUser.score >= 1) {
+        gameWin = true;
         leftUser.user.personalWin++;
         rightUser.user.personalLose++;
-      } else if (this.gameData[gameRoomId].rightUser >= 5) {
+      } else if (this.gameData[gameRoomId].rightUser >= 1) {
+        gameWin = false;
         rightUser.user.personalWin++;
         leftUser.user.personalLose++;
       }
