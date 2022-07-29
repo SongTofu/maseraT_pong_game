@@ -12,6 +12,7 @@ type userProps = {
 };
 
 export function ChatPopup({ user, setIsOpen }: userProps) {
+  // id -> target id
   const { id, authority } = user;
   const chatRoomId = +localStorage.getItem("chatRoomId");
   const myAuthority = +localStorage.getItem("authority");
@@ -37,6 +38,10 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
     });
     setIsOpen(false);
   };
+
+  const onChatBlock = () => {
+    socket.emit("chat-block", { targetId: id });
+  };
   return (
     <div>
       {myAuthority >= Authority.OWNER ? (
@@ -48,7 +53,7 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
         <button onClick={onKick}>강퇴</button>
       ) : null}
       {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
-        <button>채팅 금지</button>
+        <button onClick={onChatBlock}>채팅 금지</button>
       ) : null}
       <Popup trigger={<button>프로필</button>}>
         <ProfilePopup userId={id} />
