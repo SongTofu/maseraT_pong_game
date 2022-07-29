@@ -29,7 +29,6 @@ export class ChatParticipant extends BaseEntity {
   )
   chatRoom: ChatRoom;
 
-  //이게 맞을까? 이게 되나?
-  @Column("date", { default: () => "(CURRENT_DATE) - 30" })
-  chatBlock: Date;
+  @Column({ default: String(new Date().getTime() - 30000) })
+  chatBlock: String;
 }

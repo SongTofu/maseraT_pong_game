@@ -138,11 +138,12 @@ export class ChatGateway {
 
     const chatParticipant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({ where: { user } });
-    const now = new Date();
-    const time = now.getTime() - chatParticipant.chatBlock.getTime();
-    if (time < 30) {
+    const now = new Date().getTime();
+    const time = +now - +chatParticipant.chatBlock;
+    if (time < 30000) {
       socket.emit("chat-room-message", {
-        message: "채팅 금지 " + (30 - time) + "남았습니다.",
+        message:
+          "채팅 금지 " + Math.floor((30000 - time) / 1000) + "초 남았습니다.",
       });
       return;
     }
@@ -340,14 +341,14 @@ export class ChatGateway {
   @SubscribeMessage("chat-block")
   async handleChatBlock(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() targetId: number,
+    @MessageBody() { targetId },
   ) {
     const target: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
         where: { user: targetId },
-        relations: ["user"],
       });
-    target.chatBlock = new Date();
+    target.chatBlock = String(new Date().getTime());
+    // console.log(new Date().getTime());
     target.save();
   }
 }
