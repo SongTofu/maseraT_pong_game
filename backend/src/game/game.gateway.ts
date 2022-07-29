@@ -329,40 +329,44 @@ export class GameGateway {
   }
 
   private async endGameCheck(gameRoomId: number) {
-    // const leftUser = await this.gameParticipantRepository.findOne({
-    //   where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
-    //   relations: ["User"],
-    // });
-    // const rightUser = await this.gameParticipantRepository.findOne({
-    //   where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
-    //   relations: ["User"],
-    // });
+    const leftUser = await this.gameParticipantRepository.findOne({
+      where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
+      relations: ["user"],
+    });
+    const rightUser = await this.gameParticipantRepository.findOne({
+      where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
+      relations: ["user"],
+    });
 
     if (
-      this.gameData[gameRoomId].leftUser.score > 5 ||
-      this.gameData[gameRoomId].rightUser.score > 5
+      this.gameData[gameRoomId].leftUser.score >= 5 ||
+      this.gameData[gameRoomId].rightUser.score >= 5
     ) {
       clearInterval(this.gameData[gameRoomId].interval);
-      // let gameWin: boolean;
+      let gameWin: boolean;
 
-      // if (this.gameData[gameRoomId].leftUser.score > 5) {
-      //   gameWin = true;
-      // } else if (this.gameData[gameRoomId].rightUser > 5) {
-      //   gameWin = false;
-      // }
+      if (this.gameData[gameRoomId].leftUser.score >= 5) {
+        leftUser.user.personalWin++;
+        rightUser.user.personalLose++;
+      } else if (this.gameData[gameRoomId].rightUser >= 5) {
+        rightUser.user.personalWin++;
+        leftUser.user.personalLose++;
+      }
 
-      // this.recordRepository.gameEnd(
-      //   this.gameData[gameRoomId].isLadder,
-      //   gameWin,
-      //   leftUser.user,
-      //   rightUser.user,
-      // );
+      this.recordRepository.gameEnd(
+        this.gameData[gameRoomId].isLadder,
+        gameWin,
+        leftUser.user,
+        rightUser.user,
+      );
 
-      // const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-      //   gameRoomId,
-      // );
-      // gameRoom.isStart = false;
-      // gameRoom.save();
+      const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+        gameRoomId,
+      );
+      gameRoom.isStart = false;
+      gameRoom.save();
+      rightUser.user.save();
+      leftUser.user.save();
 
       delete this.gameData[gameRoomId];
 
