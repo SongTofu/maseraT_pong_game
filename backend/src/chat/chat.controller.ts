@@ -1,6 +1,5 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import { ChatService } from "./chat.service";
-import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
 
@@ -8,11 +7,11 @@ import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
-  @Get("/participant/:chatRoomId")
-  async participantList(
+  @Get("/room/:chatRoomId") //ㅊㅐ팅방 제목, 참여자 리스트 보내줄 수 있게
+  async chatRoomDetail(
     @Param("chatRoomId") chatRoomId: number,
-  ): Promise<ChatParticipantDto[]> {
-    return this.chatService.chatParticipantList(chatRoomId);
+  ): Promise<ChatRoomDetailDto> {
+    return this.chatService.chatRoomDetail(chatRoomId);
   }
 
   @Get("/room")

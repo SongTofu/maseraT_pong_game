@@ -12,5 +12,6 @@ export class ChatRoomDetailDto {
   }
   chatRoomId: number;
   title: string;
+  isPassword: boolean;
   chatParticipant: ChatParticipantDto[] = [];
 }

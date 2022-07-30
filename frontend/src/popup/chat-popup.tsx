@@ -1,36 +1,60 @@
 import { Authority } from "../type/enum/authority.enum";
 import { getCookie } from "../func/get-cookie";
 import { socket } from "../App";
-import { SetAdminType } from "../type/set-admin-type";
+import { ChatPopupType } from "../type/chat-popup-type";
+import { Dispatch, SetStateAction } from "react";
+import Popup from "reactjs-popup";
+import { ProfilePopup } from "./profile-popup";
 
-export function ChatPopup({ id, authority, chatRoomId }) {
+type userProps = {
+  user: ChatPopupType;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export function ChatPopup({ user, setIsOpen }: userProps) {
+  const { id, authority } = user;
+  const chatRoomId = +localStorage.getItem("chatRoomId");
+  const myAuthority = +localStorage.getItem("authority");
+
+  // 내 프로필 넣기
   if (id === +getCookie("id")) return <div></div>;
 
-  console.log("chatRoomId", chatRoomId);
   const onSetAdmin = () => {
-    const setAdmin: SetAdminType = {
-      chatRoomId: chatRoomId,
-      isAdmin: true,
-      userId: id
-    };
+    const isAdmin: boolean = Authority.ADMIN !== authority;
+
     socket.emit("chat-room-set-admin", {
       chatRoomId: chatRoomId,
-      isAdmin: true,
+      isAdmin,
       userId: id
     });
+    setIsOpen(false);
   };
 
+  const onKick = () => {
+    socket.emit("chat-room-kick", {
+      targetId: id,
+      chatRoomId: +localStorage.getItem("chatRoomId")
+    });
+    setIsOpen(false);
+  };
   return (
     <div>
-      {authority >= Authority.OWNER ? (
-        <button onClick={onSetAdmin}>관리자 임명</button>
+      {myAuthority >= Authority.OWNER ? (
+        <button onClick={onSetAdmin}>
+          {authority === Authority.ADMIN ? "관리자 해임" : "관리자 임명"}
+        </button>
       ) : null}
-      {authority >= Authority.ADMIN ? <button>강퇴</button> : null}
-      {authority >= Authority.ADMIN ? <button>채팅 금지</button> : null}
-      <button>프로필</button>
-      <button>전적</button>
-      <button>차단</button>
-      <button>친구</button>
+      {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+        <button onClick={onKick}>강퇴</button>
+      ) : null}
+      {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+        <button>채팅 금지</button>
+      ) : null}
+      <Popup trigger={<button>프로필</button>}>
+        <ProfilePopup userId={id} />
+      </Popup>
+
+      <button>게임 신청</button>
     </div>
   );
 }

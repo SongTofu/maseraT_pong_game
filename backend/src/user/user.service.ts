@@ -91,7 +91,10 @@ export class UserService {
     return targetUserInfoDto;
   }
 
-  async updateUser(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
+  async updateUser(
+    userId: number,
+    updateUserInfoDto: UpdateUserInfoDto,
+  ): Promise<{ isSuccess: boolean }> {
     const user: User = await this.userRepository.findOne(userId);
 
     if (updateUserInfoDto.nickname) {
@@ -112,7 +115,7 @@ export class UserService {
     try {
       await user.save();
     } catch (error) {
-      if (error.code === "23505") return { success: false };
+      if (error.code === "23505") return { isSuccess: false };
       else {
         throw new InternalServerErrorException();
       }
@@ -131,7 +134,7 @@ export class UserService {
       });
       this.userGateway.userAll();
     }
-    return { success: true };
+    return { isSuccess: true };
   }
 
   private async isFriend(user: User, target: User): Promise<boolean> {
@@ -164,7 +167,10 @@ export class UserService {
     }
   }
 
-  async initUserInfo(id: number, updateUserInfoDto: UpdateUserInfoDto) {
+  async initUserInfo(
+    id: number,
+    updateUserInfoDto: UpdateUserInfoDto,
+  ): Promise<{ isSuccess: boolean }> {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find User with id ${id}`);
@@ -186,6 +192,6 @@ export class UserService {
         throw new InternalServerErrorException();
       }
     }
-    return { success: true }; //return 값 미정
+    return { isSuccess: true };
   }
 }
