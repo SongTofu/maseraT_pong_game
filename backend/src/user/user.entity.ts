@@ -12,7 +12,7 @@ import { SecondAuthCode } from "src/second-auth/second-auth-code.entity";
 import { Friend } from "../friend/friend.entity";
 import { Block } from "../block/block.entity";
 import { UserState } from "./user-state.enum";
-import { ChatParticipants } from "src/chat/entity/chat-participants.entity";
+import { ChatParticipant } from "src/chat/entity/chat-participant.entity";
 import { Achievement } from "src/achievement/achievement.entity";
 import { GameParticipant } from "src/game/entity/game-participant.entity";
 
@@ -55,7 +55,7 @@ export class User extends BaseEntity {
   @Column({ default: 0 })
   state: UserState;
 
-  @Column({ default: 1 })
+  @Column({ type: "decimal", default: 1, precision: 5, scale: 2 })
   level: number;
 
   @OneToMany(
@@ -86,12 +86,12 @@ export class User extends BaseEntity {
   block: Block[];
 
   @OneToMany(
-    (type) => ChatParticipants,
-    (chatParticipants) => {
-      chatParticipants.user;
+    (type) => ChatParticipant,
+    (chatParticipant) => {
+      chatParticipant.user;
     },
   )
-  chatParticipants: ChatParticipants[];
+  chatParticipant: ChatParticipant[];
 
   @OneToOne(
     (type) => Achievement,

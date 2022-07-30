@@ -3,10 +3,9 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   OneToMany,
 } from "typeorm";
-import { ChatParticipants } from "./chat-participants.entity";
+import { ChatParticipant } from "./chat-participant.entity";
 
 @Entity()
 export class ChatRoom extends BaseEntity {
@@ -23,8 +22,8 @@ export class ChatRoom extends BaseEntity {
   isDM: boolean;
 
   @OneToMany(
-    (type) => ChatParticipants,
-    (chatParticipants) => chatParticipants.chatRoom,
+    (type) => ChatParticipant,
+    (chatParticipant) => chatParticipant.chatRoom,
   )
-  chatParticipants: ChatParticipants[];
+  chatParticipant: ChatParticipant[];
 }

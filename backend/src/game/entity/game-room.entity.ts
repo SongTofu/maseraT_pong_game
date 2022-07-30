@@ -19,6 +19,9 @@ export class GameRoom extends BaseEntity {
   isStart: boolean;
 
   @Column()
+  isSpeedMode: boolean; //true -> speed, false->nomal
+
+  @Column()
   isLadder: boolean;
 
   @OneToMany((type) => GameParticipant, (gameParticipant) => gameParticipant.id)

@@ -17,6 +17,7 @@ import { FriendService } from "./friend.service";
 export class FriendController {
   constructor(private friendService: FriendService) {}
 
+  // 생각 후 제거
   @Get()
   getAllFriend(@Req() req): Promise<GetAllFriendsDto[]> {
     const id = req.user.id;
@@ -29,6 +30,6 @@ export class FriendController {
     @Req() req,
     @Body("targetId") targetId: number,
   ): Promise<{ isSuccess: boolean }> {
-    return this.friendService.addFriend(req.id, targetId);
+    return this.friendService.addFriend(req.user.id, targetId);
   }
 }

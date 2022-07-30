@@ -5,14 +5,13 @@ import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 import { BlockRepository } from "../block/block.repository";
 import { FriendRepository } from "src/friend/friend.repository";
-import { UserGateway } from "./user.gateway";
-import { ChatParticipantsRepository } from "src/chat/repository/chat-participants.repository";
+import { ChatParticipantRepository } from "src/chat/repository/chat-participant.repository";
 import { GameParticipantRepository } from "src/game/repository/game-participant.repository";
-import { ChatGateway } from "src/chat/chat.gateway";
-import { ChatRoomRepository } from "src/chat/repository/chat-room.repository";
-import { GameGateway } from "src/game/game.gateway";
 import { GameRoomRepository } from "src/game/repository/game-room.repository";
 import { RecordRepository } from "src/record/record.repository";
+import { ChatModule } from "src/chat/chat.module";
+import { UserGateway } from "./user.gateway";
+import { ChatRoomRepository } from "src/chat/repository/chat-room.repository";
 
 @Module({
   imports: [
@@ -20,14 +19,16 @@ import { RecordRepository } from "src/record/record.repository";
       UserRepository,
       BlockRepository,
       FriendRepository,
-      ChatParticipantsRepository,
+      ChatParticipantRepository,
       ChatRoomRepository,
       GameParticipantRepository,
       GameRoomRepository,
       RecordRepository,
     ]),
+    ChatModule,
   ],
   controllers: [UserController],
-  providers: [UserService, UserGateway, ChatGateway, GameGateway],
+  providers: [UserService, UserGateway],
+  exports: [UserGateway],
 })
 export class UserModule {}

@@ -14,8 +14,7 @@ export class RecordController {
 
   @Get("")
   @UseGuards(JwtAuthGuard)
-  getMeRecord(@Req() req) {
-    console.log("aa");
+  getMeRecord(@Req() req): Promise<RecordDto[]> {
     return this.recordService.getRecord(req.user.id);
   }
 }

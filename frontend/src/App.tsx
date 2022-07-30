@@ -1,36 +1,24 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import PageNotFound from "./components/PageNotFound";
-import Chat from "./pages/Chat";
-import ChatRoom from "./pages/ChatRoom";
-import Game from "./pages/Game";
-import GameRoom from "./pages/GameRoom";
-import Home from "./pages/Home";
-import LogIn from "./pages/LogIn";
-import SecondAuth from "./pages/SecondAuth";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Home } from "./routes/Home";
+import { Login } from "./routes/Login";
+import { SecondAuth } from "./routes/Second-auth";
+import { ChatMain } from "./routes/ChatMain";
+import { io } from "socket.io-client";
+import { ChatDetail } from "./routes/ChatDetail";
+
+export let socket = io("http://localhost:3000");
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <div className="wrap min-w-max">
-          <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/second-auth" element={<SecondAuth />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/game-room" element={<GameRoom />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/chat-room/*" element={<ChatRoom />} />
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/second-auth" element={<SecondAuth />}></Route>
+        <Route path="/chat" element={<ChatMain />}></Route>
+        <Route path="/chat/:chatRoomId" element={<ChatDetail />}></Route>
+      </Routes>
+    </Router>
   );
 }
 

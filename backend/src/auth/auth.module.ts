@@ -9,19 +9,25 @@ import { ConfigModule } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./jwt.strategy";
 import { AchievementRepository } from "src/achievement/achievement.repository";
+import { SecondAuthService } from "src/second-auth/second-auth.service";
+import { SecondAuthRepository } from "src/second-auth/second-auth.repository";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([UserRepository, AchievementRepository]),
+    TypeOrmModule.forFeature([
+      UserRepository,
+      AchievementRepository,
+      SecondAuthRepository,
+    ]),
     PassportModule.register({ defaultStrategy: "42" }),
     JwtModule.register({
-      secret: "1234", // need for create token
-      signOptions: { expiresIn: 3600 },
+      secret: process.env.JWT_SECRET_KEY, // need for create token
+      signOptions: { expiresIn: 3600 * 24 * 365 },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, FtStrategy, JwtStrategy],
+  providers: [AuthService, FtStrategy, JwtStrategy, SecondAuthService],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

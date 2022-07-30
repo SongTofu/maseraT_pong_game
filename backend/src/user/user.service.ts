@@ -13,6 +13,10 @@ import { MyUserInfoDto } from "./dto/my-user-info.dto";
 import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
 import { UserListDto } from "././dto/user-list.dto";
 import { join } from "path";
+import { UserGateway } from "./user.gateway";
+import { ChatGateway } from "src/chat/chat.gateway";
+import { ChatParticipantRepository } from "src/chat/repository/chat-participant.repository";
+import { ChatParticipant } from "src/chat/entity/chat-participant.entity";
 
 @Injectable()
 export class UserService {
@@ -20,6 +24,9 @@ export class UserService {
     private userRepository: UserRepository,
     private friendsRepository: FriendRepository,
     private blockRepository: BlockRepository,
+    private userGateway: UserGateway,
+    private chatGateWay: ChatGateway,
+    private chatParticipantRepository: ChatParticipantRepository,
   ) {}
 
   // test after saved in db
@@ -84,7 +91,10 @@ export class UserService {
     return targetUserInfoDto;
   }
 
-  async updateUser(userId: number, updateUserInfoDto: UpdateUserInfoDto) {
+  async updateUser(
+    userId: number,
+    updateUserInfoDto: UpdateUserInfoDto,
+  ): Promise<{ isSuccess: boolean }> {
     const user: User = await this.userRepository.findOne(userId);
 
     if (updateUserInfoDto.nickname) {
@@ -105,12 +115,26 @@ export class UserService {
     try {
       await user.save();
     } catch (error) {
-      if (error.code === "23505") return { success: false };
+      if (error.code === "23505") return { isSuccess: false };
       else {
         throw new InternalServerErrorException();
       }
     }
-    return { success: true };
+
+    if (updateUserInfoDto.nickname) {
+      const chatParticipants: ChatParticipant[] =
+        await this.chatParticipantRepository.find({
+          where: { user: userId },
+          relations: ["chatRoom"],
+        });
+
+      chatParticipants.forEach((chatParticipant) => {
+        this.chatGateWay.chatParticipantAll(chatParticipant.chatRoom.id);
+        // this.chatGateWay.chatRoomMessageAll(chatParticipant.chatRoom.id);
+      });
+      this.userGateway.userAll();
+    }
+    return { isSuccess: true };
   }
 
   private async isFriend(user: User, target: User): Promise<boolean> {
@@ -143,7 +167,10 @@ export class UserService {
     }
   }
 
-  async initUserInfo(id: number, updateUserInfoDto: UpdateUserInfoDto) {
+  async initUserInfo(
+    id: number,
+    updateUserInfoDto: UpdateUserInfoDto,
+  ): Promise<{ isSuccess: boolean }> {
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException(`Can't find User with id ${id}`);
@@ -165,6 +192,6 @@ export class UserService {
         throw new InternalServerErrorException();
       }
     }
-    return { success: true }; //return 값 미정
+    return { isSuccess: true };
   }
 }
