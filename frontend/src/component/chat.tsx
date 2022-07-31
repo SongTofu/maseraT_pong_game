@@ -1,4 +1,6 @@
-export function Chat({ nickname, msg }) {
+import React from "react";
+
+export function Chat({ nickname, msg }: any) {
   return (
     <li>
       {nickname}

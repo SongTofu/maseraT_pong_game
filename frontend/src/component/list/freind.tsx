@@ -12,16 +12,16 @@ export function Friend() {
     fetch(process.env.REACT_APP_API_URL + "friend", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
-      .then(json => setFriends(json));
+      .then((res) => res.json())
+      .then((json) => setFriends(json));
   }, []);
 
   return (
     <div>
-      {friends.map(friend => (
+      {friends.map((friend) => (
         <Popup
           key={friend.userId}
           trigger={
