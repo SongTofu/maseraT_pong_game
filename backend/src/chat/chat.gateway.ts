@@ -299,19 +299,16 @@ export class ChatGateway {
 
     if (isCreate) chatParticipants.authority = Authority.OWNER;
 
-    if (chatJoinDto.password) {
-      if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {
-        await chatParticipants.save();
-        return true;
-      } else {
-        return false;
-      }
+    if (
+      chatJoinDto.password &&
+      !(await bcrypt.compare(chatJoinDto.password, chatRoom.password))
+    ) {
+      return false;
     }
 
     await chatParticipants.save();
     chatJoinDto.authority = chatParticipants.authority;
 
-    // this.handleConnectChatRoom(chatJoinDto);
     return true;
   }
 
