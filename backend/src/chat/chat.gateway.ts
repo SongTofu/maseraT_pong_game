@@ -23,6 +23,8 @@ import { ChatKickDto } from "./dto/chat-kick.dto";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatSettingDto } from "./dto/chat-setting.dto";
 import { ChatAuthorityDto } from "./dto/chat-authority.dto";
+import { Block } from "src/block/block.entity";
+import { BlockRepository } from "src/block/block.repository";
 
 @WebSocketGateway({
   cors: {
@@ -34,26 +36,27 @@ export class ChatGateway {
     private chatRoomRepository: ChatRoomRepository,
     private chatParticipantsRepository: ChatParticipantRepository,
     private userRepository: UserRepository,
+    private blockRepository: BlockRepository,
   ) {}
 
   @WebSocketServer()
   server;
 
-  //////////////////////
-  @SubscribeMessage("chat-room-all")
-  async handleChatRoomAll(@ConnectedSocket() socket: Socket): Promise<void> {
-    console.log("chat room all");
-    const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
-      order: { id: 1 },
-    });
+  // //////////////////////
+  // @SubscribeMessage("chat-room-all")
+  // async handleChatRoomAll(@ConnectedSocket() socket: Socket): Promise<void> {
+  //   console.log("chat room all");
+  //   const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
+  //     order: { id: 1 },
+  //   });
 
-    const chatRoomDto: ChatRoomDto[] = [];
+  //   const chatRoomDto: ChatRoomDto[] = [];
 
-    chatRooms.forEach((chatRoom) => {
-      chatRoomDto.push(new ChatRoomDto(chatRoom));
-    });
-    this.server.emit("chat-room-all", chatRoomDto);
-  }
+  //   chatRooms.forEach((chatRoom) => {
+  //     chatRoomDto.push(new ChatRoomDto(chatRoom));
+  //   });
+  //   this.server.emit("chat-room-all", chatRoomDto);
+  // }
 
   @SubscribeMessage("chat-room-join")
   async handleJoinChatRoom(
@@ -116,9 +119,9 @@ export class ChatGateway {
 
     await chatRoom.save();
 
-    await this.handleChatRoomAll(socket);
+    // await this.handleChatRoomAll(socket);
     this.server
-      .in("chat-" + chatSettingDto.chatRoomId)
+      // .in("chat-" + chatSettingDto.chatRoomId)
       .emit("chat-room-setting", {
         chatRoomId: chatSettingDto.chatRoomId,
         title: chatSettingDto.title,
@@ -130,13 +133,30 @@ export class ChatGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() chatMessageDto: ChatMessageDto,
   ): Promise<void> {
-    // console.log("chat room message");
     const user: User = await this.userRepository.findOne(chatMessageDto.userId);
+    //채팅 금지 확인
 
+    const chatParticipant: ChatParticipant =
+      await this.chatParticipantsRepository.findOne({ where: { user } });
+    const now = new Date().getTime();
+    const time = +now - +chatParticipant.chatBlock;
+    if (time < 30000) {
+      socket.emit("chat-room-message", {
+        message:
+          "채팅 금지 " + Math.floor((30000 - time) / 1000) + "초 남았습니다.",
+      });
+      return;
+    }
+    const blocks: Block[] = await this.blockRepository.find({
+      where: { blockId: user.id },
+      relations: ["ownId"],
+    });
+    let temp = this.server.in("chat-" + chatMessageDto.chatRoomId);
+    blocks.forEach((block) => {
+      temp = temp.except(block.ownId.socketId);
+    });
     chatMessageDto.nickname = user.nickname;
-    this.server
-      .in("chat-" + chatMessageDto.chatRoomId)
-      .emit("chat-room-message", chatMessageDto);
+    temp.emit("chat-room-message", chatMessageDto);
   }
 
   @SubscribeMessage("chat-room-set-admin")
@@ -161,7 +181,6 @@ export class ChatGateway {
     }
 
     await chatParticipant.save();
-    // this.chatParticipantAll(setAdminDto.chatRoomId);
     const chatAuthorityDto: ChatAuthorityDto = {
       userId: chatParticipant.user.id,
       authority: chatParticipant.authority,
@@ -179,15 +198,8 @@ export class ChatGateway {
     const { chatRoomId, targetId } = chatKickDto;
     const target: User = await this.userRepository.findOne(targetId);
 
-    const delUser: ChatParticipant =
-      await this.chatParticipantsRepository.findOne({
-        where: { chatRoom: chatRoomId, user: targetId },
-      });
-    await this.chatParticipantsRepository.delete(delUser);
-
+    this.server.in("chat-" + chatRoomId).emit("chat-room-kick", { targetId });
     this.server.in(target.socketId).socketsLeave("chat-" + chatRoomId);
-    this.server.in(target.socketId).emit("chat-room-kick", { chatRoomId });
-    this.chatParticipantAll(chatRoomId);
   }
 
   ///////////////////////////
@@ -323,5 +335,20 @@ export class ChatGateway {
     this.server
       .in("chat-" + roomId)
       .emit("chat-particip-all", chatParticipantDto);
+  }
+
+  //채팅금지 30초
+  @SubscribeMessage("chat-block")
+  async handleChatBlock(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() { targetId },
+  ) {
+    const target: ChatParticipant =
+      await this.chatParticipantsRepository.findOne({
+        where: { user: targetId },
+      });
+    target.chatBlock = String(new Date().getTime());
+    // console.log(new Date().getTime());
+    target.save();
   }
 }

@@ -5,7 +5,7 @@ import { AllUser } from "./all-user";
 import { Friend } from "./freind";
 import { ChatUser } from "./chat-user";
 
-export function UserList({ isChatRoom }: any) {
+export function UserList({ isChatRoom, participants }) {
   const [select, setSelect] = useState<Select>(Select.FREIND);
 
   useEffect(() => {
@@ -45,7 +45,9 @@ export function UserList({ isChatRoom }: any) {
       </button>
       {select === Select.ALL_USER ? <AllUser /> : null}
       {select === Select.FREIND ? <Friend /> : null}
-      {select === Select.CHAT_USER ? <ChatUser /> : null}
+      {select === Select.CHAT_USER ? (
+        <ChatUser participants={participants} />
+      ) : null}
     </div>
   );
 }

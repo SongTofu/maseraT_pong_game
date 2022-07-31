@@ -3,7 +3,7 @@ import { RecordService } from "./record.service";
 import { RecordDto } from "./dto/record.dto";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 
-@Controller("record") //record는 3개만 저장하자! ^^~~
+@Controller("record")
 export class RecordController {
   constructor(private recordService: RecordService) {}
 
@@ -14,7 +14,7 @@ export class RecordController {
 
   @Get("")
   @UseGuards(JwtAuthGuard)
-  getMeRecord(@Req() req) {
+  getMeRecord(@Req() req): Promise<RecordDto[]> {
     return this.recordService.getRecord(req.user.id);
   }
 }

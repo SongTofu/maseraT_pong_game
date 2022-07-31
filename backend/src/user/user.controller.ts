@@ -56,7 +56,7 @@ export class UserController {
     @Body() updateUserInfoDto: UpdateUserInfoDto,
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<{ isSuccess: boolean }> {
     if (file) updateUserInfoDto.profileImg = file.filename;
     return this.userService.updateUser(req.user.id, updateUserInfoDto);
   }
