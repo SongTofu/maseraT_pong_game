@@ -1,4 +1,5 @@
-import { useParams, useNavigate } from "react-router-dom";
+import React from "react";
+import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { ChatParticipantType } from "../type/chat-participant-type";
 import { Chat } from "../component/chat";
@@ -8,6 +9,8 @@ import { getCookie } from "../func/get-cookie";
 import { UserList } from "../component/list/user-list";
 import { Authority } from "../type/enum/authority.enum";
 import { ChatRoomSetPopup } from "../popup/chat-room-set-popup";
+import TopBar from "../component/TopNavBar";
+import Button from "../component/button/Button";
 
 export function ChatDetail() {
   const { chatRoomId } = useParams();
@@ -21,13 +24,16 @@ export function ChatDetail() {
   const navigate = useNavigate();
 
   const ref = useRef(null);
-
+  // @ts-ignore
   const onSideClick = e => {
+    // @ts-ignore
     if (!ref.current.contains(e.target)) setIsRoomSet(false);
   };
 
   useEffect(() => {
-    localStorage.setItem("chatRoomId", chatRoomId);
+    if (chatRoomId) {
+      localStorage.setItem("chatRoomId", chatRoomId);
+    }
 
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
       method: "GET"
@@ -35,6 +41,7 @@ export function ChatDetail() {
       .then(res => res.json())
       .then(json => {
         setParticipants(json.chatParticipant);
+        // @ts-ignore
         json.chatParticipant.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", participant.authority);
@@ -97,6 +104,7 @@ export function ChatDetail() {
     });
 
     socket.on("chat-room-set-admin", ({ userId, authority }) => {
+      console.log("Hi");
       if (userId === +getCookie("id")) {
         localStorage.setItem("authority", authority);
         setAuthority(authority);
@@ -140,7 +148,7 @@ export function ChatDetail() {
     setMessage("");
   };
 
-  const onChange = e => {
+  const onChange = (e: any) => {
     setMessage(e.target.value);
   };
 
@@ -149,35 +157,68 @@ export function ChatDetail() {
   };
 
   return (
-    <div>
-      <h1>{title}</h1>
-      <div>
-        <h2>Participant</h2>
-        <UserList isChatRoom={true} participants={participants} />
-        <div ref={ref}>
-          {authority >= Authority.ADMIN ? (
-            <button onClick={onRoomSet}>설정</button>
-          ) : null}
-          {isRoomSet ? (
-            <ChatRoomSetPopup
-              chatRoomId={chatRoomId}
-              roomTitle={title}
-              setIsRoomSet={setIsRoomSet}
-            />
-          ) : null}
+    <div className="h-full flex flex-col">
+      <TopBar>
+        <div className="content">
+          <div className="content-box w-[550px] mr-3 my-5 relative rounded-none rounded-r-lg rounded-bl-lg">
+            <div className="absolute top-[-30px] left-[-2px] border-main border-x-2 border-t-2 bg-white w-[60%] h-[31px] rounded-t-lg px-2 py-1 text-center">
+              <div className="absolute left-5 cursor-pointer">
+                <NavLink to="/chat">&lt;</NavLink>
+              </div>
+              <div>
+                <span className="font-main text-main-text">
+                  "{title}" 제목의 채팅방
+                </span>
+              </div>
+            </div>
+            <div className="w-full h-full flex flex-col justify-start items-center">
+              <div className="w-[90%] h-[80%] border-main border-2 mt-7 p-1 font-main">
+                <ul>
+                  {chats.map((chat, index) => {
+                    return (
+                      <Chat
+                        key={index}
+                        nickname={chat.nickname}
+                        msg={chat.message}
+                      />
+                    );
+                  })}
+                </ul>
+              </div>
+              <div className="w-[90%] flex justify-between mt-4">
+                <input
+                  type="text"
+                  className="w-[85%] border-main border-2 rounded px-2 py-1 text-sm font-main"
+                  onChange={onChange}
+                  value={message}
+                />
+                <div>
+                  <Button
+                    tag="전송"
+                    className="btn-sm py-1"
+                    onClick={onClick}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <UserList isChatRoom={true} participants={participants} />
+            <div ref={ref}>
+              {authority >= Authority.ADMIN ? (
+                <button onClick={onRoomSet}>설정</button>
+              ) : null}
+              {isRoomSet ? (
+                <ChatRoomSetPopup
+                  chatRoomId={chatRoomId}
+                  roomTitle={title}
+                  setIsRoomSet={setIsRoomSet}
+                />
+              ) : null}
+            </div>
+          </div>
         </div>
-        <button>나가기</button>
-        <h2>채팅</h2>
-        <ul>
-          {chats.map((chat, index) => {
-            return (
-              <Chat key={index} nickname={chat.nickname} msg={chat.message} />
-            );
-          })}
-        </ul>
-        <input type="text" onChange={onChange} value={message} />
-        <button onClick={onClick}>전송</button>
-      </div>
+      </TopBar>
     </div>
   );
 }

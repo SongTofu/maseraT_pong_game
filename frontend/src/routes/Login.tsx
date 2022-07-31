@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { getCookie } from "../func/get-cookie";
 import { useNavigate } from "react-router-dom";
 import { SecondAuthPopup } from "../popup/second-auth-popup";
+import Button from "../component/button/Button";
 
 export function Login() {
   const [nickname, setNickname] = useState("");
@@ -17,7 +18,6 @@ export function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // getApi("user/info").then(json => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
@@ -36,21 +36,23 @@ export function Login() {
   const imageInput = useRef(null);
 
   const onClick = () => {
+    // @ts-ignore
     imageInput.current.click();
   };
 
-  const onFileChange = e => {
+  const onFileChange = (e: any) => {
+    // @ts-ignore
     setImgUrl(URL.createObjectURL(e.target.files[0]));
     setProfile(e.target.files[0]);
   };
 
-  const onInputChange = e => {
+  const onInputChange = (e: any) => {
     setNickname(e.target.value);
   };
 
   const onCheckNickname = () => {
     // getApi("nickname/" + nickname).then(json => {
-    fetch(process.env.REACT_APP_API_URL + "nickname" + nickname, {
+    fetch(process.env.REACT_APP_API_URL + "nickname/" + nickname, {
       method: "GET",
       headers: {
         Authorization: getCookie("token")
@@ -70,6 +72,7 @@ export function Login() {
 
   const onProfileUpdate = () => {
     const data = new FormData();
+    // @ts-ignore
     data.append("profile", profile);
     data.append("nickname", nickname);
     fetch(process.env.REACT_APP_API_URL + "user/info", {
@@ -87,41 +90,60 @@ export function Login() {
   };
 
   return (
-    <div>
-      {secondAuthBtn ? (
-        <SecondAuthPopup
-          onSecondAuth={onSecondAuth}
-          isSecondAuth={isSecondAuth}
-          setIsSecondAuth={setIsSecondAuth}
+    <div className="flex justify-center items-center">
+      <div className="flex flex-col justify-evenly items-center h-[500px] w-[300px]">
+        {secondAuthBtn ? (
+          <SecondAuthPopup
+            onSecondAuth={onSecondAuth}
+            isSecondAuth={isSecondAuth}
+            setIsSecondAuth={setIsSecondAuth}
+          />
+        ) : null}
+        <h1 className="text-4xl">Login</h1>
+        <div className="flex flex-col items-center w-full">
+          <img
+            className="h-[200px] w-[200px] border-2 rounded-[50%] mb-2"
+            src={imgUrl}
+            alt="profile"
+            onClick={onClick}
+          />
+          <input
+            type="file"
+            style={{ display: "none" }}
+            ref={imageInput}
+            onChange={onFileChange}
+          />
+        </div>
+        <div>
+          <div className="flex flex-row">
+            <input
+              type="text"
+              className="border-2 rounded"
+              onChange={onInputChange}
+              value={nickname}
+            ></input>
+            <Button
+              tag={"중복 체크"}
+              className={"btn-sm text-sm ml-1"}
+              onClick={onCheckNickname}
+            />
+          </div>
+          <h2 className="text-red-700 text-sm text-left">{checkMsg}</h2>
+        </div>
+        <div>
+          <h3>이메일: &lt;{email}&gt;</h3>
+          <Button
+            tag={isSecondAuth ? "2차인증 비활성화" : "2차인증 활성화"}
+            className={"btn-sm text-sm"}
+            onClick={onSecondAuth}
+          />
+        </div>
+        <Button
+          tag={"수정"}
+          className={"btn-lg"}
+          disabled={btnEnable}
+          onClick={onProfileUpdate}
         />
-      ) : null}
-      <h1>Login</h1>
-      <input
-        type="file"
-        style={{ display: "none" }}
-        ref={imageInput}
-        onChange={onFileChange}
-      />
-      <img src={imgUrl} alt="" onClick={onClick} />
-      <div>
-        <input type="text" onChange={onInputChange} value={nickname}></input>
-        <button onClick={onCheckNickname}>닉네임 중복 체크</button>
-      </div>
-      <div>
-        <h2>{checkMsg}</h2>
-      </div>
-      <div>
-        <h3>이메일: {email}</h3>
-        {isSecondAuth ? (
-          <button onClick={onSecondAuth}>2차인증 비활성화</button>
-        ) : (
-          <button onClick={onSecondAuth}>2차인증 활성화</button>
-        )}
-      </div>
-      <div>
-        <button disabled={btnEnable} onClick={onProfileUpdate}>
-          수정
-        </button>
       </div>
     </div>
   );
