@@ -8,13 +8,14 @@ import { io } from "socket.io-client";
 import { ChatDetail } from "./routes/ChatDetail";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
+import { ChatRoomList } from "./component/chat-room-list";
 
 export let socket = io("http://localhost:3000");
 
 function App() {
   return (
     <Router>
-      <div className="h-screen min-h-[900px] min-w-[1000px] relative text-center w-full flex flex-col justify-between">
+      <div className="h-screen min-h-[900px] min-w-[1024px] relative text-center w-full flex flex-col justify-between">
         <Header />
         <Routes>
           <Route path="/" element={<Home />}></Route>

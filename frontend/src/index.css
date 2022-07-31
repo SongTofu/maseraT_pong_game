@@ -24,7 +24,7 @@
     @apply bg-main px-3 py-1 rounded text-slate-100 font-main
   }
   .content {
-    @apply w-full h-[700px] flex flex-row items-center justify-center 
+    @apply w-full h-full flex flex-row items-center justify-center absolute top-[50%] translate-y-[-46%]
   }
   .content-box {
     @apply border-main border-2 rounded-lg h-[500px] flex flex-col justify-center items-center

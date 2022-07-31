@@ -1,11 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import { socket } from "../App";
+import Button from "../component/button/Button";
 import { getCookie } from "../func/get-cookie";
 
 export function ChatCreatePopup() {
   const [title, setTitle] = useState("");
-  const [password, setPaasword] = useState("");
+  const [password, setPassword] = useState("");
 
   const onClick = () => {
     socket.emit("chat-room-join", {
@@ -21,24 +22,28 @@ export function ChatCreatePopup() {
   };
 
   const onPasswordChagne = (e: any) => {
-    setPaasword(e.target.value);
+    setPassword(e.target.value);
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "Black",
-      }}
-    >
-      <div>
-        {" "}
-        <label style={{ color: "White" }}>방제목</label>
-        <input onChange={onTitleChange} value={title} />
+    <div className="flex flex-col items-center p-10">
+      <div className="flex flex-col mb-2 w-full">
+        <label className="py-1">방제목</label>
+        <input
+          className="border-2 rounded-md p-1"
+          onChange={onTitleChange}
+          value={title}
+        />
       </div>
-
-      <label style={{ color: "White" }}>비밀번호</label>
-      <input onChange={onPasswordChagne} value={password} />
-      <button onClick={onClick}>방생성</button>
+      <div className="flex flex-col mb-2 w-full">
+        <label className="py-1">비밀번호</label>
+        <input
+          className="border-2 rounded-md p-1"
+          onChange={onPasswordChagne}
+          value={password}
+        />
+      </div>
+      <Button tag={"방생성"} className={"btn-lg mt-10"} onClick={onClick} />
     </div>
   );
 }

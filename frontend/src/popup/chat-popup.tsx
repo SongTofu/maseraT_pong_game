@@ -14,7 +14,9 @@ type userProps = {
 
 export function ChatPopup({ user, setIsOpen }: userProps) {
   const { id, authority } = user;
+  // @ts-ignore
   const chatRoomId = +localStorage.getItem("chatRoomId");
+  // @ts-ignore
   const myAuthority = +localStorage.getItem("authority");
 
   // 내 프로필 넣기
@@ -34,6 +36,7 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
   const onKick = () => {
     socket.emit("chat-room-kick", {
       targetId: id,
+      // @ts-ignore
       chatRoomId: +localStorage.getItem("chatRoomId"),
     });
     setIsOpen(false);
