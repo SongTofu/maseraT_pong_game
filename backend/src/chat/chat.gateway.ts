@@ -301,6 +301,7 @@ export class ChatGateway {
 
     if (chatJoinDto.password) {
       if (await bcrypt.compare(chatJoinDto.password, chatRoom.password)) {
+        await chatParticipants.save();
         return true;
       } else {
         return false;
