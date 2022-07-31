@@ -1,14 +1,15 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { Select } from "../../type/enum/select.enum";
 import { AllUser } from "./all-user";
 import { Friend } from "./freind";
 import { ChatUser } from "./chat-user";
 
-export function UserList({ isChatRoom }) {
+export function UserList({ isChatRoom }: any) {
   const [select, setSelect] = useState<Select>(Select.FREIND);
 
   useEffect(() => {
-    setSelect(curr => {
+    setSelect((curr) => {
       if (curr === Select.FREIND) {
         if (isChatRoom) {
           return Select.CHAT_USER;
@@ -22,7 +23,7 @@ export function UserList({ isChatRoom }) {
   }, [isChatRoom]);
 
   const onClick = () => {
-    setSelect(curr => {
+    setSelect((curr) => {
       if (curr === Select.FREIND) {
         if (isChatRoom) {
           return Select.CHAT_USER;

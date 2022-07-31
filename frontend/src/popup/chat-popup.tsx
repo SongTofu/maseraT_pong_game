@@ -1,9 +1,10 @@
+import React from "react";
 import { Authority } from "../type/enum/authority.enum";
 import { getCookie } from "../func/get-cookie";
 import { socket } from "../App";
 import { SetAdminType } from "../type/set-admin-type";
 
-export function ChatPopup({ id, authority, chatRoomId }) {
+export function ChatPopup({ id, authority, chatRoomId }: any) {
   if (id === +getCookie("id")) return <div></div>;
 
   console.log("chatRoomId", chatRoomId);
@@ -11,12 +12,12 @@ export function ChatPopup({ id, authority, chatRoomId }) {
     const setAdmin: SetAdminType = {
       chatRoomId: chatRoomId,
       isAdmin: true,
-      userId: id
+      userId: id,
     };
     socket.emit("chat-room-set-admin", {
       chatRoomId: chatRoomId,
       isAdmin: true,
-      userId: id
+      userId: id,
     });
   };
 

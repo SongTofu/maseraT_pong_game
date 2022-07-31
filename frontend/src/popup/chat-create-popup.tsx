@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
@@ -11,22 +12,22 @@ export function ChatCreatePopup() {
       chatRoomId: 0,
       title,
       password,
-      userId: getCookie("id")
+      userId: getCookie("id"),
     });
   };
 
-  const onTitleChange = e => {
+  const onTitleChange = (e: any) => {
     setTitle(e.target.value);
   };
 
-  const onPasswordChagne = e => {
+  const onPasswordChagne = (e: any) => {
     setPaasword(e.target.value);
   };
 
   return (
     <div
       style={{
-        backgroundColor: "Black"
+        backgroundColor: "Black",
       }}
     >
       <div>

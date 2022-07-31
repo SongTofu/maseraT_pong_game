@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ChatParticipantType } from "../type/chat-participant-type";
@@ -19,15 +20,17 @@ export function ChatDetail() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.setItem("chatRoomId", chatRoomId);
+    if (chatRoomId) {
+      localStorage.setItem("chatRoomId", chatRoomId);
+    }
 
     fetch("http://localhost:3000/chat/room/" + chatRoomId, {
-      method: "GET"
+      method: "GET",
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         setParticipants(json.chatParticipant);
-        json.chatParticipant.forEach(element => {
+        json.chatParticipant.forEach((element: any) => {
           if (element.userId === +getCookie("id")) {
             setAuthority(element.authority);
           }
@@ -35,7 +38,7 @@ export function ChatDetail() {
         setTitle(json.title);
       });
 
-    socket.on("chat-room-destroy", data => {
+    socket.on("chat-room-destroy", (data) => {
       if (data.chatRoomId === chatRoomId) navigate("/chat");
     });
 
@@ -47,34 +50,34 @@ export function ChatDetail() {
 
   useEffect(() => {
     socket.on("chat-room-leave", ({ nickname, userId }) => {
-      setParticipants(curr =>
-        curr.filter(idx => {
+      setParticipants((curr) =>
+        curr.filter((idx) => {
           return +idx.userId !== +userId;
-        })
+        }),
       );
 
-      setChats(curr => {
+      setChats((curr) => {
         return [
           ...curr,
-          { nickname: "", message: nickname + "(이)가 나갔습니다" }
+          { nickname: "", message: nickname + "(이)가 나갔습니다" },
         ];
       });
     });
 
     socket.on("chat-room-message", (chatType: ChatType) => {
-      setChats(curr => [...curr, chatType]);
+      setChats((curr) => [...curr, chatType]);
     });
 
     socket.on("chat-room-join", (participant: ChatParticipantType) => {
-      setParticipants(curr => [...curr, participant]);
+      setParticipants((curr) => [...curr, participant]);
 
-      setChats(curr => {
+      setChats((curr) => {
         return [
           ...curr,
           {
             nickname: "",
-            message: participant.nickname + "(이)가 입장했습니다."
-          }
+            message: participant.nickname + "(이)가 입장했습니다.",
+          },
         ];
       });
     });
@@ -84,8 +87,8 @@ export function ChatDetail() {
       console.log("set admin");
       if (userId === getCookie("id")) setAuthority(authority);
 
-      setParticipants(curr => {
-        curr.forEach(participant => {
+      setParticipants((curr) => {
+        curr.forEach((participant) => {
           if (participant.userId === userId) participant.authority = authority;
         });
         curr.sort((a, b) => a.authority - b.authority);
@@ -105,13 +108,13 @@ export function ChatDetail() {
     socket.emit("chat-room-message", {
       chatRoomId,
       userId: getCookie("id"),
-      message
+      message,
     });
     setMessage("");
   };
   console.log(participants);
 
-  const onChange = e => {
+  const onChange = (e: any) => {
     setMessage(e.target.value);
   };
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { UserType } from "../../type/user-type";
 import { getCookie } from "../../func/get-cookie";
@@ -13,16 +14,16 @@ export function AllUser() {
     fetch(process.env.REACT_APP_API_URL + "user", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
-      .then(json => setUsers(json));
+      .then((res) => res.json())
+      .then((json) => setUsers(json));
   }, []);
 
   return (
     <div>
-      {users.map(user => (
+      {users.map((user) => (
         <Popup
           key={user.userId}
           trigger={

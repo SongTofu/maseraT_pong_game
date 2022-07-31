@@ -1,3 +1,4 @@
+import React from "react";
 import { ChatRoomInfo } from "../type/chat-room-info";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
@@ -7,7 +8,7 @@ export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
     socket.emit("chat-room-join", {
       chatRoomId,
       title,
-      userId: getCookie("id")
+      userId: getCookie("id"),
     });
   };
   return (
