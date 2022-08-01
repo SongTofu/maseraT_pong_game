@@ -3,6 +3,8 @@ import { UserInfoType } from "../type/user-info-type";
 import { getCookie } from "../func/get-cookie";
 import { Record } from "./record";
 import { AchievementType } from "../type/achievement-type";
+import { socket } from "../App";
+import { useNavigate } from "react-router-dom";
 
 export function ProfilePopup({ userId }: any) {
   const [info, setInfo] = useState<UserInfoType>();
@@ -16,15 +18,17 @@ export function ProfilePopup({ userId }: any) {
     consecThree: false
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info/" + userId, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         setInfo(json);
         setIsFriend(json.isFriend);
         setIsBlock(json.isBlocked);
@@ -38,6 +42,14 @@ export function ProfilePopup({ userId }: any) {
     })
       .then(res => res.json())
       .then(json => setAchievement(json));
+
+    socket.on("DM", ({ chatRoomId, targetId }) => {
+      navigate("/DM/" + chatRoomId + "/" + targetId);
+    });
+
+    return () => {
+      socket.off("DM");
+    };
   }, [userId]);
 
   const onAddFriend = () => {
@@ -45,10 +57,10 @@ export function ProfilePopup({ userId }: any) {
     fetch(process.env.REACT_APP_API_URL + "friend/", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + getCookie("token"),
-        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ targetId: userId }),
+      body: JSON.stringify({ targetId: userId })
     });
   };
 
@@ -57,10 +69,10 @@ export function ProfilePopup({ userId }: any) {
     fetch(process.env.REACT_APP_API_URL + "block/", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + getCookie("token"),
-        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ targetId: userId }),
+      body: JSON.stringify({ targetId: userId })
     });
   };
 
@@ -69,11 +81,15 @@ export function ProfilePopup({ userId }: any) {
     fetch(process.env.REACT_APP_API_URL + "block/", {
       method: "DELETE",
       headers: {
-        "Authorization": "Bearer " + getCookie("token"),
-        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ targetId: userId }),
+      body: JSON.stringify({ targetId: userId })
     });
+  };
+
+  const onDMClick = (targetId: number) => {
+    socket.emit("DM", { senderId: getCookie("id"), targetId: targetId });
   };
 
   return (
@@ -82,7 +98,7 @@ export function ProfilePopup({ userId }: any) {
         width: "500px",
         height: "500px",
         backgroundColor: "Red",
-        paddingLeft: "10px",
+        paddingLeft: "10px"
       }}
     >
       {info ? (
@@ -107,7 +123,13 @@ export function ProfilePopup({ userId }: any) {
             <button disabled={isFriend} onClick={onAddFriend}>
               친구 추가
             </button>
-            <button>DM 보내기</button>
+            <button
+              onClick={e => {
+                onDMClick(userId);
+              }}
+            >
+              DM 보내기
+            </button>
             {isBlock ? (
               <button onClick={onDeleteBlock}>차단 해제</button>
             ) : (

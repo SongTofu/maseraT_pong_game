@@ -47,16 +47,16 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
     socket.emit("chat-block", { targetId: id });
   };
   return (
-    <div>
+    <div className="flex flex-col border">
       {myAuthority >= Authority.OWNER ? (
         <button onClick={onSetAdmin}>
           {authority === Authority.ADMIN ? "관리자 해임" : "관리자 임명"}
         </button>
       ) : null}
-      {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+      {myAuthority >= Authority.ADMIN && myAuthority > authority ? (
         <button onClick={onKick}>강퇴</button>
       ) : null}
-      {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+      {myAuthority >= Authority.ADMIN && myAuthority > authority ? (
         <button onClick={onChatBlock}>채팅 금지</button>
       ) : null}
       <Popup trigger={<button>프로필</button>}>

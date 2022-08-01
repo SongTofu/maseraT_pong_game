@@ -25,7 +25,8 @@ export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
   };
 
   return (
-    <div className="w-[90%] border-main border-[1px] rounded-sm bg-white flex justify-between items-center mt-2 first:mt-0 last:mb-2">
+    // <div className="w-[90%] border-main border-[1px] rounded-sm bg-white flex justify-between items-center mt-2 first:mt-0 last:mb-2">
+    <div className="w-[90%] border-main border-[1px] rounded-sm bg-white flex justify-between items-center mt-2 first:mt-0 last:mb-2 m-auto">
       <div className="flex items-center">
         <p className="px-2 py-1">{title}</p>
       </div>

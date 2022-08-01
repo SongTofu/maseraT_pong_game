@@ -53,6 +53,8 @@ export function ChatDetail() {
 
     window.addEventListener("click", onSideClick);
 
+    socket.emit("chat-room-join", { chatRoomId, userId: getCookie("id") });
+
     return () => {
       socket.emit("chat-room-leave", { chatRoomId, userId: getCookie("id") });
       localStorage.removeItem("authority");

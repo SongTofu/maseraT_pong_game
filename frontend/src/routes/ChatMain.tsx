@@ -19,10 +19,10 @@ export function ChatMain() {
     socket.emit("connect-user", { userId: getCookie("id") });
 
     fetch(process.env.REACT_APP_API_URL + "chat/room", {
-      method: "GET",
+      method: "GET"
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         setRooms(json);
       });
 
@@ -36,22 +36,22 @@ export function ChatMain() {
 
   useEffect(() => {
     socket.on("chat-room-create", (chatRoomInfo: ChatRoomInfo) => {
-      setRooms((curr) => {
+      setRooms(curr => {
         return [...curr, chatRoomInfo];
       });
     });
 
     socket.on("chat-room-destroy", ({ chatRoomId }) => {
-      setRooms((curr) =>
-        curr.filter((idx) => {
+      setRooms(curr =>
+        curr.filter(idx => {
           return idx.chatRoomId !== +chatRoomId;
-        }),
+        })
       );
     });
 
     socket.on("chat-room-setting", ({ chatRoomId, title }) => {
-      setRooms((currRooms) => {
-        return currRooms.map((currRoom) => {
+      setRooms(currRooms => {
+        return currRooms.map(currRoom => {
           if (currRoom.chatRoomId === +chatRoomId) currRoom.title = title;
           return currRoom;
         });
@@ -89,8 +89,8 @@ export function ChatMain() {
                 </PopupControl>
               )}
             </div>
-            <div className="h-full">
-              {rooms.map((room) => {
+            <div className="h-full w-full">
+              {rooms.map(room => {
                 return (
                   <ChatRoomList
                     key={room.chatRoomId}

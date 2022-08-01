@@ -13,12 +13,12 @@ export function ChatCreatePopup() {
       chatRoomId: 0,
       title,
       password,
-      userId: getCookie("id"),
+      userId: getCookie("id")
     });
   };
 
   const onTitleChange = (e: any) => {
-    setTitle(e.target.value);
+    if (e.target.value.length < 13) setTitle(e.target.value);
   };
 
   const onPasswordChagne = (e: any) => {

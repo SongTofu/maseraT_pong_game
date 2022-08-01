@@ -13,6 +13,8 @@ import {
 import { ChatPopup } from "../../popup/chat-popup";
 import { ChatPopupType } from "../../type/chat-popup-type";
 import { socket } from "../../App";
+import Admin from "../../img/admin.svg";
+import Owner from "../../img/owner.svg";
 
 // @ts-ignore
 export function ChatUser({ participants }) {
@@ -65,15 +67,23 @@ export function ChatUser({ participants }) {
             onClick={e => {
               onClick(e, participant.userId, participant.authority);
             }}
+            className="flex"
           >
-            <span>
-              {participant.authority === Authority.OWNER ? "방장" : null}
+            {/* {participant.authority === Authority.OWNER ? "방장" : null}
               {participant.authority === Authority.ADMIN ? "관리자" : null}
               {participant.authority === Authority.PARTICIPANT
                 ? "참여자"
-                : null}
-            </span>
-            <span>{participant.nickname}</span>
+                : null} */}
+            {participant.authority === Authority.OWNER ? (
+              <img src={Owner} alt="owner" />
+            ) : null}
+            {participant.authority === Authority.ADMIN ? (
+              <img src={Admin} alt="admin" />
+            ) : null}
+            {/* {participant.authority === Authority.PARTICIPANT
+                ? <img src={} alt="participant" />
+                : null} */}
+            {participant.nickname}
           </div>
         )
       )}

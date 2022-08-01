@@ -15,7 +15,7 @@ export type GameUserType = {
   personalLose: number;
   ladderWin: number;
   ladderLose: number;
-  position: number;
+  // position: number;
 };
 
 export function GameDetail() {
