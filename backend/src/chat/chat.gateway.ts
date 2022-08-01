@@ -25,6 +25,9 @@ import { ChatSettingDto } from "./dto/chat-setting.dto";
 import { ChatAuthorityDto } from "./dto/chat-authority.dto";
 import { Block } from "src/block/block.entity";
 import { BlockRepository } from "src/block/block.repository";
+import { DMDto } from "./dto/dm.dto";
+import { DM } from "./entity/dm.entity";
+import { DMRepository } from "./repository/dm.repository";
 
 @WebSocketGateway({
   cors: {
@@ -37,6 +40,7 @@ export class ChatGateway {
     private chatParticipantsRepository: ChatParticipantRepository,
     private userRepository: UserRepository,
     private blockRepository: BlockRepository,
+    private dmRepository: DMRepository,
   ) {}
 
   @WebSocketServer()
@@ -72,12 +76,14 @@ export class ChatGateway {
     if (!chatJoinDto.chatRoomId) {
       chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
         chatJoinDto,
+        false,
       );
       isCreate = true;
     }
 
     // 비번 틀리면 return
     if (!(await this.joinChatRoom(chatJoinDto, user, isCreate))) {
+      socket.join("chat-" + chatJoinDto.chatRoomId);
       return;
     }
 
@@ -156,6 +162,12 @@ export class ChatGateway {
       temp = temp.except(block.ownId.socketId);
     });
     chatMessageDto.nickname = user.nickname;
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatMessageDto.chatRoomId,
+    );
+    if (chatRoom.isDM) {
+      await this.dmRepository.createDM(chatRoom, user, chatMessageDto);
+    }
     temp.emit("chat-room-message", chatMessageDto);
   }
 
@@ -285,11 +297,12 @@ export class ChatGateway {
       await this.chatParticipantsRepository.findOne({
         where: {
           chatRoom: chatJoinDto.chatRoomId,
-          user: chatJoinDto.userId,
+          // user: chatJoinDto.userId,
+          user: user.id,
         },
       });
 
-    if (joinUser) return true;
+    if (joinUser) return false;
 
     const chatParticipants: ChatParticipant =
       this.chatParticipantsRepository.create({
@@ -348,5 +361,48 @@ export class ChatGateway {
     target.chatBlock = String(new Date().getTime());
     // console.log(new Date().getTime());
     target.save();
+  }
+
+  @SubscribeMessage("DM")
+  async handleDM(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() { senderId, targetId },
+  ) {
+    const sender: User = await this.userRepository.findOne(senderId);
+    const target: User = await this.userRepository.findOne(targetId);
+
+    const dmTitle: string = "dm-" + target.nickname;
+
+    let chatRoom: ChatRoom = await this.chatRoomRepository.findOne({
+      where: { title: dmTitle },
+    });
+
+    let isCreate: Boolean = false;
+
+    const chatJoinDto: ChatJoinDto = {
+      chatRoomId: 0,
+      title: dmTitle,
+      password: "",
+      userId: sender.id,
+      nickname: sender.nickname,
+      authority: Authority.PARTICIPANT,
+    };
+    if (!chatRoom) {
+      chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
+        chatJoinDto,
+        true,
+      );
+      isCreate = true;
+      await this.joinChatRoom(chatJoinDto, sender, isCreate);
+      await this.joinChatRoom(chatJoinDto, target, isCreate);
+      chatRoom = await this.chatRoomRepository.findOne(chatJoinDto.chatRoomId);
+    }
+
+    const recordMessages: DM[] = await this.dmRepository.find({
+      where: { sender, chatRoom: chatJoinDto.chatRoomId },
+    });
+    const dmDto: DMDto = new DMDto(chatRoom, recordMessages);
+
+    socket.emit("DM", dmDto);
   }
 }

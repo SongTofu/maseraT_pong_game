@@ -15,6 +15,7 @@ import { UserState } from "./user-state.enum";
 import { ChatParticipant } from "src/chat/entity/chat-participant.entity";
 import { Achievement } from "src/achievement/achievement.entity";
 import { GameParticipant } from "src/game/entity/game-participant.entity";
+import { DM } from "src/chat/entity/dm.entity";
 
 @Entity()
 @Unique(["nickname"])
@@ -106,4 +107,7 @@ export class User extends BaseEntity {
     (gameParticipant) => gameParticipant.user,
   )
   gameParticipant: GameParticipant[];
+
+  @OneToMany((type) => DM, (dm) => dm.sender)
+  dm: DM[];
 }

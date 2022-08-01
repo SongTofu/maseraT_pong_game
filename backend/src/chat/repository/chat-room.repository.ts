@@ -6,12 +6,12 @@ import { NotFoundException } from "@nestjs/common";
 
 @EntityRepository(ChatRoom)
 export class ChatRoomRepository extends Repository<ChatRoom> {
-  async createRoom(chatJoinDto: ChatJoinDto): Promise<number> {
+  async createRoom(chatJoinDto: ChatJoinDto, isDM: boolean): Promise<number> {
     const { title, password } = chatJoinDto;
 
     const chatRoom: ChatRoom = this.create({
       title,
-      isDM: false,
+      isDM,
     });
 
     if (password !== "") {
