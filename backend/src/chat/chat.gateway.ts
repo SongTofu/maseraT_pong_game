@@ -363,16 +363,18 @@ export class ChatGateway {
     target.save();
   }
 
-  @SubscribeMessage("DM")
+  @SubscribeMessage("DM") //채팅방 내용을 보내주는 것을 API로 한다.
   async handleDM(
     @ConnectedSocket() socket: Socket,
     @MessageBody() { senderId, targetId },
   ) {
     const sender: User = await this.userRepository.findOne(senderId);
     const target: User = await this.userRepository.findOne(targetId);
-    let dmTitle: string;
-    if (senderId > targetId) dmTitle = "dm-" + targetId + " + " + senderId;
-    else dmTitle = "dm-" + senderId + " + " + targetId;
+    const dmTitle: string =
+      "dm- " +
+      Math.min(targetId, senderId) +
+      " + " +
+      Math.max(targetId, targetId);
 
     let chatRoom: ChatRoom = await this.chatRoomRepository.findOne({
       where: { title: dmTitle },
@@ -399,11 +401,6 @@ export class ChatGateway {
       chatRoom = await this.chatRoomRepository.findOne(chatJoinDto.chatRoomId);
     }
 
-    const recordMessages: DM[] = await this.dmRepository.find({
-      where: { sender, chatRoom: chatJoinDto.chatRoomId },
-    });
-    const dmDto: DMDto = new DMDto(chatRoom, recordMessages);
-
-    socket.emit("DM", dmDto);
+    socket.emit("DM", chatRoom.id);
   }
 }

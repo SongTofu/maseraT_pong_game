@@ -6,12 +6,16 @@ import { ChatRoom } from "./entity/chat-room.entity";
 import { ChatRoomRepository } from "./repository/chat-room.repository";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
+import { DMDto } from "./dto/dm.dto";
+import { DM } from "./entity/dm.entity";
+import { DMRepository } from "./repository/dm.repository";
 
 @Injectable()
 export class ChatService {
   constructor(
     private chatParticipantRepository: ChatParticipantRepository,
     private chatRoomRepository: ChatRoomRepository,
+    private dmRepository: DMRepository,
   ) {}
 
   async chatRoomDetail(chatRoomId: number): Promise<ChatRoomDetailDto> {
@@ -44,6 +48,7 @@ export class ChatService {
 
   async chatRoomList(): Promise<ChatRoomDto[]> {
     const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
+      where: { isDM: false },
       relations: ["chatParticipant"],
     });
     const chatRoomDto: ChatRoomDto[] = [];
@@ -53,5 +58,14 @@ export class ChatService {
     });
 
     return chatRoomDto;
+  }
+
+  async dmLog(chatRoomId: number): Promise<DMDto> {
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatRoomId,
+    );
+    const dm: DM[] = await this.dmRepository.find({ where: chatRoom });
+    const dmDto: DMDto = new DMDto(chatRoom, dm);
+    return dmDto;
   }
 }

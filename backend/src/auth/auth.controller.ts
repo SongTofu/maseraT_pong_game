@@ -1,7 +1,6 @@
 import { Controller, Get, Req, UseGuards, Redirect, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { UserDto } from "./dto/user.dto";
-import { LogInDto } from "./dto/login.dto";
 import { ftAuthGuard } from "./guard/ft-auth.guard";
 import { Response } from "express";
 import { SecondAuthService } from "src/second-auth/second-auth.service";
