@@ -370,8 +370,9 @@ export class ChatGateway {
   ) {
     const sender: User = await this.userRepository.findOne(senderId);
     const target: User = await this.userRepository.findOne(targetId);
-
-    const dmTitle: string = "dm-" + target.nickname;
+    let dmTitle: string;
+    if (senderId > targetId) dmTitle = "dm-" + targetId + " + " + senderId;
+    else dmTitle = "dm-" + senderId + " + " + targetId;
 
     let chatRoom: ChatRoom = await this.chatRoomRepository.findOne({
       where: { title: dmTitle },
