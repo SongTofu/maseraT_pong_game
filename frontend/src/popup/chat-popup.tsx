@@ -1,3 +1,4 @@
+import React from "react";
 import { Authority } from "../type/enum/authority.enum";
 import { getCookie } from "../func/get-cookie";
 import { socket } from "../App";
@@ -12,8 +13,11 @@ type userProps = {
 };
 
 export function ChatPopup({ user, setIsOpen }: userProps) {
+  // id -> target id
   const { id, authority } = user;
+  // @ts-ignore
   const chatRoomId = +localStorage.getItem("chatRoomId");
+  // @ts-ignore
   const myAuthority = +localStorage.getItem("authority");
 
   // 내 프로필 넣기
@@ -33,9 +37,14 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
   const onKick = () => {
     socket.emit("chat-room-kick", {
       targetId: id,
+      // @ts-ignore
       chatRoomId: +localStorage.getItem("chatRoomId")
     });
     setIsOpen(false);
+  };
+
+  const onChatBlock = () => {
+    socket.emit("chat-block", { targetId: id });
   };
   return (
     <div>
@@ -48,7 +57,7 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
         <button onClick={onKick}>강퇴</button>
       ) : null}
       {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
-        <button>채팅 금지</button>
+        <button onClick={onChatBlock}>채팅 금지</button>
       ) : null}
       <Popup trigger={<button>프로필</button>}>
         <ProfilePopup userId={id} />

@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { socket } from "../App";
 
+// @ts-ignore
 export function ChatRoomSetPopup({ chatRoomId, roomTitle, setIsRoomSet }) {
   const [title, setTitle] = useState(roomTitle);
   const [password, setPassword] = useState("");
 
-  const onTitleChange = e => {
+  // @ts-ignore
+  const onTitleChange = (e) => {
     setTitle(e.target.value);
   };
 
-  const onPasswordChange = e => {
+  // @ts-ignore
+  const onPasswordChange = (e) => {
     setPassword(e.target.value);
   };
 
@@ -28,7 +31,7 @@ export function ChatRoomSetPopup({ chatRoomId, roomTitle, setIsRoomSet }) {
         height: "300px",
         top: "30%",
         left: "50%",
-        transform: "translate(-50%, 0)"
+        transform: "translate(-50%, 0)",
       }}
     >
       <div>

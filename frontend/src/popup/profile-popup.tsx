@@ -4,7 +4,7 @@ import { getCookie } from "../func/get-cookie";
 import { Record } from "./record";
 import { AchievementType } from "../type/achievement-type";
 
-export function ProfilePopup({ userId }) {
+export function ProfilePopup({ userId }: any) {
   const [info, setInfo] = useState<UserInfoType>();
   const [isFriend, setIsFriend] = useState(false);
   const [isBlock, setIsBlock] = useState(false);
@@ -20,11 +20,11 @@ export function ProfilePopup({ userId }) {
     fetch(process.env.REACT_APP_API_URL + "user/info/" + userId, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         setInfo(json);
         setIsFriend(json.isFriend);
         setIsBlock(json.isBlocked);
@@ -45,10 +45,10 @@ export function ProfilePopup({ userId }) {
     fetch(process.env.REACT_APP_API_URL + "friend/", {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-        "Content-Type": "application/json"
+        "Authorization": "Bearer " + getCookie("token"),
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId: userId })
+      body: JSON.stringify({ targetId: userId }),
     });
   };
 
@@ -57,10 +57,10 @@ export function ProfilePopup({ userId }) {
     fetch(process.env.REACT_APP_API_URL + "block/", {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-        "Content-Type": "application/json"
+        "Authorization": "Bearer " + getCookie("token"),
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId: userId })
+      body: JSON.stringify({ targetId: userId }),
     });
   };
 
@@ -69,10 +69,10 @@ export function ProfilePopup({ userId }) {
     fetch(process.env.REACT_APP_API_URL + "block/", {
       method: "DELETE",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-        "Content-Type": "application/json"
+        "Authorization": "Bearer " + getCookie("token"),
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId: userId })
+      body: JSON.stringify({ targetId: userId }),
     });
   };
 
@@ -82,14 +82,14 @@ export function ProfilePopup({ userId }) {
         width: "500px",
         height: "500px",
         backgroundColor: "Red",
-        paddingLeft: "10px"
+        paddingLeft: "10px",
       }}
     >
       {info ? (
         <div>
           <img src={process.env.REACT_APP_API_URL + info.profileImg} alt="" />
           <p>{info.nickname}</p>
-          <p>level: {info.level}</p>
+          <p>level: {Math.floor(info.level)}</p>
           <p>
             {achievement.firstLogin ? "firstLogin, " : null}
             {achievement.firstWin ? "firstWin, " : null}

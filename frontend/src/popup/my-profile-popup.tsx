@@ -48,7 +48,7 @@ export function MyProfilePopup() {
         <div>
           <img src={process.env.REACT_APP_API_URL + info.profileImg} alt="" />
           <p>{info.nickname}</p>
-          <p>level: {info.level}</p>
+          <p>level: {Math.floor(info.level)}</p>
           <p>
             {achievement.firstLogin ? "firstLogin, " : null}
             {achievement.firstWin ? "firstWin, " : null}

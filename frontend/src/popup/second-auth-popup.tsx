@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { getCookie } from "../func/get-cookie";
 
 export function SecondAuthPopup({
+  // @ts-ignore
   onSecondAuth,
+  // @ts-ignore
   isSecondAuth,
-  setIsSecondAuth
+  // @ts-ignore
+  setIsSecondAuth,
 }) {
   const [checkMsg, setCheckMsg] = useState("");
   const [isCheck, setIsCheck] = useState(false);
@@ -14,8 +17,8 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "second-auth", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     });
   }, []);
 
@@ -23,11 +26,11 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "second-auth/" + code, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         if (json.matchCode) {
           setIsCheck(true);
           setCheckMsg("맞음");
@@ -37,7 +40,8 @@ export function SecondAuthPopup({
       });
   };
 
-  const onChange = e => {
+  // @ts-ignore
+  const onChange = (e) => {
     setCode(e.target.value);
   };
 
@@ -47,11 +51,12 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
+        Authorization: "Bearer " + getCookie("token"),
       },
-      body: data
+      body: data,
     });
-    setIsSecondAuth(curr => !curr);
+    // @ts-ignore
+    setIsSecondAuth((curr) => !curr);
     onSecondAuth(false);
   };
 
@@ -62,7 +67,7 @@ export function SecondAuthPopup({
         height: "100%",
         backgroundColor: "#929292",
         position: "fixed",
-        margin: "-21.438px 0px 0px -8px"
+        margin: "-21.438px 0px 0px -8px",
       }}
     >
       <button onClick={onSecondAuth}>X</button>
