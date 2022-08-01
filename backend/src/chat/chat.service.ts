@@ -64,7 +64,7 @@ export class ChatService {
     const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
       chatRoomId,
     );
-    const dm: DM[] = await this.dmRepository.find({ where: chatRoom });
+    const dm: DM[] = await this.dmRepository.find({ where: { chatRoom } });
     const dmDto: DMDto = new DMDto(chatRoom, dm);
     return dmDto;
   }
