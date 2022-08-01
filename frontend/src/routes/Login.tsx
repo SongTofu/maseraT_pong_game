@@ -18,15 +18,14 @@ export function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // getApi("user/info").then(json => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         setNickname(json.nickname);
         setImgUrl(process.env.REACT_APP_API_URL + json.profileImg);
         setIsSecondAuth(json.secondAuth);
@@ -53,14 +52,14 @@ export function Login() {
 
   const onCheckNickname = () => {
     // getApi("nickname/" + nickname).then(json => {
-    fetch(process.env.REACT_APP_API_URL + "nickname" + nickname, {
+    fetch(process.env.REACT_APP_API_URL + "nickname/" + nickname, {
       method: "GET",
       headers: {
-        Authorization: getCookie("token"),
-      },
+        Authorization: getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         if (json.isValidNickname) {
           setBtnEnable(false);
           setCheckMsg("사용 가능한 닉네임입니다.");
@@ -79,15 +78,15 @@ export function Login() {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
+        Authorization: "Bearer " + getCookie("token")
       },
-      body: data,
+      body: data
     });
     navigate("/game");
   };
 
   const onSecondAuth = () => {
-    setSecondAuthBtn((curr) => !curr);
+    setSecondAuthBtn(curr => !curr);
   };
 
   return (
@@ -106,11 +105,11 @@ export function Login() {
             className="h-[200px] w-[200px] border-2 rounded-[50%] mb-2"
             src={imgUrl}
             alt="profile"
-            // onClick={onClick}
+            onClick={onClick}
           />
           <input
             type="file"
-            // style={{ display: "none" }}
+            style={{ display: "none" }}
             ref={imageInput}
             onChange={onFileChange}
           />

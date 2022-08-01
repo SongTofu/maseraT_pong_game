@@ -24,6 +24,6 @@
     "src/**/*"
   ],
   {
-    "files": ["global.d.ts"],"
+    "files": ["global.d.ts"],
   }
 }

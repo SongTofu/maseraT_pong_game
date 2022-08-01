@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Button from "./button/Button";
 // import TestModal from "./TestModal";
@@ -11,6 +11,8 @@ import ThirdWin from "../img/thirdWin.svg";
 import PopupControl from "../popup/PopupControl";
 import { MyProfilePopup } from "../popup/my-profile-popup";
 import { SecondAuthPopup } from "../popup/second-auth-popup";
+import { getCookie } from "../func/get-cookie";
+import { UserInfoType } from "../type/user-info-type";
 
 interface IProp {
   children?: JSX.Element;
@@ -19,6 +21,28 @@ interface IProp {
 function TopBar({ children }: IProp) {
   const [openModal, setOpenModal] = useState(false);
   const [showAchievement, setShowAchievement] = useState(true);
+  const [info, setInfo] = useState<UserInfoType>({
+    nickname: "",
+    personalWin: 0,
+    personalLose: 0,
+    ladderWin: 0,
+    ladderLose: 0,
+    profileImg: "",
+    level: 0,
+    isFriend: false,
+    isBlocked: false
+  });
+
+  useEffect(() => {
+    fetch(process.env.REACT_APP_API_URL + "user/info", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then(json => setInfo(json));
+  }, []);
 
   const handleOptionChange = (val: boolean) => {
     setOpenModal(!val);
@@ -72,7 +96,7 @@ function TopBar({ children }: IProp) {
             <li>
               <div className="h-12 w-[800px] bg-main-light flex justify-between px-3 items-center border-b-2 border-main">
                 <div className="text-main-text flex flex-row">
-                  <p className="pr-2">player name</p>
+                  <p className="pr-2">{info.nickname}</p>
                   <div
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
@@ -123,18 +147,20 @@ function TopBar({ children }: IProp) {
                   </div>
                 </div>
                 <div className="w-[500px] text-main-text flex justify-between items-center">
-                  <p className="inline">lv. {0}</p>
+                  <p className="inline">lv. {Math.floor(info.level)}</p>
                   <div className="inline">
                     <span className="block text-xs">일반/레더전적</span>
                     <span className="block text-sm ">
-                      {0}승 {0}패/{0}승 {0}패
+                      {info.personalWin}승 {info.personalLose}패/
+                      {info.ladderWin}승 {info.ladderLose}패
                     </span>
                   </div>
                   <div className="flex">
                     <Button
                       tag="프로필 보기"
                       className="btn-sm text-sm mr-2"
-                      onClick={() => handleOptionChange(openModal)}
+                      navlink={"/login"}
+                      // onClick={() => handleOptionChange(openModal)}
                     />
                     {/* <PopupControl mainText="프로필 보기">
                       <MyProfilePopup />

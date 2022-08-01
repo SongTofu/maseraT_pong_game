@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { ChatRoomInfo } from "../type/chat-room-info";
-import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../../func/get-cookie";
 import Popup from "reactjs-popup";
-import { ChatPasswordPopup } from "../popup/chat-password-popup";
-import PopupControl from "../popup/PopupControl";
-import Button from "./button/Button";
+import { ChatPasswordPopup } from "../../popup/chat-password-popup";
+import PopupControl from "../../popup/PopupControl";
+import Button from "../button/Button";
+import { socket } from "../../App";
 
 export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
   const [openModal, setOpenModal] = useState(false);
 
   const onClick = () => {
-    socket.emit("chat-room-join", {
-      chatRoomId,
-      title,
-      userId: getCookie("id"),
-    });
+    if (!isPassword) {
+      socket.emit("chat-room-join", {
+        chatRoomId,
+        title,
+        userId: getCookie("id")
+      });
+    }
   };
 
   const handleOptionChange = (val: boolean) => {

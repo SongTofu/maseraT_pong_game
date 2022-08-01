@@ -25,7 +25,7 @@ export function ChatDetail() {
 
   const ref = useRef(null);
   // @ts-ignore
-  const onSideClick = (e) => {
+  const onSideClick = e => {
     // @ts-ignore
     if (!ref.current.contains(e.target)) setIsRoomSet(false);
   };
@@ -36,13 +36,13 @@ export function ChatDetail() {
     }
 
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
-      method: "GET",
+      method: "GET"
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         setParticipants(json.chatParticipant);
         // @ts-ignore
-        json.chatParticipant.forEach((participant) => {
+        json.chatParticipant.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", participant.authority);
             setAuthority(participant.authority);
@@ -62,55 +62,56 @@ export function ChatDetail() {
 
   useEffect(() => {
     socket.on("chat-room-leave", ({ nickname, userId }) => {
-      setParticipants((curr) =>
-        curr.filter((idx) => {
+      setParticipants(curr =>
+        curr.filter(idx => {
           return +idx.userId !== +userId;
-        }),
+        })
       );
 
-      setChats((curr) => {
+      setChats(curr => {
         return [
           ...curr,
-          { nickname: "", message: nickname + "(이)가 나갔습니다" },
+          { nickname: "", message: nickname + "(이)가 나갔습니다" }
         ];
       });
     });
 
     socket.on("chat-room-message", (chatType: ChatType) => {
-      setChats((curr) => [...curr, chatType]);
+      setChats(curr => [...curr, chatType]);
     });
 
     socket.on("chat-room-join", (participant: ChatParticipantType) => {
-      setParticipants((curr) => {
+      setParticipants(curr => {
         return [
           ...curr,
           {
             nickname: participant.nickname,
             userId: participant.userId,
-            authority: participant.authority,
-          },
+            authority: participant.authority
+          }
         ];
       });
 
-      setChats((curr) => {
+      setChats(curr => {
         return [
           ...curr,
           {
             nickname: "",
-            message: participant.nickname + "(이)가 입장했습니다.",
-          },
+            message: participant.nickname + "(이)가 입장했습니다."
+          }
         ];
       });
     });
 
     socket.on("chat-room-set-admin", ({ userId, authority }) => {
+      console.log("Hi");
       if (userId === +getCookie("id")) {
         localStorage.setItem("authority", authority);
         setAuthority(authority);
       }
 
-      setParticipants((curr) => {
-        curr.forEach((participant) => {
+      setParticipants(curr => {
+        curr.forEach(participant => {
           if (+participant.userId === userId) participant.authority = authority;
         });
         curr.sort((a, b) => b.authority - a.authority);
@@ -122,7 +123,7 @@ export function ChatDetail() {
       if (targetId === getCookie("id")) {
         navigate("/chat");
       }
-      setParticipants((curr) => curr.filter((c) => c.userId !== targetId));
+      setParticipants(curr => curr.filter(c => c.userId !== targetId));
     });
 
     socket.on("chat-room-setting", ({ title }) => {
@@ -142,7 +143,7 @@ export function ChatDetail() {
     socket.emit("chat-room-message", {
       chatRoomId,
       userId: getCookie("id"),
-      message,
+      message
     });
     setMessage("");
   };

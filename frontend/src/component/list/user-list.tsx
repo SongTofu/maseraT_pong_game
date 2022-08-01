@@ -10,7 +10,7 @@ export function UserList({ isChatRoom, participants }: any) {
   const [select, setSelect] = useState<Select>(Select.FREIND);
 
   useEffect(() => {
-    setSelect((curr) => {
+    setSelect(curr => {
       if (curr === Select.FREIND) {
         if (isChatRoom) {
           return Select.CHAT_USER;
@@ -24,7 +24,7 @@ export function UserList({ isChatRoom, participants }: any) {
   }, [isChatRoom]);
 
   const onClick = () => {
-    setSelect((curr) => {
+    setSelect(curr => {
       if (curr === Select.FREIND) {
         if (isChatRoom) {
           return Select.CHAT_USER;
@@ -48,15 +48,14 @@ export function UserList({ isChatRoom, participants }: any) {
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
         <Button tag={buttonTag} onClick={onClick} />
-        "이 부분은 뭔지 모르겠어요"
+        {/* "이 부분은 뭔지 모르겠어요" */}
+      </div>
+      <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
         {select === Select.ALL_USER ? <AllUser /> : null}
         {select === Select.FREIND ? <Friend /> : null}
         {select === Select.CHAT_USER ? (
           <ChatUser participants={participants} />
         ) : null}
-      </div>
-      <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
-        "hi "
       </div>
       <div className="mt-7">
         <Button

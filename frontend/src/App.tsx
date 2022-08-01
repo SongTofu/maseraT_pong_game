@@ -6,6 +6,8 @@ import { SecondAuth } from "./routes/Second-auth";
 import { ChatMain } from "./routes/ChatMain";
 import { io } from "socket.io-client";
 import { ChatDetail } from "./routes/ChatDetail";
+import { GameMain } from "./routes/GameMain";
+import { GameDetail } from "./routes/GameDetail";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
 import { ChatRoomList } from "./component/chat-room-list";
@@ -23,6 +25,8 @@ function App() {
           <Route path="/second-auth" element={<SecondAuth />}></Route>
           <Route path="/chat" element={<ChatMain />}></Route>
           <Route path="/chat/:chatRoomId" element={<ChatDetail />}></Route>
+        <Route path="/game" element={<GameMain />}></Route>
+        <Route path="/game/:gameRoomId" element={<GameDetail />}></Route>
         </Routes>
         <Footer />
       </div>

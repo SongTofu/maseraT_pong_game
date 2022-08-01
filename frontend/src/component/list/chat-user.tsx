@@ -8,29 +8,30 @@ import {
   Key,
   ReactElement,
   ReactFragment,
-  ReactPortal,
+  ReactPortal
 } from "react";
 import { ChatPopup } from "../../popup/chat-popup";
 import { ChatPopupType } from "../../type/chat-popup-type";
+import { socket } from "../../App";
 
 // @ts-ignore
 export function ChatUser({ participants }) {
   const [chatPopup, setChatPopup] = useState<ChatPopupType>({
     id: 0,
-    authority: 3,
+    authority: 3
   });
   const [isOpen, setIsOpen] = useState(false);
 
   // @ts-ignore
   const onClick = (e, id, authority) => {
-    setIsOpen((curr) => !curr);
+    setIsOpen(curr => !curr);
     setChatPopup({ id, authority });
   };
 
   const ref = useRef(null);
 
   // @ts-ignore
-  const onOutSideClick = (e) => {
+  const onOutSideClick = e => {
     // @ts-ignore
     if (!ref.current.contains(e.target)) setIsOpen(false);
   };
@@ -61,7 +62,7 @@ export function ChatUser({ participants }) {
         }) => (
           <div
             key={participant.userId}
-            onClick={(e) => {
+            onClick={e => {
               onClick(e, participant.userId, participant.authority);
             }}
           >
@@ -74,7 +75,7 @@ export function ChatUser({ participants }) {
             </span>
             <span>{participant.nickname}</span>
           </div>
-        ),
+        )
       )}
       {isOpen ? <ChatPopup user={chatPopup} setIsOpen={setIsOpen} /> : null}
     </div>
