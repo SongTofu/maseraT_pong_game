@@ -1,10 +1,10 @@
 import { User } from "src/user/user.entity";
 
 export class DMMessageDto {
-  constructor(sender: User, message: string) {
-    sender;
-    message;
+  constructor(sender: string, message: string) {
+    this.nickname = sender;
+    this.message = message;
   }
-  sender: string;
+  nickname: string;
   message: string;
 }
