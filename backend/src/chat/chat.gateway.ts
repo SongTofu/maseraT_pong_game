@@ -401,6 +401,6 @@ export class ChatGateway {
       chatRoom = await this.chatRoomRepository.findOne(chatJoinDto.chatRoomId);
     }
 
-    socket.emit("DM", { chatRoomId: chatRoom.id, targetId });
+    socket.emit("DM", { chatRoomId: chatRoom.id, nickname: target.nickname });
   }
 }
