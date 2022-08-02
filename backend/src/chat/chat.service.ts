@@ -77,7 +77,10 @@ export class ChatService {
     chatParticipants.forEach((chatParticipant) => {
       if (chatParticipant.user.id != user.id) target = chatParticipant.user;
     });
-    const dm: DM[] = await this.dmRepository.find({ where: { chatRoom } });
+    const dm: DM[] = await this.dmRepository.find({
+      where: { chatRoom },
+      relations: ["sender"],
+    });
     const dmDto: DMDto = new DMDto(chatRoom, dm, target.nickname);
     return dmDto;
   }
