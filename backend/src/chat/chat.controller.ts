@@ -21,6 +21,7 @@ export class ChatController {
     return this.chatService.chatRoomList();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get("/dm/:chatRoomId")
   async dmLog(
     @Req() req,
