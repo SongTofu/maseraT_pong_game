@@ -43,8 +43,8 @@ export function ProfilePopup({ userId }: any) {
       .then(res => res.json())
       .then(json => setAchievement(json));
 
-    socket.on("DM", ({ chatRoomId, targetId }) => {
-      navigate("/DM/" + chatRoomId + "/" + targetId);
+    socket.on("DM", ({ chatRoomId }) => {
+      navigate("/DM/" + chatRoomId);
     });
 
     return () => {

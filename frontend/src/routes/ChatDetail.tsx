@@ -24,6 +24,8 @@ export function ChatDetail() {
   const navigate = useNavigate();
 
   const ref = useRef(null);
+  const scrollRef = useRef<HTMLUListElement>(null);
+
   // @ts-ignore
   const onSideClick = e => {
     // @ts-ignore
@@ -61,6 +63,11 @@ export function ChatDetail() {
       window.removeEventListener("click", onSideClick);
     };
   }, [chatRoomId, navigate]);
+
+  useEffect(() => {
+    if (scrollRef.current)
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [chats]);
 
   useEffect(() => {
     socket.on("chat-room-leave", ({ nickname, userId }) => {
@@ -142,6 +149,7 @@ export function ChatDetail() {
   }, [participants, chats, navigate]);
 
   const onClick = () => {
+    if (message.length <= 0) return;
     socket.emit("chat-room-message", {
       chatRoomId,
       userId: getCookie("id"),
@@ -174,7 +182,10 @@ export function ChatDetail() {
               </div>
             </div>
             <div className="w-full h-full flex flex-col justify-start items-center">
-              <div className="w-[90%] h-[80%] border-main border-2 mt-7 p-1 font-main">
+              <div
+                className="w-[90%] h-[80%] border-main border-2 mt-7 p-1 font-main overflow-auto"
+                ref={scrollRef}
+              >
                 <ul>
                   {chats.map((chat, index) => {
                     return (
