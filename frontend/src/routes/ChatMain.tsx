@@ -5,7 +5,6 @@ import { socket } from "../App";
 import { useNavigate } from "react-router-dom";
 import { ChatCreatePopup } from "../popup/chat-create-popup";
 import { UserList } from "../component/list/user-list";
-import { getCookie } from "../func/get-cookie";
 import TopBar from "../component/TopNavBar";
 import Button from "../component/button/Button";
 import PopupControl from "../popup/PopupControl";
@@ -16,8 +15,6 @@ export function ChatMain() {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    socket.emit("connect-user", { userId: getCookie("id") });
-
     fetch(process.env.REACT_APP_API_URL + "chat/room", {
       method: "GET"
     })

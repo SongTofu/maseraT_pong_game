@@ -18,9 +18,16 @@ import Footer from "./component/Footer";
 import { DM } from "./routes/DM";
 import { isLogin } from "./func/isLogin";
 
-export let socket = io("http://localhost:3000");
+export const socket = io("http://localhost:3000");
 
 function App() {
+  useEffect(() => {
+    // socket.disconnect();
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   return (
     <Router>
       <div className="h-screen min-h-[900px] min-w-[1024px] relative text-center w-full flex flex-col justify-between">

@@ -5,6 +5,7 @@ import { State } from "../../type/enum/state.enum";
 import Popup from "reactjs-popup";
 import { ProfilePopup } from "../../popup/profile-popup";
 import { MyProfilePopup } from "../../popup/my-profile-popup";
+import { socket } from "../../App";
 
 export function AllUser() {
   const [users, setUsers] = useState<UserType[]>([]);
@@ -13,16 +14,31 @@ export function AllUser() {
     fetch(process.env.REACT_APP_API_URL + "user", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setUsers(json));
+      .then(res => res.json())
+      .then(json => setUsers(json));
   }, []);
+
+  useEffect(() => {
+    socket.on("disconnect-user", ({ userId }) => {
+      setUsers(currUsers => currUsers.filter(user => user.userId != userId));
+    });
+
+    socket.on("connect-user", (userType: UserType) => {
+      setUsers(curr => [...curr, userType]);
+    });
+
+    return () => {
+      socket.off("disconnect-user");
+      socket.off("connect-user");
+    };
+  }, [users]);
 
   return (
     <div>
-      {users.map((user) => (
+      {users.map(user => (
         <Popup
           key={user.userId}
           trigger={
