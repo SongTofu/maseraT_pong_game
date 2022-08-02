@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Patch,
-  Get,
-  Post,
-  Param,
-  Req,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Patch, Get, Param, Req, UseGuards } from "@nestjs/common";
 import { AchievementService } from "./achievement.service";
 import { AchievementDto } from "./dto/achievement.dto";
 import { Achievement } from "./achievement.entity";

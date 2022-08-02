@@ -22,7 +22,10 @@ export class ChatController {
   }
 
   @Get("/dm/:chatRoomId")
-  async dmLog(@Param("chatRoomId") chatRoomId: number): Promise<DMDto> {
-    return this.chatService.dmLog(chatRoomId);
+  async dmLog(
+    @Req() req,
+    @Param("chatRoomId") chatRoomId: number,
+  ): Promise<DMDto> {
+    return this.chatService.dmLog(req.user.id, chatRoomId);
   }
 }

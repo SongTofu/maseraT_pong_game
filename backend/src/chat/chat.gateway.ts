@@ -25,8 +25,6 @@ import { ChatSettingDto } from "./dto/chat-setting.dto";
 import { ChatAuthorityDto } from "./dto/chat-authority.dto";
 import { Block } from "src/block/block.entity";
 import { BlockRepository } from "src/block/block.repository";
-import { DMDto } from "./dto/dm.dto";
-import { DM } from "./entity/dm.entity";
 import { DMRepository } from "./repository/dm.repository";
 
 @WebSocketGateway({
@@ -401,6 +399,6 @@ export class ChatGateway {
       chatRoom = await this.chatRoomRepository.findOne(chatJoinDto.chatRoomId);
     }
 
-    socket.emit("DM", { chatRoomId: chatRoom.id, nickname: target.nickname });
+    socket.emit("DM", { chatRoomId: chatRoom.id, targetId });
   }
 }
