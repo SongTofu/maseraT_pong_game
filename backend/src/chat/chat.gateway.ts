@@ -165,10 +165,8 @@ export class ChatGateway {
     //그냥 채팅방이라면 이쪽으로
     let temp = this.server.in("chat-" + chatMessageDto.chatRoomId);
     //dm이라면 "dm- 어저고저쩌고" 제목의 방으로 보내고, DM내용 저장해주기
-    if (chatRoom.isDM) {
-      temp = this.server.in(chatRoom.title);
+    if (chatRoom.isDM)
       await this.dmRepository.createDM(chatRoom, user, chatMessageDto);
-    }
     blocks.forEach((block) => {
       temp = temp.except(block.ownId.socketId);
     });
@@ -404,7 +402,7 @@ export class ChatGateway {
       await this.joinChatRoom(chatJoinDto, target, isCreate);
       chatRoom = await this.chatRoomRepository.findOne(chatJoinDto.chatRoomId);
     }
-
+    socket.join("chat-" + chatRoom.id);
     socket.emit("DM", { chatRoomId: chatRoom.id, targetId });
   }
 }
