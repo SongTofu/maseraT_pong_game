@@ -96,7 +96,7 @@ export class UserGateway {
     // // leaveGameRooms.forEach((leaveGameRoom) => {
     // // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
     // // })
-    this.server.emit("disconnect", { userId: user.id }); //뭐 보내줄 거 있나,,,?
+    this.server.emit("disconnect-user", { userId: user.id }); //뭐 보내줄 거 있나,,,?
   }
 
   async userAll() {
