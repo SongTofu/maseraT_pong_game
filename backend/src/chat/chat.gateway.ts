@@ -79,11 +79,21 @@ export class ChatGateway {
       isCreate = true;
     }
 
-    // 비번 틀리면 return
-    if (!(await this.joinChatRoom(chatJoinDto, user, isCreate))) {
+    //새로고침시 채팅방 입장
+    const joinUser: ChatParticipant =
+      await this.chatParticipantsRepository.findOne({
+        where: {
+          chatRoom: chatJoinDto.chatRoomId,
+          user: user.id,
+        },
+      });
+    if (joinUser) {
       socket.join("chat-" + chatJoinDto.chatRoomId);
       return;
     }
+
+    // 비번 틀리면 return
+    if (!(await this.joinChatRoom(chatJoinDto, user, isCreate))) return;
 
     const chatRoomDto: ChatRoomDto = {
       chatRoomId: chatJoinDto.chatRoomId,
@@ -294,17 +304,6 @@ export class ChatGateway {
     const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
       chatJoinDto.chatRoomId,
     );
-
-    const joinUser: ChatParticipant =
-      await this.chatParticipantsRepository.findOne({
-        where: {
-          chatRoom: chatJoinDto.chatRoomId,
-          // user: chatJoinDto.userId,
-          user: user.id,
-        },
-      });
-
-    if (joinUser) return false;
 
     const chatParticipants: ChatParticipant =
       this.chatParticipantsRepository.create({
