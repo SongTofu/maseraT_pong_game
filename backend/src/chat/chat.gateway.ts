@@ -138,6 +138,8 @@ export class ChatGateway {
     @MessageBody() chatMessageDto: ChatMessageDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatMessageDto.userId);
+    chatMessageDto.nickname = user.nickname;
+
     //채팅 금지 확인
 
     const chatParticipant: ChatParticipant =
@@ -151,21 +153,25 @@ export class ChatGateway {
       });
       return;
     }
+    //채팅 룸 찾고
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatMessageDto.chatRoomId,
+    );
+    // 나를 차단한 사람들 찾고
     const blocks: Block[] = await this.blockRepository.find({
       where: { blockId: user.id },
       relations: ["ownId"],
     });
+    //그냥 채팅방이라면 이쪽으로
     let temp = this.server.in("chat-" + chatMessageDto.chatRoomId);
+    //dm이라면 "dm- 어저고저쩌고" 제목의 방으로 보내고, DM내용 저장해주기
+    if (chatRoom.isDM) {
+      temp = this.server.in(chatRoom.title);
+      await this.dmRepository.createDM(chatRoom, user, chatMessageDto);
+    }
     blocks.forEach((block) => {
       temp = temp.except(block.ownId.socketId);
     });
-    chatMessageDto.nickname = user.nickname;
-    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
-      chatMessageDto.chatRoomId,
-    );
-    if (chatRoom.isDM) {
-      await this.dmRepository.createDM(chatRoom, user, chatMessageDto);
-    }
     temp.emit("chat-room-message", chatMessageDto);
   }
 
