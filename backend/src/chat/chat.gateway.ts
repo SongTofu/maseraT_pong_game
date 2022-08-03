@@ -79,6 +79,11 @@ export class ChatGateway {
       isCreate = true;
     }
 
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatJoinDto.chatRoomId,
+    );
+    if (!chatRoom) return;
+
     //새로고침시 채팅방 입장
     const joinUser: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
@@ -271,30 +276,6 @@ export class ChatGateway {
       // this.handleDisconnectChatRoom(chatLeaveDto.chatRoomId);
     }
   }
-
-  // @SubscribeMessage("connect-chat-room")
-  // handleConnectChatRoom(@MessageBody() chatJoinDto: ChatJoinDto) {
-  //   const chatTitle = "chat-" + chatJoinDto.chatRoomId;
-  //   const numParticipant: number =
-  //     this.server.sockets.adapter.rooms.get(chatTitle).size;
-  //   if (!numParticipant)
-  //     throw new NotFoundException(
-  //       `Can't find ChatRoom with ${chatJoinDto.title}`,
-  //     );
-  //   const chatRoomDto: ChatRoomDto = {
-  //     chatRoomId: chatJoinDto.chatRoomId,
-  //     title: chatJoinDto.title,
-  //     // password: chatJoinDto.password,
-  //     password: true,
-  //     // numParticipant,
-  //   };
-  //   this.server.emit("connect-chat-room", chatRoomDto);
-  // }
-
-  // @SubscribeMessage("disconnect-chat-room")
-  // handleDisconnectChatRoom(@MessageBody() chatRoomId: number) {
-  //   this.server.emit("disconnect-chat-room", chatRoomId); //? ㅇㅣ렇게 줘도 괜찮나?
-  // }
 
   private async joinChatRoom(
     chatJoinDto: ChatJoinDto,
