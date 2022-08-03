@@ -58,18 +58,21 @@ export class GameGateway {
     let isCreate: Boolean = false;
 
     if (!gameRoomId) {
-      gameRoomId = await this.gameRoomRepository.createRoom(gameJoinDto);
+      gameRoomId = await this.gameRoomRepository.createRoom(
+        gameJoinDto,
+        this.gameData,
+      );
       isCreate = true;
     }
-
-    if (isCreate) {
-      this.gameData[gameRoomId] = {};
-      this.gameData[gameRoomId].ball = new BallData();
-      this.gameData[gameRoomId].leftUser = new UserData(true);
-      this.gameData[gameRoomId].rightUser = new UserData(false);
-      this.gameData[gameRoomId].isLadder = isLadder;
-      this.gameData[gameRoomId].isSpeedMode = isSpeedMode;
-    }
+    //createRoom함수 안으로 넣음
+    // if (isCreate) {
+    //   this.gameData[gameRoomId] = {};
+    //   this.gameData[gameRoomId].ball = new BallData();
+    //   this.gameData[gameRoomId].leftUser = new UserData(true);
+    //   this.gameData[gameRoomId].rightUser = new UserData(false);
+    //   this.gameData[gameRoomId].isLadder = isLadder;
+    //   this.gameData[gameRoomId].isSpeedMode = isSpeedMode;
+    // }
 
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameRoomId,
@@ -237,6 +240,7 @@ export class GameGateway {
     if (!ladderGameRoom) {
       ladderGameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         ladderGameJoinDto,
+        this.gameData,
       );
       isCreate = true;
     } else {
@@ -247,20 +251,21 @@ export class GameGateway {
       ladderGameJoinDto.gameRoomId,
     );
 
-    if (isCreate) {
-      this.gameData[gameRoom.id] = {};
-      this.gameData[gameRoom.id].ball = new BallData();
-      this.gameData[gameRoom.id].leftUser = new UserData(true);
-      this.gameData[gameRoom.id].rightUser = new UserData(false);
-      this.gameData[gameRoom.id].isLadder = gameRoom.isLadder;
-      this.gameData[gameRoom.id].isSpeedMode = gameRoom.isSpeedMode;
-    }
+    // if (isCreate) {
+    //   this.gameData[gameRoom.id] = {};
+    //   this.gameData[gameRoom.id].ball = new BallData();
+    //   this.gameData[gameRoom.id].leftUser = new UserData(true);
+    //   this.gameData[gameRoom.id].rightUser = new UserData(false);
+    //   this.gameData[gameRoom.id].isLadder = gameRoom.isLadder;
+    //   this.gameData[gameRoom.id].isSpeedMode = gameRoom.isSpeedMode;
+    // }
     // 게임 참여자
     await this.joinGameRoom(ladderGameJoinDto, readyUser);
     const joinGameTitle = "game-" + ladderGameJoinDto.gameRoomId;
     socket.join(joinGameTitle);
 
     if (!isCreate) {
+      this.server.emit("game-room-create", gameRoom); //게임 입장 불가능, 관전 가능
       this.server
         .in(joinGameTitle)
         .emit("game-room-join", { gameRoomId: gameRoom.id });
@@ -407,5 +412,69 @@ export class GameGateway {
       // 게임 끝날 시 보내줄 정보 정하기 (유저 아이디랑, 승패) 왼, 오 순서, 레벨!
       this.server.to("game-" + gameRoomId).emit("end-game", endGameInfo);
     }
+  }
+
+  @SubscribeMessage("requset-game")
+  async handleRequestGame(
+    // @ConnectedSocket() socket: Socket,
+    @MessageBody() { userId, targetId, isSpeedMode },
+  ) {
+    const user: User = await this.userRepository.findOne(userId);
+    const target: User = await this.userRepository.findOne(targetId);
+
+    //유저 닉네임이랑, 스피드 모드인지
+    this.server
+      .in(target.socketId)
+      .emit("requset-game", { nickname: user.nickname, isSpeedMode });
+  }
+
+  @SubscribeMessage("response-game")
+  async handleResponseGame(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() { userId, targetId, isSpeedMode, isAccept },
+  ) {
+    if (!isAccept) {
+      this.server.in(socket.id).emit("response-game", isAccept); //거절했다는 걸 알려줌
+      return;
+    }
+    const user: User = await this.userRepository.findOne(userId);
+    const target: User = await this.userRepository.findOne(targetId);
+
+    const gameRoomJoin: GameJoinDto = {
+      gameRoomId: null,
+      title: "",
+      userId: user.id,
+      isSpeedMode,
+      isLadder: false,
+    };
+
+    gameRoomJoin.gameRoomId = await this.gameRoomRepository.createRoom(
+      gameRoomJoin,
+      this.gameData,
+    );
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomJoin.gameRoomId,
+    );
+    this.server.emit("game-room-create", gameRoom);
+
+    const gameUser: GameParticipantProfile = await this.joinGameRoom(
+      gameRoomJoin,
+      user,
+    );
+    const gameTarget: GameParticipantProfile = await this.joinGameRoom(
+      gameRoomJoin,
+      target,
+    );
+
+    const gameTitle: string = "game-" + gameRoom.id;
+    socket.join(gameTitle);
+    this.server.in(target.socketId).socketsJoin(gameTitle);
+
+    this.server
+      .in(gameTitle)
+      .emit("game-room-join", { gameRoomId: gameRoom.id, gameUser });
+    this.server
+      .in(gameTitle)
+      .emit("game-room-join", { gameRoomId: gameRoom.id, gameTarget });
   }
 }
