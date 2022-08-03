@@ -1,0 +1,33 @@
+services:
+  frontend:
+    image:
+    ports:
+      - "433:8043"
+      networks:
+        - front-tier
+        - back-tier
+      configs:
+        - httpd-config
+      secrets:
+        - server-certificate
+
+  backend:
+    db:
+      image: postgres
+      volumes:
+        - ./docker/data:/var/lib/postresql/data
+      environment:
+        - .env
+
+    nest:
+      build:
+        context: .
+        dockerfile: ./backend/Dockerfile
+      environment:
+        - .env
+      ports:
+        - "8000:8000"
+      command:
+        - 
+      volumnes:
+        - ./:/app/
