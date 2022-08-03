@@ -425,7 +425,11 @@ export class GameGateway {
     //유저 닉네임이랑, 스피드 모드인지
     this.server
       .in(target.socketId)
-      .emit("request-game", { nickname: user.nickname, isSpeedMode });
+      .emit("request-game", {
+        nickname: user.nickname,
+        isSpeedMode,
+        targetId: userId,
+      });
   }
 
   @SubscribeMessage("response-game")

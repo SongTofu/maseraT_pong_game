@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { ChatParticipantDto } from "./dto/chat-participant.dto";
 import { ChatParticipantRepository } from "./repository/chat-participant.repository";
 import { ChatParticipant } from "./entity/chat-participant.entity";
@@ -33,6 +33,10 @@ export class ChatService {
     const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
       chatRoomId,
     );
+
+    if (!chatRoom) {
+      throw new BadRequestException();
+    }
 
     const chatParticipantDto: ChatParticipantDto[] = [];
 

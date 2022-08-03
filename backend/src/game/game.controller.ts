@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { GameService } from "./game.service";
 import { GameRoomDetailDto } from "./dto/game-room-detail.dto";
 import { GameRoom } from "./entity/game-room.entity";
@@ -14,7 +14,7 @@ export class GameController {
 
   @Get("/room/:gameRoomId")
   async gameRoomDetail(
-    @Param("gameRoomId") gameRoomId: number,
+    @Param("gameRoomId", ParseIntPipe) gameRoomId: number,
   ): Promise<GameRoomDetailDto> {
     return this.gameService.gameRoomDetail(gameRoomId);
   }
