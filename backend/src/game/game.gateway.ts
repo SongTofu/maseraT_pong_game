@@ -414,7 +414,7 @@ export class GameGateway {
     }
   }
 
-  @SubscribeMessage("requset-game")
+  @SubscribeMessage("request-game")
   async handleRequestGame(
     // @ConnectedSocket() socket: Socket,
     @MessageBody() { userId, targetId, isSpeedMode },
@@ -425,7 +425,7 @@ export class GameGateway {
     //유저 닉네임이랑, 스피드 모드인지
     this.server
       .in(target.socketId)
-      .emit("requset-game", { nickname: user.nickname, isSpeedMode });
+      .emit("request-game", { nickname: user.nickname, isSpeedMode });
   }
 
   @SubscribeMessage("response-game")
