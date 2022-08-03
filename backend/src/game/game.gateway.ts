@@ -261,7 +261,9 @@ export class GameGateway {
     socket.join(joinGameTitle);
 
     if (!isCreate) {
-      this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
+      this.server
+        .in(joinGameTitle)
+        .emit("game-room-join", { gameRoomId: gameRoom.id });
     }
     // this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
   }
