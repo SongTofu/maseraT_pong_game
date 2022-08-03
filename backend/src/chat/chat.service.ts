@@ -6,12 +6,19 @@ import { ChatRoom } from "./entity/chat-room.entity";
 import { ChatRoomRepository } from "./repository/chat-room.repository";
 import { ChatRoomDto } from "./dto/chat-room.dto";
 import { ChatRoomDetailDto } from "./dto/chat-room-detail.dto";
+import { DMDto } from "./dto/dm.dto";
+import { DM } from "./entity/dm.entity";
+import { DMRepository } from "./repository/dm.repository";
+import { UserRepository } from "src/user/user.repository";
+import { User } from "src/user/user.entity";
 
 @Injectable()
 export class ChatService {
   constructor(
+    private userRepository: UserRepository,
     private chatParticipantRepository: ChatParticipantRepository,
     private chatRoomRepository: ChatRoomRepository,
+    private dmRepository: DMRepository,
   ) {}
 
   async chatRoomDetail(chatRoomId: number): Promise<ChatRoomDetailDto> {
@@ -44,6 +51,7 @@ export class ChatService {
 
   async chatRoomList(): Promise<ChatRoomDto[]> {
     const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
+      where: { isDM: false },
       relations: ["chatParticipant"],
     });
     const chatRoomDto: ChatRoomDto[] = [];
@@ -53,5 +61,27 @@ export class ChatService {
     });
 
     return chatRoomDto;
+  }
+
+  async dmLog(userId: number, chatRoomId: number): Promise<DMDto> {
+    const user: User = await this.userRepository.findOne(userId);
+    let target: User;
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatRoomId,
+    );
+    const chatParticipants: ChatParticipant[] =
+      await this.chatParticipantRepository.find({
+        where: { chatRoom },
+        relations: ["user"],
+      });
+    chatParticipants.forEach((chatParticipant) => {
+      if (chatParticipant.user.id != user.id) target = chatParticipant.user;
+    });
+    const dm: DM[] = await this.dmRepository.find({
+      where: { chatRoom },
+      relations: ["sender"],
+    });
+    const dmDto: DMDto = new DMDto(chatRoom, dm, target.nickname);
+    return dmDto;
   }
 }

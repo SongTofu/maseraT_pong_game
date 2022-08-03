@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-main:  102 103 171; /* 블루 페리 */
+    --color-main-light: 192 193 225; /* 메인에서 조금 옅은 색 */
+    --color-main-text: 58 59 138; /* 메인 텍스트로 쓸 조금 짙은 색 */
+    --color-button: 70 71 136; /* 블루 페리에서 좀더 진한거 */
+  }
+}
+@layer components {
+  .btn-nav {
+    @apply w-[150px] h-14 border-main border-t-2 rounded-t-lg bg-white flex items-center 
+  }
+  .font-nav {
+    @apply tracking-[15px] w-[95px] text-center pl-7 font-main          
+  }
+  .btn-lg {
+    @apply bg-main rounded w-full py-2 pl-[2.5rem] tracking-[2.5rem] text-slate-100 font-main
+  }
+  .btn-sm {
+    @apply bg-main px-3 py-1 rounded text-slate-100 font-main
+  }
+  .content {
+    @apply w-full h-full flex flex-row items-center justify-center absolute top-[50%] translate-y-[-46%]
+  }
+  .content-box {
+    @apply border-main border-2 rounded-lg h-[500px] flex flex-col justify-center items-center
+  }
+  .btn-unselected {
+    @apply bg-white text-main-text border-main border-[1px]
+  }
+}
+
+/* @font-face {
+  font-family: "Ubuntu";
+  src: local("Ubuntu"), url(./font/Ubuntu-Regular.ttf);
+} */

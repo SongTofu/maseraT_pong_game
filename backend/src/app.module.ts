@@ -25,6 +25,7 @@ import { ChatParticipant } from "./chat/entity/chat-participant.entity";
 import { ChatRoom } from "./chat/entity/chat-room.entity";
 import { Block } from "./block/block.entity";
 import { Achievement } from "./achievement/achievement.entity";
+import { DM } from "./chat/entity/dm.entity";
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { Achievement } from "./achievement/achievement.entity";
         ChatRoom,
         Block,
         Achievement,
+        DM,
       ], // Entity 그대로 넣으면 빠른데 dir로 주면 느려짐 ㄱㅊ?
     }),
     UserModule,

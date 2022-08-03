@@ -7,6 +7,7 @@ import { ChatController } from "./chat.controller";
 import { ChatService } from "./chat.service";
 import { UserRepository } from "src/user/user.repository";
 import { BlockRepository } from "src/block/block.repository";
+import { DMRepository } from "./repository/dm.repository";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { BlockRepository } from "src/block/block.repository";
       ChatRoomRepository,
       UserRepository,
       BlockRepository,
+      DMRepository,
     ]),
   ],
   providers: [ChatGateway, ChatService],

@@ -50,9 +50,12 @@ export class UserGateway {
 
     await user.save();
 
-    // this.userAll(); 안쓸거임!
-    // this.handleFriend(socket, { userId: data.userId });
-    // this.chatGateway.handleChatRoomAll(socket);
+    const userDto: UserListDto = {
+      userId: user.id,
+      nickname: user.nickname,
+      state: user.state,
+    };
+    this.server.emit("connect-user", userDto);
   }
 
   @SubscribeMessage("friend-all")
@@ -64,39 +67,39 @@ export class UserGateway {
   }
 
   @SubscribeMessage("disconnect")
-  async handleDisconnectUser(@ConnectedSocket() socket: Socket) {
+  async handleDisconnect(@ConnectedSocket() socket: Socket) {
     const user: User = await this.userRepository.findOne({
       where: {
         socketId: socket.id,
       },
     });
-
+    if (!user) return;
     //user table에서 비활성화 시키기(이따구로 야매로 해도 괜찮은걸까?)
-    user.state = 0;
+    user.state = UserState.DISCONNECT;
 
     await user.save();
 
-    // 채팅방 떠남
-    const leaveChatRooms: ChatParticipant[] =
-      await this.chatParticipantsRepository.find(user);
+    // // 채팅방 떠남
+    // const leaveChatRooms: ChatParticipant[] =
+    //   await this.chatParticipantsRepository.find(user);
 
-    leaveChatRooms.forEach((leaveChatRoom) => {
-      let chatLeaveDto: ChatLeaveDto = {
-        chatRoomId: leaveChatRoom.id,
-        userId: user.id,
-        nickname: user.nickname,
-      };
-      this.chatGateway.handleChatRoomLeave(socket, chatLeaveDto);
-    });
+    // leaveChatRooms.forEach((leaveChatRoom) => {
+    //   let chatLeaveDto: ChatLeaveDto = {
+    //     chatRoomId: leaveChatRoom.id,
+    //     userId: user.id,
+    //     nickname: user.nickname,
+    //   };
+    //   this.chatGateway.handleChatRoomLeave(socket, chatLeaveDto);
+    // });
 
-    //게임방 떠남
-    const leaveGameRooms: GameParticipant[] =
-      await this.gameParticipantsRepository.find(user);
+    // //게임방 떠남
+    // const leaveGameRooms: GameParticipant[] =
+    //   await this.gameParticipantsRepository.find(user);
 
-    // leaveGameRooms.forEach((leaveGameRoom) => {
-    // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
-    // })
-    this.server.emit("disconnect-user", { success: true }); //뭐 보내줄 거 있나,,,?
+    // // leaveGameRooms.forEach((leaveGameRoom) => {
+    // // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
+    // // })
+    this.server.emit("disconnect-user", { userId: user.id }); //뭐 보내줄 거 있나,,,?
   }
 
   async userAll() {
