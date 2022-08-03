@@ -44,9 +44,9 @@ export function GameMain() {
       setGameRooms(rooms => rooms.filter(room => room.id !== +gameRoomId));
     });
 
-    socket.on("match", ({ gameRoomId }) => {
-      navigate("/game/" + gameRoomId);
-    });
+    // socket.on("match", ({ gameRoomId }) => {
+    //   navigate("/game/" + gameRoomId);
+    // });
 
     return () => {
       socket.off("game-room-create");

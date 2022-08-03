@@ -11,6 +11,13 @@ import { Authority } from "../type/enum/authority.enum";
 import { ChatRoomSetPopup } from "../popup/chat-room-set-popup";
 import TopBar from "../component/TopNavBar";
 import Button from "../component/button/Button";
+import { RequestGamePopup } from "../popup/request-game-popup";
+
+export type ReqGameType = {
+  nickname: string;
+  isSpeedMode: boolean;
+  targetId: number;
+};
 
 export function ChatDetail() {
   const { chatRoomId } = useParams();
@@ -20,6 +27,8 @@ export function ChatDetail() {
   const [message, setMessage] = useState("");
   const [authority, setAuthority] = useState(Authority.PARTICIPANT);
   const [isRoomSet, setIsRoomSet] = useState(false);
+  const [reqGame, setReqGame] = useState<ReqGameType>();
+  const [isGame, setIsGame] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,11 +49,22 @@ export function ChatDetail() {
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
       method: "GET"
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 200) {
+          navigate("/chat");
+        }
+        return res.json();
+      })
       .then(json => {
+        const check = json.chatParticipant?.filter(
+          part => part.id === getCookie("id")
+        );
+        if (!check) {
+          navigate("/chat");
+        }
         setParticipants(json.chatParticipant);
         // @ts-ignore
-        json.chatParticipant.forEach(participant => {
+        json.chatParticipant?.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", participant.authority);
             setAuthority(participant.authority);
@@ -57,10 +77,24 @@ export function ChatDetail() {
 
     socket.emit("chat-room-join", { chatRoomId, userId: getCookie("id") });
 
+    socket.on("request-game", data => {
+      setIsGame(true);
+      setReqGame(data);
+    });
+
+    socket.on("game-room-join", ({ gameRoomId }) => {
+      navigate("/game/" + gameRoomId);
+    });
+
+    socket.on("response-game", ({ g }) => {});
+
     return () => {
       socket.emit("chat-room-leave", { chatRoomId, userId: getCookie("id") });
       localStorage.removeItem("authority");
       window.removeEventListener("click", onSideClick);
+      socket.off("request-game");
+      socket.off("response-game");
+      socket.off("game-room-join");
     };
   }, [chatRoomId, navigate]);
 
@@ -230,6 +264,9 @@ export function ChatDetail() {
               ) : null}
             </div>
           </div>
+          {isGame ? (
+            <RequestGamePopup game={reqGame} setIsGame={setIsGame} />
+          ) : null}
         </div>
       </TopBar>
     </div>
