@@ -4,8 +4,11 @@ WORKDIR /app
 
 COPY package-lock.json ./
 COPY package.json ./
+COPY .env ./
 
-RUN npm i
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y nodejs && \
+    npm i
 
 COPY . .
 
