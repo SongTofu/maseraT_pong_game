@@ -19,7 +19,12 @@ export type ReqGameType = {
   targetId: number;
 };
 
-export function ChatDetail() {
+type ChatRoomDetailType = {
+  title: string;
+  chatParticipant: ChatParticipantType[];
+};
+
+export function ChatDetail(): JSX.Element {
   const { chatRoomId } = useParams();
   const [participants, setParticipants] = useState<ChatParticipantType[]>([]);
   const [title, setTitle] = useState("");
@@ -31,9 +36,8 @@ export function ChatDetail() {
   const [isGame, setIsGame] = useState(false);
 
   const navigate = useNavigate();
-
-  const ref = useRef(null);
-  const scrollRef = useRef<HTMLUListElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // @ts-ignore
   const onSideClick = e => {
@@ -55,34 +59,34 @@ export function ChatDetail() {
         }
         return res.json();
       })
-      .then(json => {
-        const check = json.chatParticipant?.filter(
-          part => part.id === getCookie("id")
+      .then((detail: ChatRoomDetailType) => {
+        const check = detail.chatParticipant?.filter(
+          part => part.userId === +getCookie("id")
         );
         if (!check) {
           navigate("/chat");
         }
-        setParticipants(json.chatParticipant);
+        setParticipants(detail.chatParticipant);
         // @ts-ignore
-        json.chatParticipant?.forEach(participant => {
+        detail.chatParticipant?.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
-            localStorage.setItem("authority", participant.authority);
+            localStorage.setItem("authority", String(participant.authority));
             setAuthority(participant.authority);
           }
         });
-        setTitle(json.title);
+        setTitle(detail.title);
       });
 
     window.addEventListener("click", onSideClick);
 
     socket.emit("chat-room-join", { chatRoomId, userId: getCookie("id") });
 
-    socket.on("request-game", data => {
+    socket.on("request-game", (data: ReqGameType) => {
       setIsGame(true);
       setReqGame(data);
     });
 
-    socket.on("game-room-join", ({ gameRoomId }) => {
+    socket.on("game-room-join", ({ gameRoomId }: { gameRoomId: number }) => {
       navigate("/game/" + gameRoomId);
     });
 
@@ -104,20 +108,23 @@ export function ChatDetail() {
   }, [chats]);
 
   useEffect(() => {
-    socket.on("chat-room-leave", ({ nickname, userId }) => {
-      setParticipants(curr =>
-        curr.filter(idx => {
-          return +idx.userId !== +userId;
-        })
-      );
+    socket.on(
+      "chat-room-leave",
+      ({ nickname, userId }: { nickname: string; userId: number }) => {
+        setParticipants(curr =>
+          curr.filter(idx => {
+            return idx.userId !== userId;
+          })
+        );
 
-      setChats(curr => {
-        return [
-          ...curr,
-          { nickname: "", message: nickname + "(이)가 나갔습니다" }
-        ];
-      });
-    });
+        setChats(curr => {
+          return [
+            ...curr,
+            { nickname: "", message: nickname + "(이)가 나갔습니다" }
+          ];
+        });
+      }
+    );
 
     socket.on("chat-room-message", (chatType: ChatType) => {
       setChats(curr => [...curr, chatType]);
@@ -146,24 +153,27 @@ export function ChatDetail() {
       });
     });
 
-    socket.on("chat-room-set-admin", ({ userId, authority }) => {
-      console.log("Hi");
-      if (userId === +getCookie("id")) {
-        localStorage.setItem("authority", authority);
-        setAuthority(authority);
-      }
+    socket.on(
+      "chat-room-set-admin",
+      ({ userId, authority }: { userId: number; authority: Authority }) => {
+        if (userId === +getCookie("id")) {
+          localStorage.setItem("authority", String(authority));
+          setAuthority(authority);
+        }
 
-      setParticipants(curr => {
-        curr.forEach(participant => {
-          if (+participant.userId === userId) participant.authority = authority;
+        setParticipants(curr => {
+          curr.forEach(participant => {
+            if (+participant.userId === userId)
+              participant.authority = authority;
+          });
+          curr.sort((a, b) => b.authority - a.authority);
+          return [...curr];
         });
-        curr.sort((a, b) => b.authority - a.authority);
-        return [...curr];
-      });
-    });
+      }
+    );
 
-    socket.on("chat-room-kick", ({ targetId }) => {
-      if (targetId === getCookie("id")) {
+    socket.on("chat-room-kick", ({ targetId }: { targetId: number }) => {
+      if (targetId === +getCookie("id")) {
         navigate("/chat");
       }
       setParticipants(curr => curr.filter(c => c.userId !== targetId));
@@ -192,7 +202,7 @@ export function ChatDetail() {
     setMessage("");
   };
 
-  const onChange = (e: any) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
 
@@ -226,7 +236,7 @@ export function ChatDetail() {
                       <Chat
                         key={index}
                         nickname={chat.nickname}
-                        msg={chat.message}
+                        message={chat.message}
                       />
                     );
                   })}

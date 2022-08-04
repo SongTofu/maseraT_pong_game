@@ -7,7 +7,7 @@ import { ProfilePopup } from "../../popup/profile-popup";
 import { MyProfilePopup } from "../../popup/my-profile-popup";
 import { socket } from "../../App";
 
-export function AllUser() {
+export function AllUser(): JSX.Element {
   const [users, setUsers] = useState<UserType[]>([]);
 
   useEffect(() => {
@@ -17,13 +17,17 @@ export function AllUser() {
         Authorization: "Bearer " + getCookie("token")
       }
     })
-      .then(res => res.json())
-      .then(json => setUsers(json));
+      .then((res: Response) => res.json())
+      .then((json: UserType[]) => {
+        setUsers(json);
+      });
   }, []);
 
   useEffect(() => {
     socket.on("disconnect-user", ({ userId }) => {
-      setUsers(currUsers => currUsers.filter(user => user.userId != userId));
+      setUsers((currUsers: UserType[]) =>
+        currUsers.filter((user: UserType) => user.userId != userId)
+      );
     });
 
     socket.on("connect-user", (userType: UserType) => {

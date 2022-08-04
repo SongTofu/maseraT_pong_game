@@ -5,7 +5,7 @@ import { getCookie } from "../func/get-cookie";
 import { Link } from "react-router-dom";
 import { AchievementType } from "../type/achievement-type";
 
-export function MyProfilePopup() {
+export function MyProfilePopup(): JSX.Element {
   const [info, setInfo] = useState<UserInfoType>();
   const [achievement, setAchievement] = useState<AchievementType>({
     firstLogin: false,
@@ -23,7 +23,7 @@ export function MyProfilePopup() {
       }
     })
       .then(res => res.json())
-      .then(json => setInfo(json));
+      .then((json: UserInfoType) => setInfo(json));
 
     fetch(process.env.REACT_APP_API_URL + "achievement/", {
       method: "GET",
@@ -32,7 +32,7 @@ export function MyProfilePopup() {
       }
     })
       .then(res => res.json())
-      .then(json => setAchievement(json));
+      .then((json: AchievementType) => setAchievement(json));
   }, []);
 
   return (

@@ -12,7 +12,7 @@ type userProps = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export function ChatPopup({ user, setIsOpen }: userProps) {
+export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
   // id -> target id
   const { id, authority } = user;
   // @ts-ignore

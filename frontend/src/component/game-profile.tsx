@@ -1,6 +1,6 @@
 import { GameUserType } from "../routes/GameDetail";
 
-export function GameProfile(user: GameUserType) {
+export function GameProfile(user: GameUserType): JSX.Element {
   return (
     <div style={{ backgroundColor: "tomato", width: "300px", height: "600px" }}>
       <img src={process.env.REACT_APP_API_URL + user.profileImg} alt="" />

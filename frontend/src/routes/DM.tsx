@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Chat } from "../component/chat";
 import { ChatType } from "../type/chat-type";
@@ -8,12 +8,17 @@ import Button from "../component/button/Button";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
 
+type DMInfoType = {
+  targetNickname: string;
+  message: ChatType[];
+};
+
 export function DM() {
   const { chatRoomId } = useParams();
   const [chats, setChats] = useState<ChatType[]>([]);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const ref = useRef<HTMLUListElement>();
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "chat/dm/" + chatRoomId, {
@@ -23,9 +28,9 @@ export function DM() {
       }
     })
       .then(res => res.json())
-      .then(json => {
-        setChats(json.message);
-        setTitle(json.targetNickname);
+      .then((dmInfo: DMInfoType) => {
+        setChats(dmInfo.message);
+        setTitle(dmInfo.targetNickname);
       });
   }, []);
 
@@ -42,7 +47,7 @@ export function DM() {
     };
   }, [chats]);
 
-  const onChange = e => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
 
@@ -82,10 +87,9 @@ export function DM() {
                     <Chat
                       key={idx}
                       nickname={chat.nickname}
-                      msg={chat.message}
+                      message={chat.message}
                     />
                   ))}
-                  <Chat />
                 </ul>
               </div>
               <div className="w-[90%] flex justify-between mt-4">

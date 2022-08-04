@@ -22,7 +22,6 @@ export const socket = io("http://localhost:3000");
 
 function App() {
   useEffect(() => {
-    // socket.disconnect();
     return () => {
       socket.disconnect();
     };

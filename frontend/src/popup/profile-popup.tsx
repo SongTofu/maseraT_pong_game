@@ -4,9 +4,13 @@ import { getCookie } from "../func/get-cookie";
 import { Record } from "./record";
 import { AchievementType } from "../type/achievement-type";
 import { socket } from "../App";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
-export function ProfilePopup({ userId }: any) {
+type Props = {
+  userId: number;
+};
+
+export function ProfilePopup({ userId }: Props): JSX.Element {
   const [info, setInfo] = useState<UserInfoType>();
   const [isFriend, setIsFriend] = useState(false);
   const [isBlock, setIsBlock] = useState(false);
@@ -18,7 +22,7 @@ export function ProfilePopup({ userId }: any) {
     consecThree: false
   });
 
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info/" + userId, {
@@ -28,10 +32,10 @@ export function ProfilePopup({ userId }: any) {
       }
     })
       .then(res => res.json())
-      .then(json => {
-        setInfo(json);
-        setIsFriend(json.isFriend);
-        setIsBlock(json.isBlocked);
+      .then((user: UserInfoType) => {
+        setInfo(user);
+        setIsFriend(user.isFriend);
+        setIsBlock(user.isBlocked);
       });
 
     fetch(process.env.REACT_APP_API_URL + "achievement/" + userId, {
@@ -41,9 +45,9 @@ export function ProfilePopup({ userId }: any) {
       }
     })
       .then(res => res.json())
-      .then(json => setAchievement(json));
+      .then((achievement: AchievementType) => setAchievement(achievement));
 
-    socket.on("DM", ({ chatRoomId }) => {
+    socket.on("DM", ({ chatRoomId }: { chatRoomId: number }) => {
       navigate("/DM/" + chatRoomId);
     });
 
@@ -89,7 +93,7 @@ export function ProfilePopup({ userId }: any) {
   };
 
   const onDMClick = (targetId: number) => {
-    socket.emit("DM", { senderId: getCookie("id"), targetId: targetId });
+    socket.emit("DM", { senderId: getCookie("id"), targetId });
   };
 
   return (

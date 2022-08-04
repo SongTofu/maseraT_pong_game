@@ -3,18 +3,18 @@ import { useEffect, useState } from "react";
 import { RecordType } from "../type/record-type";
 import { getCookie } from "../func/get-cookie";
 
-export function Record({ userId }: any) {
+export function Record({ userId }: { userId: number }): JSX.Element {
   const [records, setRecords] = useState<RecordType[]>([]);
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "record/" + userId, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setRecords(json));
+      .then(res => res.json())
+      .then((record: RecordType[]) => setRecords(record));
   }, []);
 
   return (

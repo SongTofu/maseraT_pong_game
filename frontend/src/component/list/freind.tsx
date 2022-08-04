@@ -5,23 +5,23 @@ import { State } from "../../type/enum/state.enum";
 import Popup from "reactjs-popup";
 import { ProfilePopup } from "../../popup/profile-popup";
 
-export function Friend() {
+export function Friend(): JSX.Element {
   const [friends, setFriends] = useState<UserType[]>([]);
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "friend", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setFriends(json));
+      .then((res: Response) => res.json())
+      .then((user: UserType[]) => setFriends(user));
   }, []);
 
   return (
     <div>
-      {friends.map((friend) => (
+      {friends.map((friend: UserType) => (
         <Popup
           key={friend.userId}
           trigger={

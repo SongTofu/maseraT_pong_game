@@ -4,9 +4,9 @@ import { socket } from "../App";
 import Button from "../component/button/Button";
 import { getCookie } from "../func/get-cookie";
 
-export function ChatCreatePopup() {
-  const [title, setTitle] = useState("");
-  const [password, setPassword] = useState("");
+export function ChatCreatePopup(): JSX.Element {
+  const [title, setTitle] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const onClick = () => {
     socket.emit("chat-room-join", {

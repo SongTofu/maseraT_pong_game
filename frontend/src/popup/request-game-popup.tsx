@@ -8,7 +8,10 @@ type ReqGamePopupType = {
   setIsGame: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function RequestGamePopup({ game, setIsGame }: ReqGamePopupType) {
+export function RequestGamePopup({
+  game,
+  setIsGame
+}: ReqGamePopupType): JSX.Element {
   const onOk = (isAccept: boolean) => {
     socket.emit("response-game", {
       userId: getCookie("id"),

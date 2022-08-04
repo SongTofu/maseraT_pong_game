@@ -5,8 +5,17 @@ import { AllUser } from "./all-user";
 import { Friend } from "./freind";
 import { ChatUser } from "./chat-user";
 import Button from "../button/Button";
+import { ChatParticipantType } from "../../type/chat-participant-type";
 
-export function UserList({ isChatRoom, participants }: any) {
+type UserListType = {
+  participants: ChatParticipantType[] | null;
+  isChatRoom: boolean;
+};
+
+export function UserList({
+  isChatRoom,
+  participants
+}: UserListType): JSX.Element {
   const [select, setSelect] = useState<Select>(Select.FREIND);
 
   useEffect(() => {

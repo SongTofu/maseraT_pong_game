@@ -28,7 +28,7 @@ export function GameMain() {
       }
     })
       .then(res => res.json())
-      .then(json => setGameRooms(json));
+      .then((gameRoom: GameRoomType[]) => setGameRooms(gameRoom));
   }, []);
 
   useEffect(() => {
@@ -36,11 +36,11 @@ export function GameMain() {
       setGameRooms(curr => [...curr, gameRoom]);
     });
 
-    socket.on("game-room-join", ({ gameRoomId }) => {
+    socket.on("game-room-join", ({ gameRoomId }: { gameRoomId: number }) => {
       navigate("/game/" + gameRoomId);
     });
 
-    socket.on("game-room-destroy", ({ gameRoomId }) => {
+    socket.on("game-room-destroy", ({ gameRoomId }: { gameRoomId: number }) => {
       setGameRooms(rooms => rooms.filter(room => room.id !== +gameRoomId));
     });
 
@@ -77,7 +77,7 @@ export function GameMain() {
         />
       ))}
       <h1>UserList</h1>
-      <UserList isChatRoom={false} participants="" />
+      <UserList isChatRoom={false} participants={null} />
       <button onClick={onMatch}>래더 매칭</button>
       {isMatching ? <MatchPopup setIsMatching={setIsMatching} /> : null}
     </div>

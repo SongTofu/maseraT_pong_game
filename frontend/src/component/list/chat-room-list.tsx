@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { ChatRoomInfo } from "../type/chat-room-info";
+import { ChatRoomInfo } from "../../type/chat-room-info";
 import { getCookie } from "../../func/get-cookie";
-import Popup from "reactjs-popup";
 import { ChatPasswordPopup } from "../../popup/chat-password-popup";
 import PopupControl from "../../popup/PopupControl";
 import Button from "../button/Button";
 import { socket } from "../../App";
 
-export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
+export function ChatRoomList({
+  title,
+  isPassword,
+  chatRoomId
+}: ChatRoomInfo): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
 
   const onClick = () => {

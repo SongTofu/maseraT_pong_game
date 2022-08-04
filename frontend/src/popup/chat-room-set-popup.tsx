@@ -1,18 +1,28 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { socket } from "../App";
 
+type Props = {
+  chatRoomId: string | undefined;
+  roomTitle: string;
+  setIsRoomSet: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 // @ts-ignore
-export function ChatRoomSetPopup({ chatRoomId, roomTitle, setIsRoomSet }) {
+export function ChatRoomSetPopup({
+  chatRoomId,
+  roomTitle,
+  setIsRoomSet
+}: Props): JSX.Element {
   const [title, setTitle] = useState(roomTitle);
   const [password, setPassword] = useState("");
 
   // @ts-ignore
-  const onTitleChange = (e) => {
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
   // @ts-ignore
-  const onPasswordChange = (e) => {
+  const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
@@ -31,7 +41,7 @@ export function ChatRoomSetPopup({ chatRoomId, roomTitle, setIsRoomSet }) {
         height: "300px",
         top: "30%",
         left: "50%",
-        transform: "translate(-50%, 0)",
+        transform: "translate(-50%, 0)"
       }}
     >
       <div>

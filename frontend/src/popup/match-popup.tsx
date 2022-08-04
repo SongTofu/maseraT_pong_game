@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
 
-export function MatchPopup({ setIsMatching }) {
+type Props = {
+  setIsMatching: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function MatchPopup({ setIsMatching }: Props): JSX.Element {
   const [second, setSecond] = useState(0);
   const onClick = () => {
     setIsMatching(false);

@@ -15,10 +15,16 @@ export type GameUserType = {
   personalLose: number;
   ladderWin: number;
   ladderLose: number;
-  // position: number;
+  position: number;
 };
 
-export function GameDetail() {
+type GameInfoType = {
+  gameUser: GameUserType[];
+  title: string;
+  isLadder: boolean;
+};
+
+export function GameDetail(): JSX.Element {
   const { gameRoomId } = useParams();
   const [gameUsers, setGameUsers] = useState<GameUserType[]>([]);
   const [title, setTitle] = useState("");
@@ -33,15 +39,15 @@ export function GameDetail() {
       method: "GET"
     })
       .then(res => res.json())
-      .then(json => {
-        setGameUsers(json.gameUser);
-        setTitle(json.title);
-        json.gameUser.forEach(user => {
+      .then((gameInfo: GameInfoType) => {
+        setGameUsers(gameInfo.gameUser);
+        setTitle(gameInfo.title);
+        gameInfo.gameUser.forEach(user => {
           if (user.userId === +getCookie("id")) {
             setPosition(user.position);
           }
         });
-        setIsLadder(json.isLadder);
+        setIsLadder(gameInfo.isLadder);
       });
 
     return () => {
@@ -50,7 +56,7 @@ export function GameDetail() {
   }, [gameRoomId, navigate]);
 
   useEffect(() => {
-    socket.on("game-room-join", ({ gameUser }) => {
+    socket.on("game-room-join", ({ gameUser }: { gameUser: GameUserType }) => {
       setGameUsers(currUsers =>
         currUsers.map(currUser => {
           if (currUser.position === gameUser.position) {
@@ -61,7 +67,7 @@ export function GameDetail() {
       );
     });
 
-    socket.on("game-room-leave", ({ userId }) => {
+    socket.on("game-room-leave", ({ userId }: { userId: number }) => {
       setGameUsers(users =>
         users.map(user => {
           if (user.userId === userId) {
@@ -98,18 +104,16 @@ export function GameDetail() {
       }
     });
 
+    if (isLadder && gameUsers[0].userId === +getCookie("id")) {
+      socket.emit("start-game", { gameRoomId, isLadder });
+    }
+
     return () => {
       socket.off("game-room-leave");
       socket.off("game-room-join");
       socket.off("end-game");
     };
   }, [gameUsers, gameRoomId, isLadder, navigate]);
-
-  useEffect(() => {
-    if (isLadder && gameUsers[0].userId === +getCookie("id")) {
-      socket.emit("start-game", { gameRoomId, isLadder });
-    }
-  }, [isLadder, gameRoomId, gameUsers]);
 
   const onStart = () => {
     socket.emit("start-game", { gameRoomId, isLadder: false });
