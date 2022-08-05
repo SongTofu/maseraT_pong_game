@@ -22,10 +22,11 @@ import { getCookie } from "./func/cookieFunc";
 export const socket = io("http://localhost:3000");
 
 function App() {
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   useEffect(() => {
     if (getCookie("isLogin")) {
-      setLogin(true);
+    } else {
+      setLogin(false);
     }
     return () => {
       socket.disconnect();
@@ -37,7 +38,7 @@ function App() {
       <div className="h-screen min-h-[900px] min-w-[1024px] relative text-center w-full flex flex-col justify-between">
         <Header />
         <Routes>
-          {login && connectUser() ? (
+          {connectUser() ? (
             <>
               <Route path="/login" element={<Login />}></Route>
               <Route path="/chat" element={<ChatMain />}></Route>
@@ -53,13 +54,11 @@ function App() {
           ) : (
             <>
               <Route path="/" element={<Home />}></Route>
-              {isToken() ? (
-                <Route
-                  path="/second-auth"
-                  element={<SecondAuth setLogin={setLogin} />}
-                ></Route>
-              ) : null}
-
+              <Route
+                path="/second-auth"
+                element={<SecondAuth setLogin={setLogin} />}
+                // element={<SecondAuth />}
+              ></Route>
               <Route path="/*" element={<Navigate to="/"></Navigate>}></Route>
             </>
           )}

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { RecordType } from "../type/record-type";
 import { getCookie } from "../func/cookieFunc";
 
-export function Record({ userId }: { userId: number }): JSX.Element {
+export function Record({ userId }: { userId: string }): JSX.Element {
   const [records, setRecords] = useState<RecordType[]>([]);
 
   useEffect(() => {
