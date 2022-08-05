@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { useNavigate } from "react-router-dom";
 import { SecondAuthPopup } from "../popup/second-auth-popup";
 import Button from "../component/button/Button";

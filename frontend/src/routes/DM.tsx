@@ -6,7 +6,7 @@ import TopBar from "../component/TopNavBar";
 import { NavLink } from "react-router-dom";
 import Button from "../component/button/Button";
 import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
 type DMInfoType = {
   targetNickname: string;

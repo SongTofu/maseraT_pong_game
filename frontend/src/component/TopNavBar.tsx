@@ -11,8 +11,9 @@ import ThirdWin from "../img/thirdWin.svg";
 import PopupControl from "../popup/PopupControl";
 import { MyProfilePopup } from "../popup/my-profile-popup";
 import { SecondAuthPopup } from "../popup/second-auth-popup";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { UserInfoType } from "../type/user-info-type";
+import { AchievementType } from "../type/achievement-type";
 
 interface IProp {
   children?: JSX.Element;
@@ -20,7 +21,7 @@ interface IProp {
 
 function TopBar({ children }: IProp) {
   const [openModal, setOpenModal] = useState(false);
-  const [showAchievement, setShowAchievement] = useState(true);
+  const [showAchievement, setShowAchievement] = useState(false);
   const [info, setInfo] = useState<UserInfoType>({
     nickname: "",
     personalWin: 0,
@@ -32,6 +33,13 @@ function TopBar({ children }: IProp) {
     isFriend: false,
     isBlocked: false
   });
+  const [achievement, setAchievement] = useState<AchievementType>({
+    firstLogin: false,
+    firstLose: false,
+    firstWin: false,
+    consecThree: false,
+    thiredWin: false
+  });
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
@@ -41,7 +49,19 @@ function TopBar({ children }: IProp) {
       }
     })
       .then(res => res.json())
-      .then(json => setInfo(json));
+      .then((userInfo: UserInfoType) => setInfo(userInfo));
+
+    fetch(process.env.REACT_APP_API_URL + "achievement", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then((achi: AchievementType) => {
+        setAchievement(achi);
+        console.log(achi);
+      });
   }, []);
 
   const handleOptionChange = (val: boolean) => {
@@ -112,36 +132,46 @@ function TopBar({ children }: IProp) {
                         className="w-[150px] h-[30px] bg-white border-black rounded-md border-[1px] absolute top-[-20px] left-[10px] flex justify-evenly items-center"
                         onMouseEnter={handleMouseEnter}
                       >
-                        <img
-                          alt="첫 로그인"
-                          title="첫 로그인"
-                          src={FirstLogin}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="첫승"
-                          title="첫승"
-                          src={FirstWin}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="3승"
-                          title="3승"
-                          src={ThirdWin}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="첫패"
-                          title="첫패"
-                          src={FirstLose}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="3연승"
-                          title="3연승"
-                          src={ConsecThree}
-                          className="w-[20px] h-[20px]"
-                        />
+                        {achievement.firstLogin ? (
+                          <img
+                            alt="첫 로그인"
+                            title="첫 로그인"
+                            src={FirstLogin}
+                            className="w-[20px] h-[20px]"
+                          />
+                        ) : null}
+                        {achievement.firstWin ? (
+                          <img
+                            alt="첫승"
+                            title="첫승"
+                            src={FirstWin}
+                            className="w-[20px] h-[20px]"
+                          />
+                        ) : null}
+                        {achievement.thiredWin ? (
+                          <img
+                            alt="3승"
+                            title="3승"
+                            src={ThirdWin}
+                            className="w-[20px] h-[20px]"
+                          />
+                        ) : null}
+                        {achievement.firstLose ? (
+                          <img
+                            alt="첫패"
+                            title="첫패"
+                            src={FirstLose}
+                            className="w-[20px] h-[20px]"
+                          />
+                        ) : null}
+                        {achievement.consecThree ? (
+                          <img
+                            alt="3연승"
+                            title="3연승"
+                            src={ConsecThree}
+                            className="w-[20px] h-[20px]"
+                          />
+                        ) : null}
                       </div>
                     )}
                   </div>

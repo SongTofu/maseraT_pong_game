@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
 type Props = {
   setIsMatching: React.Dispatch<React.SetStateAction<boolean>>;

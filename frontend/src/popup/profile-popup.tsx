@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserInfoType } from "../type/user-info-type";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { Record } from "./record";
 import { AchievementType } from "../type/achievement-type";
 import { socket } from "../App";

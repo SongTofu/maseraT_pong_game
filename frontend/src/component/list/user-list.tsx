@@ -32,32 +32,21 @@ export function UserList({
     });
   }, [isChatRoom]);
 
-  const onClick = () => {
-    setSelect(curr => {
-      if (curr === Select.FREIND) {
-        if (isChatRoom) {
-          return Select.CHAT_USER;
-        } else {
-          return Select.ALL_USER;
-        }
-      } else {
-        return Select.FREIND;
-      }
-    });
+  const onFreindClick = () => {
+    setSelect(Select.FREIND);
   };
 
-  const buttonTag =
-    select === Select.ALL_USER
-      ? "전체 유저"
-      : select === Select.FREIND
-      ? "친구"
-      : "참여자";
+  const onClick = () => {
+    if (isChatRoom) setSelect(Select.CHAT_USER);
+    else setSelect(Select.ALL_USER);
+  };
+
   const pathName = window.location.pathname;
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
-        <Button tag={buttonTag} onClick={onClick} />
-        {/* "이 부분은 뭔지 모르겠어요" */}
+        <Button tag={isChatRoom ? "참여자" : "전체유저"} onClick={onClick} />
+        <Button tag={"친구"} onClick={onFreindClick} />
       </div>
       <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
         {select === Select.ALL_USER ? <AllUser /> : null}

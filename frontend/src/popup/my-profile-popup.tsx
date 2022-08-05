@@ -1,7 +1,7 @@
 import { Record } from "./record";
 import { useState, useEffect } from "react";
 import { UserInfoType } from "../type/user-info-type";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { Link } from "react-router-dom";
 import { AchievementType } from "../type/achievement-type";
 

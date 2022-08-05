@@ -5,7 +5,7 @@ import { ChatParticipantType } from "../type/chat-participant-type";
 import { Chat } from "../component/chat";
 import { ChatType } from "../type/chat-type";
 import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { UserList } from "../component/list/user-list";
 import { Authority } from "../type/enum/authority.enum";
 import { ChatRoomSetPopup } from "../popup/chat-room-set-popup";

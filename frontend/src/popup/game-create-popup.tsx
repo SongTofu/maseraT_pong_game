@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
 export function GameCreatePopup(): JSX.Element {
   const [title, setTitle] = useState("");

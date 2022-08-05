@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChatRoomInfo } from "../../type/chat-room-info";
-import { getCookie } from "../../func/get-cookie";
+import { getCookie } from "../../func/cookieFunc";
 import { ChatPasswordPopup } from "../../popup/chat-password-popup";
 import PopupControl from "../../popup/PopupControl";
 import Button from "../button/Button";

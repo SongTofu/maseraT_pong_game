@@ -1,6 +1,6 @@
 import React from "react";
 import { Authority } from "../type/enum/authority.enum";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { socket } from "../App";
 import { ChatPopupType } from "../type/chat-popup-type";
 import { Dispatch, SetStateAction } from "react";

@@ -1,4 +1,3 @@
-import React from "react";
 import Button from "../component/button/Button";
 
 export function Home(): JSX.Element {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserType } from "../../type/user-type";
-import { getCookie } from "../../func/get-cookie";
+import { getCookie } from "../../func/cookieFunc";
 import { State } from "../../type/enum/state.enum";
 import Popup from "reactjs-popup";
 import { ProfilePopup } from "../../popup/profile-popup";

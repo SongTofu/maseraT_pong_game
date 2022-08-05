@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
 type Props = {
   chatRoomId: number;

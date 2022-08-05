@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
 export function ChatCreatePopup(): JSX.Element {
   const [title, setTitle] = useState<string>("");

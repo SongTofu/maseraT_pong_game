@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
 type Props = {
   onSecondAuth: () => void;

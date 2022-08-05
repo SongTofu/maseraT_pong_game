@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { GameProfile } from "../component/game-profile";
 import { useEffect, useState } from "react";
 import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { Game } from "../component/game";
 
 export type GameUserType = {

@@ -1,6 +1,6 @@
 import { GameRoomType } from "../../routes/GameMain";
 import { socket } from "../../App";
-import { getCookie } from "../../func/get-cookie";
+import { getCookie } from "../../func/cookieFunc";
 
 export function GameRoomList({
   id,

@@ -1,6 +1,6 @@
 import { socket } from "../App";
 import Button from "../component/button/Button";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { ReqGameType } from "../routes/ChatDetail";
 
 type ReqGamePopupType = {

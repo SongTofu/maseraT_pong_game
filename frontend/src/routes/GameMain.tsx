@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserList } from "../component/list/user-list";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { GameRoomList } from "../component/list/game-room-list";
 import { socket } from "../App";
 import { useNavigate } from "react-router-dom";
