@@ -8,7 +8,7 @@ const leftUser = {
   width: 10,
   height: 100,
   color: "WHITE",
-  score: 0
+  score: 0,
 };
 
 const rightUser = {
@@ -17,7 +17,7 @@ const rightUser = {
   width: 10,
   height: 100,
   color: "WHITE",
-  score: 0
+  score: 0,
 };
 
 const ball = {
@@ -27,7 +27,7 @@ const ball = {
   speed: 5,
   velocityX: 5,
   velocityY: 5,
-  color: "WHITE"
+  color: "WHITE",
 };
 
 function movePaddle(evt, cvs, position) {
@@ -45,8 +45,8 @@ export function Game({ position, gameRoomId, start }) {
     const cvs = ref.current;
 
     const context = cvs.getContext("2d");
-    ref.current.addEventListener("mousemove", e =>
-      movePaddle(e, ref.current, position)
+    ref.current.addEventListener("mousemove", (e) =>
+      movePaddle(e, ref.current, position),
     );
 
     render(ref.current, context, leftUser, rightUser, ball);
@@ -70,13 +70,13 @@ export function Game({ position, gameRoomId, start }) {
       render(ref.current, context, leftUser, rightUser, ball);
     });
     return () => {
-      cvs.removeEventListener("mousemove", e => movePaddle(e, cvs, position));
+      cvs.removeEventListener("mousemove", (e) => movePaddle(e, cvs, position));
       socket.off("game");
     };
   }, [gameRoomId, position]);
 
   return (
-    <div>
+    <div className="flex justify-center items-center">
       <canvas ref={ref} width="600px" height="400px"></canvas>
     </div>
   );

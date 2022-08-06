@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { socket } from "../App";
 import { getCookie } from "../func/get-cookie";
 import { Game } from "../component/game";
+import TopBar from "../component/TopNavBar";
+import Button from "../component/button/Button";
 
 export type GameUserType = {
   userId: number;
@@ -30,13 +32,13 @@ export function GameDetail() {
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "game/room/" + gameRoomId, {
-      method: "GET"
+      method: "GET",
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         setGameUsers(json.gameUser);
         setTitle(json.title);
-        json.gameUser.forEach(user => {
+        json.gameUser.forEach((user) => {
           if (user.userId === +getCookie("id")) {
             setPosition(user.position);
           }
@@ -51,19 +53,19 @@ export function GameDetail() {
 
   useEffect(() => {
     socket.on("game-room-join", ({ gameUser }) => {
-      setGameUsers(currUsers =>
-        currUsers.map(currUser => {
+      setGameUsers((currUsers) =>
+        currUsers.map((currUser) => {
           if (currUser.position === gameUser.position) {
             currUser = gameUser;
           }
           return currUser;
-        })
+        }),
       );
     });
 
     socket.on("game-room-leave", ({ userId }) => {
-      setGameUsers(users =>
-        users.map(user => {
+      setGameUsers((users) =>
+        users.map((user) => {
           if (user.userId === userId) {
             user.userId = 0;
             user.nickname = "";
@@ -75,23 +77,23 @@ export function GameDetail() {
             user.ladderLose = 0;
           }
           return user;
-        })
+        }),
       );
     });
 
-    socket.on("end-game", data => {
+    socket.on("end-game", (data) => {
       if (isLadder) {
         navigate("/game");
       } else {
-        setGameUsers(currUsers =>
-          currUsers.map(currUser => {
+        setGameUsers((currUsers) =>
+          currUsers.map((currUser) => {
             if (currUser.position === 0) {
               currUser = data[0];
             } else if (currUser.position === 1) {
               currUser = data[1];
             }
             return currUser;
-          })
+          }),
         );
 
         setStart(false);
@@ -117,52 +119,55 @@ export function GameDetail() {
   };
 
   return (
-    <div>
-      <h1>game room {gameRoomId}</h1>
-      <h2>{title}</h2>
-      <div style={{ display: "flex" }}>
-        {gameUsers.length ? (
-          <GameProfile
-            userId={gameUsers[0].userId}
-            nickname={gameUsers[0].nickname}
-            profileImg={gameUsers[0].profileImg}
-            level={Math.floor(gameUsers[0].level)}
-            personalWin={gameUsers[0].personalWin}
-            personalLose={gameUsers[0].personalLose}
-            ladderWin={gameUsers[0].ladderWin}
-            ladderLose={gameUsers[0].ladderLose}
-            position={gameUsers[0].position}
-          />
-        ) : null}
-        <Game position={position} gameRoomId={gameRoomId} start={start} />
-        {gameUsers.length ? (
-          <GameProfile
-            userId={gameUsers[1].userId}
-            nickname={gameUsers[1].nickname}
-            profileImg={gameUsers[1].profileImg}
-            level={Math.floor(gameUsers[1].level)}
-            personalWin={gameUsers[1].personalWin}
-            personalLose={gameUsers[1].personalLose}
-            ladderWin={gameUsers[1].ladderWin}
-            ladderLose={gameUsers[1].ladderLose}
-            position={gameUsers[1].position}
-          />
-        ) : null}
-      </div>
-      {gameUsers.length &&
-      gameUsers[0].userId === +getCookie("id") &&
-      !isLadder ? (
-        <button
-          onClick={onStart}
-          disabled={
-            gameUsers.length && !start
-              ? gameUsers[0].userId === 0 || gameUsers[1].userId === 0
-              : true
-          }
-        >
-          게임 시작
-        </button>
-      ) : null}
+    <div className="h-full flex flex-col">
+      <TopBar>
+        <div className="content flex-col">
+          <h1>game room {gameRoomId}</h1>
+          <h2>{title}</h2>
+          <div className="flex">
+            {gameUsers.length ? (
+              <GameProfile
+                userId={gameUsers[0].userId}
+                nickname={gameUsers[0].nickname}
+                profileImg={gameUsers[0].profileImg}
+                level={Math.floor(gameUsers[0].level)}
+                personalWin={gameUsers[0].personalWin}
+                personalLose={gameUsers[0].personalLose}
+                ladderWin={gameUsers[0].ladderWin}
+                ladderLose={gameUsers[0].ladderLose}
+                position={gameUsers[0].position}
+              />
+            ) : null}
+            <Game position={position} gameRoomId={gameRoomId} start={start} />
+            {gameUsers.length ? (
+              <GameProfile
+                userId={gameUsers[1].userId}
+                nickname={gameUsers[1].nickname}
+                profileImg={gameUsers[1].profileImg}
+                level={Math.floor(gameUsers[1].level)}
+                personalWin={gameUsers[1].personalWin}
+                personalLose={gameUsers[1].personalLose}
+                ladderWin={gameUsers[1].ladderWin}
+                ladderLose={gameUsers[1].ladderLose}
+                position={gameUsers[1].position}
+              />
+            ) : null}
+          </div>
+          {gameUsers.length &&
+          gameUsers[0].userId === +getCookie("id") &&
+          !isLadder ? (
+            <Button
+              tag={"게임 시작"}
+              onClick={onStart}
+              disabled={
+                gameUsers.length && !start
+                  ? gameUsers[0].userId === 0 || gameUsers[1].userId === 0
+                  : true
+              }
+            />
+          ) : null}
+        </div>
+      </TopBar>
     </div>
   );
 }

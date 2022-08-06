@@ -8,46 +8,32 @@ import {
   Key,
   ReactElement,
   ReactFragment,
-  ReactPortal
+  ReactPortal,
 } from "react";
 import { ChatPopup } from "../../popup/chat-popup";
-import { ChatPopupType } from "../../type/chat-popup-type";
+import { upType } from "../../type/chat-popup-type";
 import { socket } from "../../App";
+import PopupControl from "../../popup/PopupControl";
 
-// @ts-ignore
 export function ChatUser({ participants }) {
-  const [chatPopup, setChatPopup] = useState<ChatPopupType>({
+  const [up, setup] = useState<upType>({
     id: 0,
-    authority: 3
+    authority: 3,
   });
   const [isOpen, setIsOpen] = useState(false);
 
-  // @ts-ignore
   const onClick = (e, id, authority) => {
-    setIsOpen(curr => !curr);
-    setChatPopup({ id, authority });
+    setup({ id, authority });
+    handleOptionChange(isOpen);
   };
-
-  const ref = useRef(null);
-
-  // @ts-ignore
-  const onOutSideClick = e => {
-    // @ts-ignore
-    if (!ref.current.contains(e.target)) setIsOpen(false);
+  const handleOptionChange = (val: boolean) => {
+    setIsOpen(!val);
   };
-
-  useEffect(() => {
-    window.addEventListener("click", onOutSideClick);
-    return () => {
-      window.removeEventListener("click", onOutSideClick);
-    };
-  }, []);
 
   return (
-    <div ref={ref}>
-      {/* @ts-ignore */}
-      {participants.map(
-        (participant: {
+    <div className="relative">
+      {/* {participants.map( */}
+      {/* (participant: {
           userId: Key | null | undefined;
           authority: Authority;
           nickname:
@@ -59,25 +45,28 @@ export function ChatUser({ participants }) {
             | ReactPortal
             | null
             | undefined;
-        }) => (
-          <div
-            key={participant.userId}
-            onClick={e => {
-              onClick(e, participant.userId, participant.authority);
-            }}
-          >
-            <span>
-              {participant.authority === Authority.OWNER ? "방장" : null}
-              {participant.authority === Authority.ADMIN ? "관리자" : null}
-              {participant.authority === Authority.PARTICIPANT
-                ? "참여자"
-                : null}
-            </span>
-            <span>{participant.nickname}</span>
-          </div>
-        )
-      )}
-      {isOpen ? <ChatPopup user={chatPopup} setIsOpen={setIsOpen} /> : null}
+        }) => ( */}
+      <button
+        className="relative"
+        // key={participant.userId}
+        // onClick={(e) => {
+        //   onClick(e, participant.userId, participant.authority);
+        onClick={() => {
+          handleOptionChange(isOpen);
+        }}
+        // }}
+      >
+        <span className="mr-2">
+          관리자
+          {/* {participant.authority === Authority.OWNER ? "방장" : null}
+          {participant.authority === Authority.ADMIN ? "관리자" : null}
+          {participant.authority === Authority.PARTICIPANT ? "참여자" : null} */}
+        </span>
+        <span>participant.nickname</span>
+      </button>
+      {/* ), */}
+      {/* )} */}
+      {isOpen ? <ChatPopup user={up} setIsOpen={setIsOpen} /> : null}
     </div>
   );
 }
