@@ -15,7 +15,7 @@ export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
       socket.emit("chat-room-join", {
         chatRoomId,
         title,
-        userId: getCookie("id")
+        userId: getCookie("id"),
       });
     }
   };
@@ -25,36 +25,29 @@ export function ChatRoomList({ title, isPassword, chatRoomId }: ChatRoomInfo) {
   };
 
   return (
-    <div className="w-[90%] border-main border-[1px] rounded-sm bg-white flex justify-between items-center mt-2 first:mt-0 last:mb-2">
-      <div className="flex items-center">
-        <p className="px-2 py-1">{title}</p>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="pr-5 text-sm">
-          {!isPassword && <div className="text-black font-main">공개</div>}
-          {isPassword && <div className="text-red-800 font-main">비공개</div>}
+    <div className="flex border-[1px] p-1 w-[500px] flex-row justify-between items-center border-main rounded-sm mb-2">
+      <div className="pl-2">{title}</div>
+      <div className="flex justify-between items-center w-[150px]">
+        <div
+          className={`font-main ${isPassword ? "text-red-800" : "text-black"}`}
+        >
+          {isPassword ? "비공개" : "공개"}
         </div>
         <div className="pr-1">
-          {isPassword ? (
-            <div>
-              <Button
-                tag={"입장"}
-                onClick={() => {
-                  onClick();
-                  handleOptionChange(openModal);
-                }}
-              />
-              {openModal && (
-                <PopupControl
-                  mainText="비밀 번호"
-                  onClick={() => handleOptionChange(openModal)}
-                >
-                  <ChatPasswordPopup chatRoomId={chatRoomId} />
-                </PopupControl>
-              )}
-            </div>
-          ) : (
-            <Button tag={"입장"} onClick={onClick} />
+          <Button
+            tag={"입장"}
+            onClick={() => {
+              onClick();
+              isPassword && handleOptionChange(openModal);
+            }}
+          />
+          {isPassword && openModal && (
+            <PopupControl
+              mainText="비밀 번호"
+              onClick={() => handleOptionChange(openModal)}
+            >
+              <ChatPasswordPopup chatRoomId={chatRoomId} />
+            </PopupControl>
           )}
         </div>
       </div>

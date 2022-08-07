@@ -5,11 +5,11 @@ import { getCookie } from "../func/get-cookie";
 import { Link } from "react-router-dom";
 import { AchievementType } from "../type/achievement-type";
 import AchievementImg from "../component/achievementImg/AchievementImg";
-import ConsecThree from "img/consecThree.svg";
-import FirstLogin from "img/firstLogin.svg";
-import FirstLose from "img/firstLose.svg";
-import FirstWin from "img/firstWin.svg";
-import ThirdWin from "img/thirdWin.svg";
+import ConsecThree from "../img/consecThree.svg";
+import FirstLogin from "../img/firstLogin.svg";
+import FirstLose from "../img/firstLose.svg";
+import FirstWin from "../img/firstWin.svg";
+import ThirdWin from "../img/thirdWin.svg";
 import Button from "../component/button/Button";
 
 export function MyProfilePopup() {

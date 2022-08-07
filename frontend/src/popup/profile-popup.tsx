@@ -4,11 +4,12 @@ import { getCookie } from "../func/get-cookie";
 import { Record } from "./record";
 import { AchievementType } from "../type/achievement-type";
 import AchievementImg from "../component/achievementImg/AchievementImg";
-import ConsecThree from "img/consecThree.svg";
-import FirstLogin from "img/firstLogin.svg";
-import FirstLose from "img/firstLose.svg";
-import FirstWin from "img/firstWin.svg";
-import ThirdWin from "img/thirdWin.svg";
+import AchievementIcon from "../img/achievementIcon.svg";
+import ConsecThree from "../img/consecThree.svg";
+import FirstLogin from "../img/firstLogin.svg";
+import FirstLose from "../img/firstLose.svg";
+import FirstWin from "../img/firstWin.svg";
+import ThirdWin from "../img/thirdWin.svg";
 import Button from "../component/button/Button";
 
 export function ProfilePopup({ userId }: any) {

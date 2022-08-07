@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Button from "./button/Button";
-import AchievementIcon from "img/achievementIcon.svg";
-import ConsecThree from "img/consecThree.svg";
-import FirstLogin from "img/firstLogin.svg";
-import FirstLose from "img/firstLose.svg";
-import FirstWin from "img/firstWin.svg";
-import ThirdWin from "img/thirdWin.svg";
+import AchievementIcon from "../img/achievementIcon.svg";
+import ConsecThree from "../img/consecThree.svg";
+import FirstLogin from "../img/firstLogin.svg";
+import FirstLose from "../img/firstLose.svg";
+import FirstWin from "../img/firstWin.svg";
+import ThirdWin from "../img/thirdWin.svg";
 import PopupControl from "../popup/PopupControl";
 import { MyProfilePopup } from "../popup/my-profile-popup";
 import { getCookie } from "../func/get-cookie";
