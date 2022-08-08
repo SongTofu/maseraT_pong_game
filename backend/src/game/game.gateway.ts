@@ -165,17 +165,13 @@ export class GameGateway {
     gameRoom.isStart = false;
     await gameRoom.save();
     user.state = UserState.CONNECT; //게임중에서 접속 중으로 변경
-    target.state = UserState.CONNECT;
     await user.save();
     await target.save();
     this.server.emit("change-state", {
       userId: user.id,
       state: user.state,
     });
-    this.server.emit("change-state", {
-      userId: target.id,
-      state: target.state,
-    });
+
     if (gameWin)
       this.recordRepository.gameEnd(gameRoom.isLadder, gameWin, target, user);
     if (gameRoom.isLadder) {
@@ -185,6 +181,11 @@ export class GameGateway {
           relations: ["user"],
         });
       await this.gameParticipantRepository.delete(targetParticipant);
+      target.state = UserState.CONNECT;
+      this.server.emit("change-state", {
+        userId: target.id,
+        state: target.state,
+      });
       this.server.in("game-" + gameRoom.id).emit("game-room-leave", {
         userId: target.id,
         gameRoomId: gameRoom.id,
@@ -205,7 +206,10 @@ export class GameGateway {
       gameLeaveDto.gameRoomId,
     );
     //게임 중에 나온 거라면
-    if (gameRoom.isStart) this.escapeGame(gameRoom, user);
+    if (gameRoom.isStart) {
+      this.escapeGame(gameRoom, user);
+      clearInterval(this.gameData[gameRoom.id].interval);
+    }
 
     const delUser: GameParticipant =
       await this.gameParticipantRepository.findOne({
