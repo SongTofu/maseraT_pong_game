@@ -49,6 +49,7 @@ export class UserGateway {
     user.state = UserState.CONNECT;
 
     await user.save();
+    this.server.emit("change-state", { userId: user.id, state: user.state });
 
     const userDto: UserListDto = {
       userId: user.id,
@@ -78,7 +79,7 @@ export class UserGateway {
     user.state = UserState.DISCONNECT;
 
     await user.save();
-
+    this.server.emit("change-state", { userId: user.id, state: user.state });
     // // 채팅방 떠남
     // const leaveChatRooms: ChatParticipant[] =
     //   await this.chatParticipantsRepository.find(user);

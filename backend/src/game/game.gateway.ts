@@ -21,6 +21,7 @@ import { GameJoinDto } from "./dto/game-room-join.dto";
 import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
+import { UserState } from "src/user/user-state.enum";
 
 const cvs = {
   width: 600,
@@ -180,14 +181,23 @@ export class GameGateway {
   handleConnect(@ConnectedSocket() socket: Socket) {
     socket.join("game-1");
   }
-
+  //ㄱㅔ임 ㄱ시작, 끝 -> user.state
   @SubscribeMessage("start-game")
   async handleGameStart(@MessageBody() startGameDto: StartGameDto) {
     const { gameRoomId, isLadder } = startGameDto;
 
-    // const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-    //   gameRoomId,
-    // );
+    const gameUsers: GameParticipant[] =
+      await this.gameParticipantRepository.find({
+        where: { gameRoom: gameRoomId },
+        relations: ["user"],
+      });
+
+    gameUsers.forEach(async (gameUser) => {
+      const user: User = await this.userRepository.findOne(gameUser.id);
+      user.state = UserState.IN_GAME;
+      await user.save();
+      this.server.emit("change-state", { userId: user.id, state: user.state });
+    });
 
     // gameRoom.isStart = true;
     // await gameRoom.save();
@@ -423,13 +433,11 @@ export class GameGateway {
     const target: User = await this.userRepository.findOne(targetId);
 
     //유저 닉네임이랑, 스피드 모드인지
-    this.server
-      .in(target.socketId)
-      .emit("request-game", {
-        nickname: user.nickname,
-        isSpeedMode,
-        targetId: userId,
-      });
+    this.server.in(target.socketId).emit("request-game", {
+      nickname: user.nickname,
+      isSpeedMode,
+      targetId: userId,
+    });
   }
 
   @SubscribeMessage("response-game")
