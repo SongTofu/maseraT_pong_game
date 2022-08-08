@@ -57,6 +57,7 @@ export class GameGateway {
     const user: User = await this.userRepository.findOne(userId);
 
     let isCreate: Boolean = false;
+    const joinGameTitle = "game-" + gameRoomId;
 
     if (!gameRoomId) {
       gameRoomId = await this.gameRoomRepository.createRoom(
@@ -78,7 +79,14 @@ export class GameGateway {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameRoomId,
     );
-
+    const joinUser: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameJoinDto.gameRoomId, user: user.id },
+      });
+    if (joinUser) {
+      socket.join(joinGameTitle);
+      return;
+    }
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
       gameJoinDto,
       user,
@@ -87,7 +95,6 @@ export class GameGateway {
     if (isCreate) {
       this.server.emit("game-room-create", gameRoom);
     }
-    const joinGameTitle = "game-" + gameRoomId;
 
     socket.join(joinGameTitle);
     this.server
