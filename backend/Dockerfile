@@ -2,15 +2,13 @@ FROM node:14.16.1
 
 WORKDIR /app
 
-COPY package-lock.json /app/
-COPY package.json /app/
-COPY .env /app/
+COPY . /app/
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y nodejs && \
-    npm i
+    apt-get install -y nodejs
 
-COPY . /app/
+RUN npm i -g npm
+RUN npm i
 
 EXPOSE 5000
 
