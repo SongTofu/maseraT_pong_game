@@ -10,7 +10,6 @@ import { GameMain } from "./routes/GameMain";
 import { GameDetail } from "./routes/GameDetail";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
-import { ChatRoomList } from "./component/chat-room-list";
 
 export let socket = io("http://localhost:3000");
 
@@ -25,8 +24,8 @@ function App() {
           <Route path="/second-auth" element={<SecondAuth />}></Route>
           <Route path="/chat" element={<ChatMain />}></Route>
           <Route path="/chat/:chatRoomId" element={<ChatDetail />}></Route>
-        <Route path="/game" element={<GameMain />}></Route>
-        <Route path="/game/:gameRoomId" element={<GameDetail />}></Route>
+          <Route path="/game" element={<GameMain />}></Route>
+          <Route path="/game/:gameRoomId" element={<GameDetail />}></Route>
         </Routes>
         <Footer />
       </div>
