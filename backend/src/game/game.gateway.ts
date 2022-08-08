@@ -199,7 +199,7 @@ export class GameGateway {
       gameUser.user.state = UserState.IN_GAME;
       await gameUser.user.save();
       this.server.emit("change-state", {
-        userId: gameUser.user,
+        userId: gameUser.user.id,
         state: gameUser.user.state,
       });
     });
