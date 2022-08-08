@@ -27,7 +27,7 @@ const cvs = {
   width: 600,
   height: 400,
 };
-
+//api에서 레더룸 삭제, createroom 레더게임시 안보여주기
 @WebSocketGateway({
   cors: {
     origin: "*",
@@ -92,7 +92,7 @@ export class GameGateway {
       user,
     );
 
-    if (isCreate) {
+    if (isCreate && gameJoinDto.isLadder == false) {
       this.server.emit("game-room-create", gameRoom);
     }
 
@@ -287,7 +287,6 @@ export class GameGateway {
     socket.join(joinGameTitle);
 
     if (!isCreate) {
-      this.server.emit("game-room-create", gameRoom); //게임 입장 불가능, 관전 가능
       this.server
         .in(joinGameTitle)
         .emit("game-room-join", { gameRoomId: gameRoom.id });
