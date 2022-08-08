@@ -266,14 +266,13 @@ export class ChatGateway {
       });
     // if (!participant || userAuthority == Authority.owner) {
     if (!participant) {
-      this.server.emit("chat-room-destroy", {
-        chatRoomId: chatLeaveDto.chatRoomId,
-      });
       await this.chatParticipantsRepository.deleteAllParticipants(
         chatLeaveDto.chatRoomId,
       );
       await this.chatRoomRepository.deleteRoom(chatLeaveDto.chatRoomId);
-      // this.handleDisconnectChatRoom(chatLeaveDto.chatRoomId);
+      this.server.emit("chat-room-destroy", {
+        chatRoomId: chatLeaveDto.chatRoomId,
+      });
     }
   }
 

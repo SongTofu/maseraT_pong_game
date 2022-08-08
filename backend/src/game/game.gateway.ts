@@ -145,12 +145,53 @@ export class GameGateway {
     return gameParticipantProfile;
   }
 
+  private async escapeGame(gameRoom: GameRoom, user: User) {
+    const gameParticipants: GameParticipant[] =
+      await this.gameParticipantRepository.find({
+        where: { gameRoom },
+        relations: ["user"],
+      });
+    let target: User;
+    let gameWin: boolean = false;
+    gameParticipants.forEach((gameParticipant) => {
+      if (gameParticipant.user.id !== user.id) {
+        target = gameParticipant.user;
+        if (gameParticipant.position === GamePosition.leftUser) gameWin = true;
+      }
+    });
+    gameRoom.isStart = false;
+    await gameRoom.save();
+    user.state = UserState.CONNECT; //게임중에서 접속 중으로 변경
+    target.state = UserState.CONNECT;
+    await user.save();
+    await target.save();
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+    });
+    this.server.emit("change-state", {
+      userId: target.id,
+      state: target.state,
+    });
+    if (gameWin)
+      this.recordRepository.gameEnd(gameRoom.isLadder, gameWin, target, user);
+  }
+
+  //게임 안끝났는데 나온 유저 체크
   @SubscribeMessage("game-room-leave")
   async handleGameRoomLeave(
     @ConnectedSocket() socket: Socket,
     @MessageBody() gameLeaveDto: GameLeaveDto,
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
+
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameLeaveDto.gameRoomId,
+    );
+    //게임 중에 나온 거라면
+    if (gameRoom.isStart) {
+      this.escapeGame(gameRoom, user);
+    }
 
     const delUser: GameParticipant =
       await this.gameParticipantRepository.findOne({
@@ -173,22 +214,21 @@ export class GameGateway {
         where: { gameRoom: gameLeaveDto.gameRoomId },
       });
     if (!participant) {
-      this.server.emit("game-room-destroy", {
-        gameRoomId: gameLeaveDto.gameRoomId,
-      });
       await this.gameParticipantRepository.deleteAllParticipants(
         gameLeaveDto.gameRoomId,
       );
       await this.gameRoomRepository.deleteRoom(gameLeaveDto.gameRoomId);
+      this.server.emit("game-room-destroy", {
+        gameRoomId: gameLeaveDto.gameRoomId,
+      });
     }
   }
 
   //// test 게임방 참여, game room join으로 바꿔야함
-  @SubscribeMessage("test")
-  handleConnect(@ConnectedSocket() socket: Socket) {
-    socket.join("game-1");
-  }
-  //ㄱㅔ임 ㄱ시작, 끝 -> user.state
+  // @SubscribeMessage("test")
+  // handleConnect(@ConnectedSocket() socket: Socket) {
+  //   socket.join("game-1");
+  // }
   @SubscribeMessage("start-game")
   async handleGameStart(@MessageBody() startGameDto: StartGameDto) {
     const { gameRoomId, isLadder } = startGameDto;
@@ -199,10 +239,11 @@ export class GameGateway {
         relations: ["user"],
       });
 
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomId,
+    );
+
     gameUsers.forEach(async (gameUser) => {
-      // const user: User = await this.userRepository.findOne(gameUser.id);
-      // user.state = UserState.IN_GAME;
-      // await user.save();
       gameUser.user.state = UserState.IN_GAME;
       await gameUser.user.save();
       this.server.emit("change-state", {
@@ -211,8 +252,8 @@ export class GameGateway {
       });
     });
 
-    // gameRoom.isStart = true;
-    // await gameRoom.save();
+    gameRoom.isStart = true;
+    await gameRoom.save();
 
     // 방 생성, 방 수정으로 이동할 예정
 
@@ -383,24 +424,24 @@ export class GameGateway {
 
       if (this.gameData[gameRoomId].leftUser.score >= 1) {
         gameWin = true;
-        if (this.gameData[gameRoomId].isLadder) {
-          leftUser.user.ladderWin++;
-          rightUser.user.ladderLose++;
-        } else {
-          leftUser.user.personalWin++;
-          rightUser.user.personalLose++;
-        }
-        leftUser.user.level = +leftUser.user.level + 0.7;
+        // if (this.gameData[gameRoomId].isLadder) {
+        //   leftUser.user.ladderWin++;
+        //   rightUser.user.ladderLose++;
+        // } else {
+        //   leftUser.user.personalWin++;
+        //   rightUser.user.personalLose++;
+        // }
+        // leftUser.user.level = +leftUser.user.level + 0.7;
       } else if (this.gameData[gameRoomId].rightUser.score >= 1) {
         gameWin = false;
-        if (this.gameData[gameRoomId].isLadder) {
-          rightUser.user.ladderWin++;
-          leftUser.user.ladderLose++;
-        } else {
-          rightUser.user.personalWin++;
-          leftUser.user.personalLose++;
-        }
-        rightUser.user.level = +rightUser.user.level + 0.7;
+        // if (this.gameData[gameRoomId].isLadder) {
+        //   rightUser.user.ladderWin++;
+        //   leftUser.user.ladderLose++;
+        // } else {
+        //   rightUser.user.personalWin++;
+        //   leftUser.user.personalLose++;
+        // }
+        // rightUser.user.level = +rightUser.user.level + 0.7;
       }
 
       this.recordRepository.gameEnd(
@@ -414,9 +455,9 @@ export class GameGateway {
         gameRoomId,
       );
       gameRoom.isStart = false;
-      gameRoom.save();
-      rightUser.user.save();
-      leftUser.user.save();
+      await gameRoom.save();
+      // await rightUser.user.save();
+      // await leftUser.user.save();
 
       // delete this.gameData[gameRoomId];
       this.gameData[gameRoomId].leftUser.score = 0;
