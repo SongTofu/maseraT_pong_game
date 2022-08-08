@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { UserType } from "../../type/user-type";
 import { getCookie } from "../../func/cookieFunc";
 import { State } from "../../type/enum/state.enum";
-import Popup from "reactjs-popup";
 import { ProfilePopup } from "../../popup/profile-popup";
+import PopupControl from "../../popup/PopupControl";
 
 export function Friend(): JSX.Element {
   const [friends, setFriends] = useState<UserType[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectUser, setSelectUser] = useState(0);
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "friend", {
@@ -20,24 +22,35 @@ export function Friend(): JSX.Element {
   }, []);
 
   return (
-    <div>
-      {friends.map((friend: UserType) => (
-        <Popup
-          key={friend.userId}
-          trigger={
-            <div>
-              <span>
-                {friend.state === State.CONNECT ? "온라인" : null}
-                {friend.state === State.IN_GAME ? "게임중" : null}
-                {friend.state === State.DISCONNECT ? "오프라인" : null}
-              </span>
-              <span>{friend.nickname}</span>
-            </div>
-          }
-        >
-          <ProfilePopup userId={friend.userId} />
-        </Popup>
+    <div className="flex flex-start w-full flex-col">
+      {friends.map(friend => (
+        <div key={friend.userId}>
+          <button
+            className="pl-2"
+            onClick={() => {
+              setOpenModal(true);
+              setSelectUser(friend.userId);
+            }}
+          >
+            <span className="mr-2">
+              {friend.state === State.CONNECT ? "온라인" : null}
+              {friend.state === State.IN_GAME ? "게임중" : null}
+              {friend.state === State.DISCONNECT ? "오프라인" : null}
+            </span>
+            <span>{friend.nickname}</span>
+          </button>
+        </div>
       ))}
+      {openModal && (
+        <PopupControl
+          mainText="프로필 보기"
+          onClick={() => {
+            setOpenModal(false);
+          }}
+        >
+          <ProfilePopup userId={selectUser} />
+        </PopupControl>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { socket } from "../App";
+import Button from "../component/button/Button";
 
 type Props = {
   chatRoomId: string | undefined;
@@ -32,31 +33,24 @@ export function ChatRoomSetPopup({
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "tomato",
-        position: "fixed",
-        margin: "auto",
-        width: "300px",
-        height: "300px",
-        top: "30%",
-        left: "50%",
-        transform: "translate(-50%, 0)"
-      }}
-    >
+    <div className="w-[300px] h-[300px] flex flex-col justify-center">
       <div>
         <label>방제목</label>
-        <input type="text" value={title} onChange={onTitleChange}></input>
-      </div>
-      <div>
+        <input
+          className="border-2 rounded-md w-full my-2"
+          type="text"
+          value={title}
+          onChange={onTitleChange}
+        ></input>
         <label>비밀번호</label>
         <input
+          className="border-2 rounded-md w-full my-2"
           type="password"
           value={password}
           onChange={onPasswordChange}
         ></input>
       </div>
-      <button onClick={onClick}>변경</button>
+      <Button tag={"변경"} className={"btn-lg mt-8"} onClick={onClick} />
     </div>
   );
 }

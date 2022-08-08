@@ -109,7 +109,7 @@ export function Game({ position, gameRoomId, start }: GameType): JSX.Element {
   }, [gameRoomId, position]);
 
   return (
-    <div>
+    <div className="flex justify-center items-center">
       <canvas ref={ref} width="600px" height="400px"></canvas>
     </div>
   );

@@ -61,7 +61,7 @@ export function UserList({
           className="btn-lg text-sm font-main px-16 tracking-widest btn-unselected"
         />
       </div>
-      {pathName !== "/chat" && (
+      {isChatRoom && (
         <div className="flex flex-row mt-4 justify-between w-[80%]">
           <Button
             tag="방 설정"

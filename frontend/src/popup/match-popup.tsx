@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { socket } from "../App";
 import { getCookie } from "../func/cookieFunc";
+import Button from "../component/button/Button";
 
 type Props = {
   setIsMatching: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,11 +25,9 @@ export function MatchPopup({ setIsMatching }: Props): JSX.Element {
     };
   }, []);
   return (
-    <div
-      style={{ width: "300px", height: "300px", backgroundColor: "aquamarine" }}
-    >
-      <h1>{second}</h1>
-      <button onClick={onClick}>매칭 취소</button>
+    <div className="w-[300px] h-[150px] flex flex-col justify-center items-center">
+      <h1 className="text-xl my-8">{second} 초</h1>
+      <Button tag={"매칭 취소"} onClick={onClick} />
     </div>
   );
 }

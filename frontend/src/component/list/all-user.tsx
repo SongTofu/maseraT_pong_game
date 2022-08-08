@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { UserType } from "../../type/user-type";
 import { getCookie } from "../../func/cookieFunc";
 import { State } from "../../type/enum/state.enum";
-import Popup from "reactjs-popup";
 import { ProfilePopup } from "../../popup/profile-popup";
 import { MyProfilePopup } from "../../popup/my-profile-popup";
 import { socket } from "../../App";
+import PopupControl from "../../popup/PopupControl";
+import { open } from "fs";
 
 export function AllUser(): JSX.Element {
   const [users, setUsers] = useState<UserType[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectUser, setSelectUser] = useState(0);
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user", {
@@ -41,27 +44,38 @@ export function AllUser(): JSX.Element {
   }, [users]);
 
   return (
-    <div>
+    <div className="flex flex-start w-full flex-col">
       {users.map(user => (
-        <Popup
-          key={user.userId}
-          trigger={
-            <div>
-              <span>
-                {user.state === State.CONNECT ? "온라인" : null}
-                {user.state === State.IN_GAME ? "게임중" : null}
-              </span>
-              <span>{user.nickname}</span>
-            </div>
-          }
-        >
-          {user.userId === +getCookie("id") ? (
-            <MyProfilePopup />
-          ) : (
-            <ProfilePopup userId={user.userId} />
-          )}
-        </Popup>
+        <div key={user.userId}>
+          <button
+            className="pl-2"
+            onClick={() => {
+              setOpenModal(true);
+              setSelectUser(user.userId);
+            }}
+          >
+            <span className="mr-2">
+              {user.state === State.CONNECT ? "온라인" : null}
+              {user.state === State.IN_GAME ? "게임중" : null}
+            </span>
+            <span>{user.nickname}</span>
+          </button>
+        </div>
       ))}
+      {openModal && (
+        <PopupControl
+          mainText="프로필 보기"
+          onClick={() => setOpenModal(false)}
+        >
+          <div>
+            {selectUser === +getCookie("id") ? (
+              <MyProfilePopup />
+            ) : (
+              <ProfilePopup userId={selectUser} />
+            )}
+          </div>
+        </PopupControl>
+      )}
     </div>
   );
 }

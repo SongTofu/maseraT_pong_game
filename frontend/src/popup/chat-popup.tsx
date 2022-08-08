@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import { Authority } from "../type/enum/authority.enum";
 import { getCookie } from "../func/cookieFunc";
 import { socket } from "../App";
 import { ChatPopupType } from "../type/chat-popup-type";
 import { Dispatch, SetStateAction } from "react";
-import Popup from "reactjs-popup";
 import { ProfilePopup } from "./profile-popup";
+import Button from "../component/button/Button";
+import PopupControl from "./PopupControl";
 
 type userProps = {
   user: ChatPopupType;
@@ -15,10 +17,14 @@ type userProps = {
 export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
   // id -> target id
   const { id, authority } = user;
-  // @ts-ignore
-  const chatRoomId = +localStorage.getItem("chatRoomId");
-  // @ts-ignore
-  const myAuthority = +localStorage.getItem("authority");
+  const chatRoomId = localStorage.getItem("chatRoomId")
+    ? localStorage.getItem("chatRoomId")
+    : 0;
+  const myAuthority = localStorage.getItem("authority")
+    ? localStorage.getItem("authority")
+    : 0;
+  const [openModal, setOpenModal] = useState(false);
+  const portalDiv = document.getElementById("portal") as HTMLElement;
 
   // 내 프로필 넣기
   if (id === +getCookie("id")) return <div></div>;
@@ -37,11 +43,11 @@ export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
   const onKick = () => {
     socket.emit("chat-room-kick", {
       targetId: id,
-      // @ts-ignore
-      chatRoomId: +localStorage.getItem("chatRoomId")
+      chatRoomId
     });
     setIsOpen(false);
   };
+  const style = "w-[100px] btn-sm my-1";
 
   const onChatBlock = () => {
     socket.emit("chat-block", { targetId: id });
@@ -55,25 +61,59 @@ export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
     });
   };
 
-  return (
-    <div className="flex flex-col border">
-      {myAuthority >= Authority.OWNER ? (
-        <button onClick={onSetAdmin}>
-          {authority === Authority.ADMIN ? "관리자 해임" : "관리자 임명"}
-        </button>
-      ) : null}
-      {myAuthority >= Authority.ADMIN && myAuthority > authority ? (
-        <button onClick={onKick}>강퇴</button>
-      ) : null}
-      {myAuthority >= Authority.ADMIN && myAuthority > authority ? (
-        <button onClick={onChatBlock}>채팅 금지</button>
-      ) : null}
-      <Popup trigger={<button>프로필</button>}>
-        <ProfilePopup userId={id} />
-      </Popup>
-
-      <button onClick={e => onRequestGame(false)}>게임 신청</button>
-      <button onClick={e => onRequestGame(true)}>스피드 게임 신청</button>
-    </div>
+  return ReactDOM.createPortal(
+    <>
+      <button
+        className="fixed top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,.1)] z-[1000]"
+        onClick={() => setIsOpen(false)}
+      ></button>
+      <div className="fixed top-[50%] left-[55%] translate-x-[-55%] translate-y-[-50%] z-[1000]">
+        <div className="flex flex-col border-2 py-2 px-4 border-main rounded-md bg-white">
+          <h1 className="text-center mb-2 text-lg">유저 이름</h1>
+          {myAuthority >= Authority.OWNER ? (
+            <Button
+              className={style}
+              tag={
+                authority === Authority.ADMIN ? "관리자 해임" : "관리자 임명"
+              }
+              onClick={onSetAdmin}
+            />
+          ) : null}
+          {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+            <Button className={style} tag={"강퇴"} onClick={onKick} />
+          ) : null}
+          {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+            <Button className={style} tag={"채팅 금지"} onClick={onChatBlock} />
+          ) : null}
+          <Button
+            className={style}
+            tag={"프로필"}
+            onClick={() => setOpenModal(true)}
+          />
+          {openModal && (
+            <PopupControl
+              mainText="프로필 보기"
+              onClick={() => {
+                setIsOpen(false);
+                setOpenModal(false);
+              }}
+            >
+              <ProfilePopup userId={id} />
+            </PopupControl>
+          )}{" "}
+          <Button
+            className={style}
+            tag={"게임 신청"}
+            onClick={e => onRequestGame(true)}
+          />
+          <Button
+            className={style}
+            tag={"스피드 게임 신청"}
+            onClick={e => onRequestGame(true)}
+          />
+        </div>
+      </div>
+    </>,
+    portalDiv
   );
 }
