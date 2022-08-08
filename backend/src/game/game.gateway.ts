@@ -155,8 +155,11 @@ export class GameGateway {
     let gameWin: boolean = false;
     gameParticipants.forEach((gameParticipant) => {
       if (gameParticipant.user.id !== user.id) {
-        target = gameParticipant.user;
-        if (gameParticipant.position === GamePosition.leftUser) gameWin = true;
+        if (gameParticipant.position === GamePosition.leftUser) {
+          gameWin = true;
+          target = gameParticipant.user;
+        } else if (gameParticipant.position === GamePosition.rightUser)
+          target = gameParticipant.user;
       }
     });
     gameRoom.isStart = false;
@@ -175,6 +178,19 @@ export class GameGateway {
     });
     if (gameWin)
       this.recordRepository.gameEnd(gameRoom.isLadder, gameWin, target, user);
+    if (gameRoom.isLadder) {
+      const targetParticipant: GameParticipant =
+        await this.gameParticipantRepository.findOne({
+          where: { gameRoom, user: target },
+          relations: ["user"],
+        });
+      await this.gameParticipantRepository.delete(targetParticipant);
+      this.server.in("game-" + gameRoom.id).emit("game-room-leave", {
+        userId: target.id,
+        gameRoomId: gameRoom.id,
+      }); //괜춘ㄴ?
+      this.server.in(target.socketId).socketsLeave("game-" + gameRoom.id);
+    }
   }
 
   //게임 안끝났는데 나온 유저 체크
@@ -189,9 +205,7 @@ export class GameGateway {
       gameLeaveDto.gameRoomId,
     );
     //게임 중에 나온 거라면
-    if (gameRoom.isStart) {
-      this.escapeGame(gameRoom, user);
-    }
+    if (gameRoom.isStart) this.escapeGame(gameRoom, user);
 
     const delUser: GameParticipant =
       await this.gameParticipantRepository.findOne({
@@ -406,15 +420,6 @@ export class GameGateway {
   }
 
   private async endGameCheck(gameRoomId: number) {
-    const leftUser = await this.gameParticipantRepository.findOne({
-      where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
-      relations: ["user"],
-    });
-    const rightUser = await this.gameParticipantRepository.findOne({
-      where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
-      relations: ["user"],
-    });
-
     if (
       this.gameData[gameRoomId].leftUser.score >= 1 ||
       this.gameData[gameRoomId].rightUser.score >= 1
@@ -443,6 +448,15 @@ export class GameGateway {
         // }
         // rightUser.user.level = +rightUser.user.level + 0.7;
       }
+      const leftUser = await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
+        relations: ["user"],
+      });
+      const rightUser = await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
+        relations: ["user"],
+      });
+      if (!leftUser || !rightUser) return;
 
       this.recordRepository.gameEnd(
         this.gameData[gameRoomId].isLadder,

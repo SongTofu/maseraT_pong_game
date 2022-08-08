@@ -25,12 +25,14 @@ export class AuthController {
       res.cookie("nickname", data.nickname);
       res.cookie("id", data.userId);
       if (data.firstLogin) {
+        res.cookie("isLogin", "1");
         res.redirect("http://localhost:3001/login");
       } else {
         if (data.secondAuth) {
           this.secondAuthService.requestAuth(data.userId);
           res.redirect("http://localhost:3001/second-auth");
         } else {
+          res.cookie("isLogin", "1");
           res.redirect("http://localhost:3001/game");
         }
       }
