@@ -16,7 +16,7 @@ export class GameService {
 
   async gameRoomList(): Promise<GameRoom[]> {
     const gameRoom: GameRoom[] = await this.gameRoomRepository.find();
-    return gameRoom.filter((game) => game.isLadder);
+    return gameRoom.filter((game) => !game.isLadder);
   }
 
   async gameRoomDetail(gameRoomId: number): Promise<GameRoomDetailDto> {
