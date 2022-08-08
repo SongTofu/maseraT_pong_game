@@ -160,11 +160,6 @@ export class GameGateway {
     this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
     socket.leave(leaveGameTitle);
 
-    //user state 변경
-    user.state = UserState.CONNECT;
-    await user.save();
-    this.server.emit("change-state", { userId: user.id, state: user.state });
-
     //게임방 유저 모두 나가면 방 폭파
     const participant: GameParticipant =
       await this.gameParticipantRepository.findOne({
@@ -430,7 +425,18 @@ export class GameGateway {
       );
 
       // 게임 끝날 시 보내줄 정보 정하기 (유저 아이디랑, 승패) 왼, 오 순서, 레벨!
-
+      rightUser.user.state = UserState.CONNECT;
+      leftUser.user.state = UserState.CONNECT;
+      await rightUser.user.save();
+      await leftUser.user.save();
+      this.server.emit("change-state", {
+        userId: rightUser.user.id,
+        state: rightUser.user.state,
+      });
+      this.server.emit("change-state", {
+        userId: leftUser.user.id,
+        state: leftUser.user.state,
+      });
       this.server.to("game-" + gameRoomId).emit("end-game", endGameInfo);
     }
   }
