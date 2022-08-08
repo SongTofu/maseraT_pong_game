@@ -1,0 +1,70 @@
+version: '3'
+services:
+  frontend:
+    container_name: front
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: client
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./client:/app
+
+  database:
+    image: postgres
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    container_name: postgres
+    volumes:
+      - ./pgdata/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -h localhost -p 5432 -q -U postgres"
+      interval: 3s
+      timeout: 1s
+      retries: 10
+      # start_period: 30s
+
+  backend:
+    container_name: back
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: server
+    env_file:
+      - ./backend/.env
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_PORT=${DB_PORT}
+      - POSTGRES_SYNC=false
+      - NODE_ENV=${NODE_ENV}
+      - NODE_SERVER_PORT=${NODE_SERVER_PORT}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - EMAIL_AUTH_EMAIL=${EMAIL_AUTH_EMAIL}
+      - EMAIL_AUTH_PASSWORD=${EMAIL_AUTH_PASSWORD}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_FROM_USER_NAME=${EMAIL_FROM_USER_NAME}
+      - TOKEN_URI=${TOKEN_URI}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - CB_URI=${CB_URI}
+    ports:
+      - '5000:5000'
+    depends_on:
+      database:
+        condition: service_healthy
+    # links:
+    #   -database
+    volumes:
+      - ./server:/app
+volumes:
+  pgdata:
+  pgadmin-data:
