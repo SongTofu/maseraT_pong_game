@@ -146,6 +146,8 @@ export class GameGateway {
   }
 
   private async escapeGame(gameRoom: GameRoom, user: User) {
+    const gameRoomTitle: string = "game-" + gameRoom.id;
+    const endGameInfo: GameParticipantProfile[] = [];
     const gameParticipants: GameParticipant[] =
       await this.gameParticipantRepository.find({
         where: { gameRoom },
@@ -158,8 +160,15 @@ export class GameGateway {
         if (gameParticipant.position === GamePosition.leftUser) {
           gameWin = true;
           target = gameParticipant.user;
-        } else if (gameParticipant.position === GamePosition.rightUser)
+          endGameInfo.push(
+            new GameParticipantProfile(target, GamePosition.leftUser),
+          );
+        } else if (gameParticipant.position === GamePosition.rightUser) {
           target = gameParticipant.user;
+          endGameInfo.push(
+            new GameParticipantProfile(target, GamePosition.rightUser),
+          );
+        }
       }
     });
     gameRoom.isStart = false;
@@ -186,12 +195,13 @@ export class GameGateway {
         userId: target.id,
         state: target.state,
       });
-      this.server.in("game-" + gameRoom.id).emit("game-room-leave", {
+      this.server.in(gameRoomTitle).emit("game-room-leave", {
         userId: target.id,
         gameRoomId: gameRoom.id,
       }); //괜춘ㄴ?
-      this.server.in(target.socketId).socketsLeave("game-" + gameRoom.id);
+      this.server.in(target.socketId).socketsLeave(gameRoomTitle);
     }
+    this.server.to(gameRoomTitle).emit("end-game", endGameInfo);
   }
 
   //게임 안끝났는데 나온 유저 체크
