@@ -14,7 +14,7 @@ type DMInfoType = {
 };
 
 export function DM() {
-  const { chatRoomId } = useParams();
+  const { chatRoomId, targetId } = useParams();
   const [chats, setChats] = useState<ChatType[]>([]);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -32,13 +32,20 @@ export function DM() {
         setChats(dmInfo.message);
         setTitle(dmInfo.targetNickname);
       });
+
+    socket.emit("DM", { senderId: getCookie("id"), targetId });
+
+    return () => {
+      socket.emit("chat-room-leave", {
+        chatRoomId,
+        userId: localStorage.getItem("id")
+      });
+    };
   }, []);
 
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
-  }, [chats]);
 
-  useEffect(() => {
     socket.on("chat-room-message", (chatType: ChatType) => {
       setChats(curr => [...curr, chatType]);
     });
