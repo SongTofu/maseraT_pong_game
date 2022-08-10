@@ -52,7 +52,6 @@ export function ChatUser({
                 ) : null}
                 {participant.nickname}
               </span>
-              <span>{participant.nickname}</span>
             </button>
           ))
         : null}

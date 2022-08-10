@@ -73,7 +73,7 @@ export function MyProfilePopup(): JSX.Element {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            <AchievementImg
+            {/* <AchievementImg
               alt={"첫 로그인"}
               src={FirstLogin}
               className="mr-2"
@@ -81,7 +81,7 @@ export function MyProfilePopup(): JSX.Element {
             <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
             <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
             <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-            <AchievementImg alt={"3연승"} src={ConsecThree} />
+            <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>

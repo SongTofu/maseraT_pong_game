@@ -30,8 +30,6 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
     consecThree: false
   });
 
-  console.log(userId);
-
   const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
@@ -57,9 +55,12 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
       .then(res => res.json())
       .then((achievement: AchievementType) => setAchievement(achievement));
 
-    socket.on("DM", ({ chatRoomId }: { chatRoomId: number }) => {
-      navigate("/DM/" + chatRoomId);
-    });
+    socket.on(
+      "DM",
+      ({ chatRoomId, targetId }: { chatRoomId: number; targetId: number }) => {
+        navigate("/DM/" + chatRoomId + "/" + targetId);
+      }
+    );
 
     return () => {
       socket.off("DM");
@@ -137,15 +138,15 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            <AchievementImg
+            {/* <AchievementImg
               alt={"첫 로그인"}
               src={FirstLogin}
               className="mr-2"
-            />
-            <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
+            /> */}
+            {/* <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
             <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
             <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-            <AchievementImg alt={"3연승"} src={ConsecThree} />
+            <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>
@@ -167,7 +168,11 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
               disabled={isFriend}
               onClick={onAddFriend}
             />
-            <Button tag={"DM 보내기 "} className={"btn-sm mr-2"} />
+            <Button
+              tag={"DM 보내기 "}
+              className={"btn-sm mr-2"}
+              onClick={e => onDMClick(userId)}
+            />
             {isBlock ? (
               <Button
                 tag={"차단 해제"}
