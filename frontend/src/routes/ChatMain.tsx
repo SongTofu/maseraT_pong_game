@@ -41,7 +41,7 @@ export function ChatMain(): JSX.Element {
     socket.on("chat-room-destroy", ({ chatRoomId }: { chatRoomId: number }) => {
       setRooms(curr =>
         curr.filter(idx => {
-          return idx.chatRoomId !== chatRoomId;
+          return idx.chatRoomId !== +chatRoomId;
         })
       );
     });
