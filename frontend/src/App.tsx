@@ -45,7 +45,7 @@ function App() {
               <Route path="/chat/:chatRoomId" element={<ChatDetail />}></Route>
               <Route path="/game" element={<GameMain />}></Route>
               <Route path="/game/:gameRoomId" element={<GameDetail />}></Route>
-              <Route path="/DM/:chatRoomId" element={<DM />}></Route>
+              <Route path="/DM/:chatRoomId/:targetId" element={<DM />}></Route>
               <Route
                 path="/*"
                 element={<Navigate to="/chat"></Navigate>}

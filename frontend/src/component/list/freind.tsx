@@ -4,6 +4,7 @@ import { getCookie } from "../../func/cookieFunc";
 import { State } from "../../type/enum/state.enum";
 import { ProfilePopup } from "../../popup/profile-popup";
 import PopupControl from "../../popup/PopupControl";
+import { socket } from "../../App";
 
 export function Friend(): JSX.Element {
   const [friends, setFriends] = useState<UserType[]>([]);
@@ -20,6 +21,20 @@ export function Friend(): JSX.Element {
       .then((res: Response) => res.json())
       .then((user: UserType[]) => setFriends(user));
   }, []);
+
+  useEffect(() => {
+    socket.on("change-state", ({ userId, state }) => {
+      setFriends(currFriends =>
+        currFriends.map(friend => {
+          if (friend.userId === userId) {
+            friend.state = state;
+            return friend;
+          }
+          return friend;
+        })
+      );
+    });
+  }, [friends]);
 
   return (
     <div className="flex flex-start w-full flex-col">

@@ -34,12 +34,30 @@ export function AllUser(): JSX.Element {
     });
 
     socket.on("connect-user", (userType: UserType) => {
-      setUsers(curr => [...curr, userType]);
+      setUsers(currUsers => {
+        for (let i = 0; i < currUsers.length; i++) {
+          if (currUsers[i].userId === userType.userId) return [...currUsers];
+        }
+        return [...currUsers, userType];
+      });
+    });
+
+    socket.on("change-state", ({ userId, state }) => {
+      setUsers(currUsers =>
+        currUsers.map(user => {
+          if (user.userId === userId) {
+            user.state = state;
+            return user;
+          }
+          return user;
+        })
+      );
     });
 
     return () => {
       socket.off("disconnect-user");
       socket.off("connect-user");
+      socket.off("change-state");
     };
   }, [users]);
 
