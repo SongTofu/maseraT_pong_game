@@ -2,23 +2,23 @@ import React from "react";
 import { useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 
-export function ChatCreatePopup() {
-  const [title, setTitle] = useState("");
-  const [password, setPassword] = useState("");
+export function ChatCreatePopup(): JSX.Element {
+  const [title, setTitle] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const onClick = () => {
     socket.emit("chat-room-join", {
       chatRoomId: 0,
       title,
       password,
-      userId: getCookie("id"),
+      userId: getCookie("id")
     });
   };
 
   const onTitleChange = (e: any) => {
-    setTitle(e.target.value);
+    if (e.target.value.length < 13) setTitle(e.target.value);
   };
 
   const onPasswordChagne = (e: any) => {

@@ -5,25 +5,22 @@ import { socket } from "../App";
 import { useNavigate } from "react-router-dom";
 import { ChatCreatePopup } from "../popup/chat-create-popup";
 import { UserList } from "../component/list/user-list";
-import { getCookie } from "../func/get-cookie";
 import TopBar from "../component/TopNavBar";
 import Button from "../component/button/Button";
 import PopupControl from "../popup/PopupControl";
 
-export function ChatMain() {
+export function ChatMain(): JSX.Element {
   const [rooms, setRooms] = useState<ChatRoomInfo[]>([]);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    socket.emit("connect-user", { userId: getCookie("id") });
-
     fetch(process.env.REACT_APP_API_URL + "chat/room", {
-      method: "GET",
+      method: "GET"
     })
-      .then((res) => res.json())
-      .then((json) => {
-        setRooms(json);
+      .then(res => res.json())
+      .then((room: ChatRoomInfo[]) => {
+        setRooms(room);
       });
 
     socket.on("chat-room-join", (chatRoomInfo: ChatRoomInfo) => {
@@ -36,27 +33,30 @@ export function ChatMain() {
 
   useEffect(() => {
     socket.on("chat-room-create", (chatRoomInfo: ChatRoomInfo) => {
-      setRooms((curr) => {
+      setRooms(curr => {
         return [...curr, chatRoomInfo];
       });
     });
 
-    socket.on("chat-room-destroy", ({ chatRoomId }) => {
-      setRooms((curr) =>
-        curr.filter((idx) => {
+    socket.on("chat-room-destroy", ({ chatRoomId }: { chatRoomId: number }) => {
+      setRooms(curr =>
+        curr.filter(idx => {
           return idx.chatRoomId !== +chatRoomId;
-        }),
+        })
       );
     });
 
-    socket.on("chat-room-setting", ({ chatRoomId, title }) => {
-      setRooms((currRooms) => {
-        return currRooms.map((currRoom) => {
-          if (currRoom.chatRoomId === +chatRoomId) currRoom.title = title;
-          return currRoom;
+    socket.on(
+      "chat-room-setting",
+      ({ chatRoomId, title }: { chatRoomId: number; title: string }) => {
+        setRooms(currRooms => {
+          return currRooms.map(currRoom => {
+            if (currRoom.chatRoomId === +chatRoomId) currRoom.title = title;
+            return currRoom;
+          });
         });
-      });
-    });
+      }
+    );
 
     return () => {
       socket.off("chat-room-create");
@@ -89,8 +89,8 @@ export function ChatMain() {
                 </PopupControl>
               )}
             </div>
-            <div className="h-full">
-              {rooms.map((room) => {
+            <div className="h-full w-full">
+              {rooms.map(room => {
                 return (
                   <ChatRoomList
                     key={room.chatRoomId}
@@ -103,7 +103,7 @@ export function ChatMain() {
             </div>
           </div>
           <div>
-            <UserList isChatRoom={false} participants="" />
+            <UserList isChatRoom={false} participants={null} />
           </div>
         </div>
       </TopBar>

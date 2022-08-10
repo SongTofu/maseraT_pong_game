@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
+
+type Props = {
+  chatRoomId: number;
+};
 
 // @ts-ignore
-export function ChatPasswordPopup({ chatRoomId }) {
+export function ChatPasswordPopup({ chatRoomId }: Props): JSX.Element {
+  console.log(chatRoomId);
   const [password, setPassword] = useState("");
 
   // @ts-ignore
-  const onChange = (e) => {
+  const onChange = e => {
     setPassword(e.target.value);
   };
 
@@ -17,7 +22,7 @@ export function ChatPasswordPopup({ chatRoomId }) {
       chatRoomId: chatRoomId,
       title: "",
       password: password,
-      userId: getCookie("id"),
+      userId: getCookie("id")
     });
   };
 

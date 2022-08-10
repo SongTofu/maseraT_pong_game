@@ -1,8 +1,6 @@
-import React from "react";
 import Button from "../component/button/Button";
 
 export function Home(): JSX.Element {
-  console.log(process.env.REACT_APP_API_URL);
   return (
     <div className="flex justify-evenly items-center">
       <div className="w-[550px]">

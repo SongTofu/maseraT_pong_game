@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Button from "./button/Button";
-// import TestModal from "./TestModal";
 import AchievementIcon from "../img/achievementIcon.svg";
 import ConsecThree from "../img/consecThree.svg";
 import FirstLogin from "../img/firstLogin.svg";
@@ -10,9 +9,10 @@ import FirstWin from "../img/firstWin.svg";
 import ThirdWin from "../img/thirdWin.svg";
 import PopupControl from "../popup/PopupControl";
 import { MyProfilePopup } from "../popup/my-profile-popup";
-import { SecondAuthPopup } from "../popup/second-auth-popup";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
+import { AchievementType } from "../type/achievement-type";
 import { UserInfoType } from "../type/user-info-type";
+import AchievementImg from "./achievementImg/AchievementImg";
 
 interface IProp {
   children?: JSX.Element;
@@ -20,7 +20,7 @@ interface IProp {
 
 function TopBar({ children }: IProp) {
   const [openModal, setOpenModal] = useState(false);
-  const [showAchievement, setShowAchievement] = useState(true);
+  const [showAchievement, setShowAchievement] = useState(false);
   const [info, setInfo] = useState<UserInfoType>({
     nickname: "",
     personalWin: 0,
@@ -32,6 +32,13 @@ function TopBar({ children }: IProp) {
     isFriend: false,
     isBlocked: false
   });
+  const [achievement, setAchievement] = useState<AchievementType>({
+    firstLogin: false,
+    firstLose: false,
+    firstWin: false,
+    consecThree: false,
+    thiredWin: false
+  });
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
@@ -41,12 +48,20 @@ function TopBar({ children }: IProp) {
       }
     })
       .then(res => res.json())
-      .then(json => setInfo(json));
-  }, []);
+      .then((userInfo: UserInfoType) => setInfo(userInfo));
 
-  const handleOptionChange = (val: boolean) => {
-    setOpenModal(!val);
-  };
+    fetch(process.env.REACT_APP_API_URL + "achievement", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then((achi: AchievementType) => {
+        setAchievement(achi);
+        console.log(achi);
+      });
+  }, []);
 
   const handleMouseEnter = () => {
     setShowAchievement(true);
@@ -112,36 +127,11 @@ function TopBar({ children }: IProp) {
                         className="w-[150px] h-[30px] bg-white border-black rounded-md border-[1px] absolute top-[-20px] left-[10px] flex justify-evenly items-center"
                         onMouseEnter={handleMouseEnter}
                       >
-                        <img
-                          alt="첫 로그인"
-                          title="첫 로그인"
-                          src={FirstLogin}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="첫승"
-                          title="첫승"
-                          src={FirstWin}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="3승"
-                          title="3승"
-                          src={ThirdWin}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="첫패"
-                          title="첫패"
-                          src={FirstLose}
-                          className="w-[20px] h-[20px]"
-                        />
-                        <img
-                          alt="3연승"
-                          title="3연승"
-                          src={ConsecThree}
-                          className="w-[20px] h-[20px]"
-                        />
+                        <AchievementImg alt={"첫 로그인"} src={FirstLogin} />
+                        <AchievementImg alt={"첫승"} src={FirstWin} />
+                        <AchievementImg alt={"3승"} src={ThirdWin} />
+                        <AchievementImg alt={"첫패"} src={FirstLose} />
+                        <AchievementImg alt={"3연승"} src={ConsecThree} />
                       </div>
                     )}
                   </div>
@@ -159,36 +149,17 @@ function TopBar({ children }: IProp) {
                     <Button
                       tag="프로필 보기"
                       className="btn-sm text-sm mr-2"
-                      navlink={"/login"}
-                      // onClick={() => handleOptionChange(openModal)}
+                      // navlink={"/login"}
+                      onClick={() => setOpenModal(true)}
                     />
-                    {/* <PopupControl mainText="프로필 보기">
-                      <MyProfilePopup />
-                    </PopupControl> */}
-                    <Button
-                      tag="닉네임 변경"
-                      className="btn-sm text-sm mr-2"
-                      onClick={() => {
-                        handleOptionChange(openModal);
-                      }}
-                    />
-                    {/* <PopupControl mainText="닉네임 변경">
-                      <div>"닉네임 변경"</div>
-                    </PopupControl> */}
-                    <Button
-                      tag="2차 인증 활성화"
-                      className="btn-sm text-sm "
-                      onClick={() => {
-                        handleOptionChange(openModal);
-                      }}
-                    />
-                    {/* <PopupControl mainText="2차 인증 활성화">
-                      <SecondAuthPopup
-                        onSecondAuth={() => {}}
-                        isSecondAuth={() => {}}
-                        setIsSecondAuth={() => {}}
-                      />
-                    </PopupControl> */}
+                    {openModal && (
+                      <PopupControl
+                        mainText="프로필 보기"
+                        onClick={() => setOpenModal(false)}
+                      >
+                        <MyProfilePopup />
+                      </PopupControl>
+                    )}
                   </div>
                 </div>
               </div>

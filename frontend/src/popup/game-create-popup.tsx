@@ -1,12 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { socket } from "../App";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
+import Button from "../component/button/Button";
 
-export function GameCreatePopup() {
+export function GameCreatePopup(): JSX.Element {
   const [title, setTitle] = useState("");
   const [check, setCheck] = useState(false);
 
-  const onChange = e => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
@@ -20,17 +21,27 @@ export function GameCreatePopup() {
     });
   };
 
-  const onCheck = e => {
+  const onCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheck(curr => !curr);
   };
 
   return (
-    <div style={{ backgroundColor: "tomato", width: "200px", height: "100px" }}>
-      <label>방제목</label>
-      <input value={title} onChange={onChange}></input>
-      <label>스피드 모드</label>
-      <input type="checkbox" onChange={onCheck} />
-      <button onClick={onClick}>생성</button>
+    <div className="w-[200px] h-[150px] flex flex-col justify-center items-center">
+      <div className="flex flex-col my-4">
+        <div className="mb-2">
+          <label>방 제목</label>
+          <input
+            className="border-2 w-full rounded-md mb-2 mt-1"
+            value={title}
+            onChange={onChange}
+          ></input>
+        </div>
+        <div className="flex justify-between">
+          <label>스피드 모드</label>
+          <input type="checkbox" onChange={onCheck} />
+        </div>
+      </div>
+      <Button tag={"생성"} onClick={onClick} />
     </div>
   );
 }

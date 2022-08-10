@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { getCookie } from "../func/get-cookie";
+import React, { useState, useEffect, useRef } from "react";
+import { getCookie } from "../func/cookieFunc";
 import { useNavigate } from "react-router-dom";
 import { SecondAuthPopup } from "../popup/second-auth-popup";
 import Button from "../component/button/Button";
@@ -7,7 +7,7 @@ import Button from "../component/button/Button";
 export function Login() {
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState<File>();
   const [isSecondAuth, setIsSecondAuth] = useState(false);
 
   const [imgUrl, setImgUrl] = useState();
@@ -40,13 +40,13 @@ export function Login() {
     imageInput.current.click();
   };
 
-  const onFileChange = (e: any) => {
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // @ts-ignore
     setImgUrl(URL.createObjectURL(e.target.files[0]));
-    setProfile(e.target.files[0]);
+    if (e.target.files) setProfile(e.target.files[0]);
   };
 
-  const onInputChange = (e: any) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
   };
 
@@ -59,8 +59,8 @@ export function Login() {
       }
     })
       .then(res => res.json())
-      .then(json => {
-        if (json.isValidNickname) {
+      .then(({ isValidNickname }: { isValidNickname: boolean }) => {
+        if (isValidNickname) {
           setBtnEnable(false);
           setCheckMsg("사용 가능한 닉네임입니다.");
         } else {
