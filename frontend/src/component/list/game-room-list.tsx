@@ -1,14 +1,19 @@
 import { GameRoomType } from "../../routes/GameMain";
 import { socket } from "../../App";
-import { getCookie } from "../../func/get-cookie";
+import { getCookie } from "../../func/cookieFunc";
 import Button from "../button/Button";
 
-export function GameRoomList({ id, title, isLadder, isStart }: GameRoomType) {
+export function GameRoomList({
+  id,
+  title,
+  isLadder,
+  isStart
+}: GameRoomType): JSX.Element {
   const onClick = () => {
     socket.emit("game-room-join", {
       gameRoomId: id,
       title,
-      userId: getCookie("id"),
+      userId: getCookie("id")
     });
   };
   return (

@@ -1,7 +1,7 @@
 import { Record } from "./record";
 import { useState, useEffect } from "react";
 import { UserInfoType } from "../type/user-info-type";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { Link } from "react-router-dom";
 import { AchievementType } from "../type/achievement-type";
 import AchievementImg from "../component/achievementImg/AchievementImg";
@@ -12,34 +12,34 @@ import FirstWin from "../img/firstWin.svg";
 import ThirdWin from "../img/thirdWin.svg";
 import Button from "../component/button/Button";
 
-export function MyProfilePopup() {
+export function MyProfilePopup(): JSX.Element {
   const [info, setInfo] = useState<UserInfoType>();
   const [achievement, setAchievement] = useState<AchievementType>({
     firstLogin: false,
     firstWin: false,
     firstLose: false,
     thiredWin: false,
-    consecThree: false,
+    consecThree: false
   });
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setInfo(json));
+      .then(res => res.json())
+      .then((json: UserInfoType) => setInfo(json));
 
     fetch(process.env.REACT_APP_API_URL + "achievement/", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setAchievement(json));
+      .then(res => res.json())
+      .then((json: AchievementType) => setAchievement(json));
   }, []);
 
   return (
@@ -73,7 +73,7 @@ export function MyProfilePopup() {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            <AchievementImg
+            {/* <AchievementImg
               alt={"첫 로그인"}
               src={FirstLogin}
               className="mr-2"
@@ -81,7 +81,7 @@ export function MyProfilePopup() {
             <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
             <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
             <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-            <AchievementImg alt={"3연승"} src={ConsecThree} />
+            <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>

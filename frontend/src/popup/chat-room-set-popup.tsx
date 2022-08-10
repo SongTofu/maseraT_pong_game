@@ -1,16 +1,29 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
 
-export function ChatRoomSetPopup({ chatRoomId, roomTitle, setIsRoomSet }) {
+type Props = {
+  chatRoomId: string | undefined;
+  roomTitle: string;
+  setIsRoomSet: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+// @ts-ignore
+export function ChatRoomSetPopup({
+  chatRoomId,
+  roomTitle,
+  setIsRoomSet
+}: Props): JSX.Element {
   const [title, setTitle] = useState(roomTitle);
   const [password, setPassword] = useState("");
 
-  const onTitleChange = (e) => {
+  // @ts-ignore
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
-  const onPasswordChange = (e) => {
+  // @ts-ignore
+  const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 

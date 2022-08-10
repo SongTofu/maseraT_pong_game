@@ -9,7 +9,8 @@ import FirstWin from "../img/firstWin.svg";
 import ThirdWin from "../img/thirdWin.svg";
 import PopupControl from "../popup/PopupControl";
 import { MyProfilePopup } from "../popup/my-profile-popup";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
+import { AchievementType } from "../type/achievement-type";
 import { UserInfoType } from "../type/user-info-type";
 import AchievementImg from "./achievementImg/AchievementImg";
 
@@ -29,18 +30,37 @@ function TopBar({ children }: IProp) {
     profileImg: "",
     level: 0,
     isFriend: false,
-    isBlocked: false,
+    isBlocked: false
+  });
+  const [achievement, setAchievement] = useState<AchievementType>({
+    firstLogin: false,
+    firstLose: false,
+    firstWin: false,
+    consecThree: false,
+    thiredWin: false
   });
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setInfo(json));
+      .then(res => res.json())
+      .then((userInfo: UserInfoType) => setInfo(userInfo));
+
+    fetch(process.env.REACT_APP_API_URL + "achievement", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then((achi: AchievementType) => {
+        setAchievement(achi);
+        console.log(achi);
+      });
   }, []);
 
   const handleMouseEnter = () => {

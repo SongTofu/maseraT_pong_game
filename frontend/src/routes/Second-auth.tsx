@@ -1,10 +1,14 @@
 import React from "react";
 import { useState } from "react";
-import { getCookie } from "../func/get-cookie";
+import { getCookie, setCookie } from "../func/cookieFunc";
 import { useNavigate } from "react-router-dom";
 import Button from "../component/button/Button";
 
-export function SecondAuth() {
+export function SecondAuth({
+  setLogin
+}: {
+  setLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
 
@@ -12,8 +16,8 @@ export function SecondAuth() {
     fetch("http://localhost:3000/second-auth/", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     });
   };
 
@@ -21,13 +25,14 @@ export function SecondAuth() {
     fetch("http://localhost:3000/second-auth/" + code, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.matchCode) {
-          navigate("/game");
+      .then(response => response.json())
+      .then(({ matchCode }: { matchCode: boolean }) => {
+        if (matchCode) {
+          setCookie("isLogin", "1");
+          setLogin(true);
           console.log("코드 맞음");
         } else {
           console.log("코드 틀림");
@@ -35,7 +40,7 @@ export function SecondAuth() {
       });
   };
 
-  const onChange = (e: any) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
   };
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserList } from "../component/list/user-list";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { GameRoomList } from "../component/list/game-room-list";
 import { socket } from "../App";
 import { useNavigate } from "react-router-dom";
@@ -27,29 +27,29 @@ export function GameMain() {
     fetch(process.env.REACT_APP_API_URL + "game/room", {
       method: "GET",
       headers: {
-        Authorization: getCookie("token"),
-      },
+        Authorization: getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setGameRooms(json));
+      .then(res => res.json())
+      .then((gameRoom: GameRoomType[]) => setGameRooms(gameRoom));
   }, []);
 
   useEffect(() => {
     socket.on("game-room-create", (gameRoom: GameRoomType) => {
-      setGameRooms((curr) => [...curr, gameRoom]);
+      setGameRooms(curr => [...curr, gameRoom]);
     });
 
-    socket.on("game-room-join", ({ gameRoomId }) => {
+    socket.on("game-room-join", ({ gameRoomId }: { gameRoomId: number }) => {
       navigate("/game/" + gameRoomId);
     });
 
-    socket.on("game-room-destroy", ({ gameRoomId }) => {
-      setGameRooms((rooms) => rooms.filter((room) => room.id !== +gameRoomId));
+    socket.on("game-room-destroy", ({ gameRoomId }: { gameRoomId: number }) => {
+      setGameRooms(rooms => rooms.filter(room => room.id !== +gameRoomId));
     });
 
-    socket.on("match", ({ gameRoomId }) => {
-      navigate("/game/" + gameRoomId);
-    });
+    // socket.on("match", ({ gameRoomId }) => {
+    //   navigate("/game/" + gameRoomId);
+    // });
 
     return () => {
       socket.off("game-room-create");
@@ -93,7 +93,7 @@ export function GameMain() {
               )}
             </div>
             <div className="h-full">
-              {gameRooms.map((gameRoom) => (
+              {gameRooms.map(gameRoom => (
                 <GameRoomList
                   key={gameRoom.id}
                   id={gameRoom.id}
@@ -105,7 +105,7 @@ export function GameMain() {
             </div>
           </div>
           <div>
-            <UserList isChatRoom={false} participants="" />
+            <UserList isChatRoom={false} participants={null} />
           </div>
         </div>
       </TopBar>

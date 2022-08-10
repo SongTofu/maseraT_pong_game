@@ -1,13 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { socket } from "../App";
+import { getCookie } from "../func/cookieFunc";
 import Button from "../component/button/Button";
-import { getCookie } from "../func/get-cookie";
 
-export function GameCreatePopup() {
+export function GameCreatePopup(): JSX.Element {
   const [title, setTitle] = useState("");
   const [check, setCheck] = useState(false);
 
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
@@ -17,12 +17,12 @@ export function GameCreatePopup() {
       title,
       userId: getCookie("id"),
       isSpeedMode: check,
-      isLadder: false,
+      isLadder: false
     });
   };
 
-  const onCheck = (e) => {
-    setCheck((curr) => !curr);
+  const onCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCheck(curr => !curr);
   };
 
   return (

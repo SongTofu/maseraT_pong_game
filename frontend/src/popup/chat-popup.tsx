@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { Authority } from "../type/enum/authority.enum";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { socket } from "../App";
 import { ChatPopupType } from "../type/chat-popup-type";
 import { Dispatch, SetStateAction } from "react";
@@ -14,11 +14,15 @@ type userProps = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export function ChatPopup({ user, setIsOpen }: userProps) {
+export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
   // id -> target id
   const { id, authority } = user;
-  const chatRoomId = +localStorage.getItem("chatRoomId");
-  const myAuthority = +localStorage.getItem("authority");
+  const chatRoomId = localStorage.getItem("chatRoomId")
+    ? localStorage.getItem("chatRoomId")
+    : 0;
+  const myAuthority = localStorage.getItem("authority")
+    ? localStorage.getItem("authority")
+    : 0;
   const [openModal, setOpenModal] = useState(false);
   const portalDiv = document.getElementById("portal") as HTMLElement;
 
@@ -31,7 +35,7 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
     socket.emit("chat-room-set-admin", {
       chatRoomId: chatRoomId,
       isAdmin,
-      userId: id,
+      userId: id
     });
     setIsOpen(false);
   };
@@ -39,7 +43,7 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
   const onKick = () => {
     socket.emit("chat-room-kick", {
       targetId: id,
-      chatRoomId: +localStorage.getItem("chatRoomId"),
+      chatRoomId
     });
     setIsOpen(false);
   };
@@ -48,6 +52,15 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
   const onChatBlock = () => {
     socket.emit("chat-block", { targetId: id });
   };
+
+  const onRequestGame = (isSpeedMode: boolean) => {
+    socket.emit("request-game", {
+      userId: getCookie("id"),
+      targetId: id,
+      isSpeedMode
+    });
+  };
+
   return ReactDOM.createPortal(
     <>
       <button
@@ -88,10 +101,19 @@ export function ChatPopup({ user, setIsOpen }: userProps) {
               <ProfilePopup userId={id} />
             </PopupControl>
           )}{" "}
-          <Button className={style} tag={"게임 신청"} />
+          <Button
+            className={style}
+            tag={"게임 신청"}
+            onClick={e => onRequestGame(true)}
+          />
+          <Button
+            className={style}
+            tag={"스피드 게임 신청"}
+            onClick={e => onRequestGame(true)}
+          />
         </div>
       </div>
     </>,
-    portalDiv,
+    portalDiv
   );
 }

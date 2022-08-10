@@ -1,5 +1,11 @@
-import { useState, useEffect } from "react";
-import { getCookie } from "../func/get-cookie";
+import React, { useState, useEffect } from "react";
+import { getCookie } from "../func/cookieFunc";
+
+type Props = {
+  onSecondAuth: () => void;
+  isSecondAuth: boolean;
+  setIsSecondAuth: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 export function SecondAuthPopup({
   // @ts-ignore
@@ -7,8 +13,8 @@ export function SecondAuthPopup({
   // @ts-ignore
   isSecondAuth,
   // @ts-ignore
-  setIsSecondAuth,
-}) {
+  setIsSecondAuth
+}: Props): JSX.Element {
   const [checkMsg, setCheckMsg] = useState("");
   const [isCheck, setIsCheck] = useState(false);
   const [code, setCode] = useState("");
@@ -17,8 +23,8 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "second-auth", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     });
   }, []);
 
@@ -26,12 +32,12 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "second-auth/" + code, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.matchCode) {
+      .then(res => res.json())
+      .then(({ matchCode }: { matchCode: boolean }) => {
+        if (matchCode) {
           setIsCheck(true);
           setCheckMsg("맞음");
         } else {
@@ -41,7 +47,7 @@ export function SecondAuthPopup({
   };
 
   // @ts-ignore
-  const onChange = (e) => {
+  const onChange = e => {
     setCode(e.target.value);
   };
 
@@ -51,12 +57,12 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
+        Authorization: "Bearer " + getCookie("token")
       },
-      body: data,
+      body: data
     });
     // @ts-ignore
-    setIsSecondAuth((curr) => !curr);
+    setIsSecondAuth(curr => !curr);
     onSecondAuth(false);
   };
 
@@ -67,7 +73,7 @@ export function SecondAuthPopup({
         height: "100%",
         backgroundColor: "#929292",
         position: "fixed",
-        margin: "-21.438px 0px 0px -8px",
+        margin: "-21.438px 0px 0px -8px"
       }}
     >
       <button onClick={onSecondAuth}>X</button>

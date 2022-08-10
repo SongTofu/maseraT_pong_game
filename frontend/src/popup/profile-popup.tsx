@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { UserInfoType } from "../type/user-info-type";
-import { getCookie } from "../func/get-cookie";
+import { getCookie } from "../func/cookieFunc";
 import { Record } from "./record";
 import { AchievementType } from "../type/achievement-type";
+import { socket } from "../App";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import AchievementImg from "../component/achievementImg/AchievementImg";
 import AchievementIcon from "../img/achievementIcon.svg";
 import ConsecThree from "../img/consecThree.svg";
@@ -12,7 +14,11 @@ import FirstWin from "../img/firstWin.svg";
 import ThirdWin from "../img/thirdWin.svg";
 import Button from "../component/button/Button";
 
-export function ProfilePopup({ userId }: any) {
+type Props = {
+  userId: number;
+};
+
+export function ProfilePopup({ userId }: Props): JSX.Element {
   const [info, setInfo] = useState<UserInfoType>();
   const [isFriend, setIsFriend] = useState(false);
   const [isBlock, setIsBlock] = useState(false);
@@ -21,31 +27,44 @@ export function ProfilePopup({ userId }: any) {
     firstWin: false,
     firstLose: false,
     thiredWin: false,
-    consecThree: false,
+    consecThree: false
   });
+
+  const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info/" + userId, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
-        setInfo(json);
-        setIsFriend(json.isFriend);
-        setIsBlock(json.isBlocked);
+      .then(res => res.json())
+      .then((user: UserInfoType) => {
+        setInfo(user);
+        setIsFriend(user.isFriend);
+        setIsBlock(user.isBlocked);
       });
 
     fetch(process.env.REACT_APP_API_URL + "achievement/" + userId, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => setAchievement(json));
+      .then(res => res.json())
+      .then((achievement: AchievementType) => setAchievement(achievement));
+
+    socket.on(
+      "DM",
+      ({ chatRoomId, targetId }: { chatRoomId: number; targetId: number }) => {
+        navigate("/DM/" + chatRoomId + "/" + targetId);
+      }
+    );
+
+    return () => {
+      socket.off("DM");
+    };
   }, [userId]);
 
   const onAddFriend = () => {
@@ -53,10 +72,10 @@ export function ProfilePopup({ userId }: any) {
     fetch(process.env.REACT_APP_API_URL + "friend/", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + getCookie("token"),
-        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ targetId: userId }),
+      body: JSON.stringify({ targetId: userId })
     });
   };
 
@@ -65,10 +84,10 @@ export function ProfilePopup({ userId }: any) {
     fetch(process.env.REACT_APP_API_URL + "block/", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + getCookie("token"),
-        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ targetId: userId }),
+      body: JSON.stringify({ targetId: userId })
     });
   };
 
@@ -77,11 +96,15 @@ export function ProfilePopup({ userId }: any) {
     fetch(process.env.REACT_APP_API_URL + "block/", {
       method: "DELETE",
       headers: {
-        "Authorization": "Bearer " + getCookie("token"),
-        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("token"),
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ targetId: userId }),
+      body: JSON.stringify({ targetId: userId })
     });
+  };
+
+  const onDMClick = (targetId: number) => {
+    socket.emit("DM", { senderId: getCookie("id"), targetId });
   };
 
   return (
@@ -115,15 +138,15 @@ export function ProfilePopup({ userId }: any) {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            <AchievementImg
+            {/* <AchievementImg
               alt={"첫 로그인"}
               src={FirstLogin}
               className="mr-2"
-            />
-            <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
+            /> */}
+            {/* <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
             <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
             <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-            <AchievementImg alt={"3연승"} src={ConsecThree} />
+            <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>
@@ -145,7 +168,11 @@ export function ProfilePopup({ userId }: any) {
               disabled={isFriend}
               onClick={onAddFriend}
             />
-            <Button tag={"DM 보내기 "} className={"btn-sm mr-2"} />
+            <Button
+              tag={"DM 보내기 "}
+              className={"btn-sm mr-2"}
+              onClick={e => onDMClick(userId)}
+            />
             {isBlock ? (
               <Button
                 tag={"차단 해제"}

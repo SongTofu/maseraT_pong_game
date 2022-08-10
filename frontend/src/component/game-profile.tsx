@@ -1,6 +1,6 @@
 import { GameUserType } from "../routes/GameDetail";
 
-export function GameProfile(user: GameUserType) {
+export function GameProfile(user: GameUserType): JSX.Element {
   return (
     <div className="w-[300px] h-[600px] flex flex-col justify-center items-center">
       <img
