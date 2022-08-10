@@ -52,6 +52,14 @@ export function GameDetail(): JSX.Element {
         setIsLadder(gameInfo.isLadder);
       });
 
+    socket.emit("game-room-join", {
+      gameRoomId,
+      title,
+      userId: getCookie("id"),
+      isSpeedMode: false,
+      isLadder: false
+    });
+
     return () => {
       socket.emit("game-room-leave", { gameRoomId, userId: getCookie("id") });
     };
@@ -72,7 +80,7 @@ export function GameDetail(): JSX.Element {
     socket.on("game-room-leave", ({ userId }: { userId: number }) => {
       setGameUsers(users =>
         users.map(user => {
-          if (user.userId === userId) {
+          if (user.userId === +userId) {
             user.userId = 0;
             user.nickname = "";
             user.profileImg = "maserat.png";
@@ -87,16 +95,16 @@ export function GameDetail(): JSX.Element {
       );
     });
 
-    socket.on("end-game", data => {
+    socket.on("end-game", (gameUserData: GameUserType[]) => {
       if (isLadder) {
         navigate("/game");
       } else {
         setGameUsers(currUsers =>
           currUsers.map(currUser => {
             if (currUser.position === 0) {
-              currUser = data[0];
+              currUser = gameUserData[0];
             } else if (currUser.position === 1) {
-              currUser = data[1];
+              currUser = gameUserData[1];
             }
             return currUser;
           })
