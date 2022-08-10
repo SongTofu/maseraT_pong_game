@@ -20,11 +20,7 @@ export function ChatUser({
   });
   const [isOpen, setIsOpen] = useState(false);
 
-  const onClick = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    id: number,
-    authority: Authority
-  ) => {
+  const onClick = (id: number, authority: Authority) => {
     setup({ id, authority });
     handleOptionChange(isOpen);
   };
@@ -39,8 +35,8 @@ export function ChatUser({
             <button
               className="relative"
               key={participant.userId}
-              onClick={e => {
-                onClick(e, participant.userId, participant.authority);
+              onClick={() => {
+                onClick(participant.userId, participant.authority);
               }}
             >
               <span className="mr-2">

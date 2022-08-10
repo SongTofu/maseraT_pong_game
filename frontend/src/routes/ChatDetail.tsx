@@ -8,11 +8,9 @@ import { socket } from "../App";
 import { getCookie } from "../func/cookieFunc";
 import { UserList } from "../component/list/user-list";
 import { Authority } from "../type/enum/authority.enum";
-import { ChatRoomSetPopup } from "../popup/chat-room-set-popup";
 import TopBar from "../component/TopNavBar";
 import Button from "../component/button/Button";
 import { RequestGamePopup } from "../popup/request-game-popup";
-import PopupControl from "../popup/PopupControl";
 
 export type ReqGameType = {
   nickname: string;
@@ -31,21 +29,11 @@ export function ChatDetail(): JSX.Element {
   const [title, setTitle] = useState("");
   const [chats, setChats] = useState<ChatType[]>([]);
   const [message, setMessage] = useState("");
-  const [authority, setAuthority] = useState(Authority.PARTICIPANT);
-  const [isRoomSet, setIsRoomSet] = useState(false);
   const [reqGame, setReqGame] = useState<ReqGameType>();
   const [isGame, setIsGame] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
-  const ref = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // @ts-ignore
-  const onSideClick = e => {
-    // @ts-ignore
-    if (!ref.current.contains(e.target)) setIsRoomSet(false);
-  };
 
   useEffect(() => {
     if (chatRoomId) {
@@ -73,13 +61,10 @@ export function ChatDetail(): JSX.Element {
         detail.chatParticipant?.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", String(participant.authority));
-            setAuthority(participant.authority);
           }
         });
         setTitle(detail.title);
       });
-
-    window.addEventListener("click", onSideClick);
 
     socket.emit("chat-room-join", { chatRoomId, userId: getCookie("id") });
 
@@ -97,7 +82,6 @@ export function ChatDetail(): JSX.Element {
     return () => {
       socket.emit("chat-room-leave", { chatRoomId, userId: getCookie("id") });
       localStorage.removeItem("authority");
-      window.removeEventListener("click", onSideClick);
       socket.off("request-game");
       socket.off("response-game");
       socket.off("game-room-join");
@@ -160,7 +144,6 @@ export function ChatDetail(): JSX.Element {
       ({ userId, authority }: { userId: number; authority: Authority }) => {
         if (userId === +getCookie("id")) {
           localStorage.setItem("authority", String(authority));
-          setAuthority(authority);
         }
 
         setParticipants(curr => {
@@ -258,24 +241,11 @@ export function ChatDetail(): JSX.Element {
             </div>
           </div>
           <div>
-            <UserList isChatRoom={true} participants={participants} />
-            <div ref={ref}>
-              {authority >= Authority.ADMIN ? (
-                <Button tag={"설정"} onClick={() => setOpenModal(true)} />
-              ) : null}
-              {openModal && (
-                <PopupControl
-                  mainText={"방 설정"}
-                  onClick={() => setOpenModal(false)}
-                >
-                  <ChatRoomSetPopup
-                    chatRoomId={chatRoomId}
-                    roomTitle={title}
-                    setIsRoomSet={() => setOpenModal(false)}
-                  />
-                </PopupControl>
-              )}
-            </div>
+            <UserList
+              isChatRoom={true}
+              participants={participants}
+              chatRoomId={chatRoomId}
+            />
           </div>
           {isGame ? (
             <RequestGamePopup game={reqGame} setIsGame={setIsGame} />
