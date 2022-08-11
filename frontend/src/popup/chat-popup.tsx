@@ -51,6 +51,7 @@ export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
 
   const onChatBlock = () => {
     socket.emit("chat-block", { targetId: id });
+    setIsOpen(false);
   };
 
   const onRequestGame = (isSpeedMode: boolean) => {
@@ -59,6 +60,7 @@ export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
       targetId: id,
       isSpeedMode
     });
+    setIsOpen(false);
   };
 
   return ReactDOM.createPortal(
@@ -104,7 +106,7 @@ export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
           <Button
             className={style}
             tag={"게임 신청"}
-            onClick={e => onRequestGame(true)}
+            onClick={e => onRequestGame(false)}
           />
           <Button
             className={style}
