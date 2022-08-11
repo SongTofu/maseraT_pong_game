@@ -19,7 +19,7 @@ import { DM } from "./routes/DM";
 import { connectUser, isToken } from "./func/isLogin";
 import { getCookie } from "./func/cookieFunc";
 
-export const socket = io("http://localhost:3000");
+export const socket = io(process.env.REACT_APP_API_URL);
 
 function App() {
   const [login, setLogin] = useState(true);
