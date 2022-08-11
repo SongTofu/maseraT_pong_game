@@ -6,16 +6,22 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     image: client
+    env_file:
+      - ./frontend/.env
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
     ports:
       - '3000:3000'
     volumes:
-      - ./client:/app
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend
 
   database:
     image: postgres
     restart: always
-    env_file:
-      - ./backend/.env
+    # env_file:
+    #   - ./backend/.env
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -35,8 +41,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     image: server
-    env_file:
-      - ./backend/.env
+    # env_file:
+    #   - ./backend/.env
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -65,3 +71,42 @@ services:
 volumes:
   pgdata:
   pgadmin-data:
+
+# version: '3'
+# services:
+  # db:
+  #   image: postgres:10.2
+  #   networks:
+  #     - database
+  #   ports:
+  #     - "5432:5432"
+  #   # env_file:
+  #   #   - ./db/.env
+  #   restart: always
+  #   container_name: db
+  # back:
+  #   build:
+  #     context: ./back
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - database
+  #   ports:
+  #     - 8000:8000
+  #     - 8001:8001
+  #   depends_on:
+  #     - db
+  #   restart: always
+  #   container_name: back
+  # front:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   # depends_on:
+  #   #   - back
+  #   ports:
+  #     - 3000:3000
+  #   restart: always
+  #   container_name: front
+# networks:
+#   database:
+#     driver: bridge
