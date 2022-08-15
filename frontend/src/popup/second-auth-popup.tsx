@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Button from "../component/button/Button";
 import { getCookie } from "../func/cookieFunc";
 
 type Props = {
@@ -8,12 +9,9 @@ type Props = {
 };
 
 export function SecondAuthPopup({
-  // @ts-ignore
   onSecondAuth,
-  // @ts-ignore
   isSecondAuth,
-  // @ts-ignore
-  setIsSecondAuth
+  setIsSecondAuth,
 }: Props): JSX.Element {
   const [checkMsg, setCheckMsg] = useState("");
   const [isCheck, setIsCheck] = useState(false);
@@ -23,8 +21,8 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "second-auth", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     });
   }, []);
 
@@ -32,10 +30,10 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "second-auth/" + code, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ matchCode }: { matchCode: boolean }) => {
         if (matchCode) {
           setIsCheck(true);
@@ -46,8 +44,7 @@ export function SecondAuthPopup({
       });
   };
 
-  // @ts-ignore
-  const onChange = e => {
+  const onChange = (e) => {
     setCode(e.target.value);
   };
 
@@ -57,37 +54,35 @@ export function SecondAuthPopup({
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
+        Authorization: "Bearer " + getCookie("token"),
       },
-      body: data
+      body: data,
     });
-    // @ts-ignore
-    setIsSecondAuth(curr => !curr);
-    onSecondAuth(false);
+    setIsSecondAuth((curr) => !curr);
+    onSecondAuth();
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#929292",
-        position: "fixed",
-        margin: "-21.438px 0px 0px -8px"
-      }}
-    >
-      <button onClick={onSecondAuth}>X</button>
-      <div>
+    <div className="w-[260px] h-[170px] flex flex-col items-center justify-center">
+      <div className="my-5 mb-8">
         <label>인증 코드</label>
-        <input type="text" onChange={onChange} value={code}></input>
-        <button disabled={isCheck} onClick={onClick}>
-          확인
-        </button>
-        <p>{checkMsg}</p>
+        <div className="flex flex-row mt-1 w-full">
+          <input
+            className="border-2 rounded-md w-[70%] mr-1 px-1"
+            type="text"
+            onChange={onChange}
+            value={code}
+          ></input>
+          <Button tag={"확인"} disabled={isCheck} onClick={onClick} />
+        </div>
+        <p className="text-center mt-1 text-sm">{checkMsg}</p>
       </div>
-      <button disabled={!isCheck} onClick={onActive}>
-        {isSecondAuth ? "비활성화" : "활성화"}
-      </button>
+      <Button
+        className="btn-sm text-md font-main pr-6 pl-7 tracking-widest"
+        tag={isSecondAuth ? "비활성화" : "활성화"}
+        disabled={!isCheck}
+        onClick={onActive}
+      />
     </div>
   );
 }
