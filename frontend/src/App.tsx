@@ -38,17 +38,20 @@ function App() {
       <div className="h-screen min-h-[900px] min-w-[1024px] relative text-center w-full flex flex-col justify-between">
         <Header />
         <Routes>
-          {/* {connectUser() ? ( */}
-          <>
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/chat" element={<ChatMain />}></Route>
-            <Route path="/chat/:chatRoomId" element={<ChatDetail />}></Route>
-            <Route path="/game" element={<GameMain />}></Route>
-            <Route path="/game/:gameRoomId" element={<GameDetail />}></Route>
-            <Route path="/DM/:chatRoomId/:targetId" element={<DM />}></Route>
-            <Route path="/*" element={<Navigate to="/chat"></Navigate>}></Route>
-          </>
-          {/* ) : (
+          {connectUser() ? (
+            <>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/chat" element={<ChatMain />}></Route>
+              <Route path="/chat/:chatRoomId" element={<ChatDetail />}></Route>
+              <Route path="/game" element={<GameMain />}></Route>
+              <Route path="/game/:gameRoomId" element={<GameDetail />}></Route>
+              <Route path="/DM/:chatRoomId/:targetId" element={<DM />}></Route>
+              <Route
+                path="/*"
+                element={<Navigate to="/chat"></Navigate>}
+              ></Route>
+            </>
+          ) : (
             <>
               <Route path="/" element={<Home />}></Route>
               <Route
@@ -58,7 +61,7 @@ function App() {
               ></Route>
               <Route path="/*" element={<Navigate to="/"></Navigate>}></Route>
             </>
-          )} */}
+          )}
         </Routes>
         <Footer />
       </div>
