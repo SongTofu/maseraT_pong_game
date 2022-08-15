@@ -14,12 +14,12 @@ type UserListType = {
 
 export function UserList({
   isChatRoom,
-  participants
+  participants,
 }: UserListType): JSX.Element {
   const [select, setSelect] = useState<Select>(Select.FREIND);
 
   useEffect(() => {
-    setSelect(curr => {
+    setSelect((curr) => {
       if (curr === Select.FREIND) {
         if (isChatRoom) {
           return Select.CHAT_USER;
@@ -45,8 +45,16 @@ export function UserList({
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
-        <Button tag={isChatRoom ? "참여자" : "전체유저"} onClick={onClick} />
-        <Button tag={"친구"} onClick={onFreindClick} />
+        <Button
+          tag={isChatRoom ? "참여자" : "전체유저"}
+          onClick={onClick}
+          className="btn-sm text-sm font-main pr-6 pl-7 tracking-widest"
+        />
+        <Button
+          tag={"친구"}
+          onClick={onFreindClick}
+          className="btn-sm text-sm font-main pr-6 pl-7 tracking-widest"
+        />
       </div>
       <div className="border-main border-[1px] w-[80%] h-[55%] rounded-sm m-3 flex flex-col items-center overflow-y-scroll ">
         {select === Select.ALL_USER ? <AllUser /> : null}
@@ -55,12 +63,12 @@ export function UserList({
           <ChatUser participants={participants} />
         ) : null}
       </div>
-      <div className="mt-7">
+      {/* <div className="mt-7">
         <Button
           tag="차단 유저 목록"
           className="btn-lg text-sm font-main px-16 tracking-widest btn-unselected"
         />
-      </div>
+      </div> */}
       {isChatRoom && (
         <div className="flex flex-row mt-4 justify-between w-[80%]">
           <Button

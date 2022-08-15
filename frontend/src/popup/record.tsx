@@ -10,15 +10,15 @@ export function Record({ userId }: { userId: string }): JSX.Element {
     fetch(process.env.REACT_APP_API_URL + "record/" + userId, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((record: RecordType[]) => setRecords(record));
   }, []);
 
   return (
-    <div>
+    <div className="h-[55px] overflow-y-scroll mb-4">
       {records.map((record, index) => {
         return (
           <div key={index}>

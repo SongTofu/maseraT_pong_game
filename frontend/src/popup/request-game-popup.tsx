@@ -10,14 +10,14 @@ type ReqGamePopupType = {
 
 export function RequestGamePopup({
   game,
-  setIsGame
+  setIsGame,
 }: ReqGamePopupType): JSX.Element {
   const onOk = (isAccept: boolean) => {
     socket.emit("response-game", {
       userId: getCookie("id"),
       targetId: game?.targetId,
       isSpeedMode: game?.isSpeedMode,
-      isAccept
+      isAccept,
     });
     setIsGame(false);
   };
@@ -26,17 +26,27 @@ export function RequestGamePopup({
       userId: getCookie("id"),
       targetId: game?.targetId,
       isSpeedMode: game?.isSpeedMode,
-      isAccept
+      isAccept,
     });
     setIsGame(false);
   };
 
   return (
-    <div>
+    <div className="flex flex-row justify-evenly ">
       <p>{game?.nickname}</p>
       <p>{game?.isSpeedMode ? "스피드 모드" : "일반 모드"}</p>
-      <Button tag="수락" onClick={() => onOk(true)} />
-      <Button tag="거절" onClick={() => onNo(false)} />
+      <div className="flex flex-row gap-x-1">
+        <Button
+          className="btn-sm text-sm"
+          tag="수락"
+          onClick={() => onOk(true)}
+        />
+        <Button
+          className="btn-sm text-sm"
+          tag="거절"
+          onClick={() => onNo(false)}
+        />
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { getCookie } from "../func/cookieFunc";
 import { useNavigate } from "react-router-dom";
 import { SecondAuthPopup } from "../popup/second-auth-popup";
 import Button from "../component/button/Button";
+import PopupControl from "../popup/PopupControl";
 
 export function Login() {
   const [nickname, setNickname] = useState("");
@@ -13,19 +14,19 @@ export function Login() {
   const [imgUrl, setImgUrl] = useState();
   const [btnEnable, setBtnEnable] = useState(false);
   const [checkMsg, setCheckMsg] = useState("닉네임 중복 체크를 해주세요");
-  const [secondAuthBtn, setSecondAuthBtn] = useState(false);
 
+  const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
-      }
+        Authorization: "Bearer " + getCookie("token"),
+      },
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         setNickname(json.nickname);
         setImgUrl(process.env.REACT_APP_API_URL + json.profileImg);
         setIsSecondAuth(json.secondAuth);
@@ -36,12 +37,10 @@ export function Login() {
   const imageInput = useRef(null);
 
   const onClick = () => {
-    // @ts-ignore
     imageInput.current.click();
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // @ts-ignore
     setImgUrl(URL.createObjectURL(e.target.files[0]));
     if (e.target.files) setProfile(e.target.files[0]);
   };
@@ -55,10 +54,10 @@ export function Login() {
     fetch(process.env.REACT_APP_API_URL + "nickname/" + nickname, {
       method: "GET",
       headers: {
-        Authorization: getCookie("token")
-      }
+        Authorization: getCookie("token"),
+      },
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ isValidNickname }: { isValidNickname: boolean }) => {
         if (isValidNickname) {
           setBtnEnable(false);
@@ -72,33 +71,21 @@ export function Login() {
 
   const onProfileUpdate = () => {
     const data = new FormData();
-    // @ts-ignore
     data.append("profile", profile);
     data.append("nickname", nickname);
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token")
+        Authorization: "Bearer " + getCookie("token"),
       },
-      body: data
+      body: data,
     });
     navigate("/game");
-  };
-
-  const onSecondAuth = () => {
-    setSecondAuthBtn(curr => !curr);
   };
 
   return (
     <div className="flex justify-center items-center">
       <div className="flex flex-col justify-evenly items-center h-[500px] w-[300px]">
-        {secondAuthBtn ? (
-          <SecondAuthPopup
-            onSecondAuth={onSecondAuth}
-            isSecondAuth={isSecondAuth}
-            setIsSecondAuth={setIsSecondAuth}
-          />
-        ) : null}
         <h1 className="text-4xl">Login</h1>
         <div className="flex flex-col items-center w-full">
           <img
@@ -131,12 +118,30 @@ export function Login() {
           <h2 className="text-red-700 text-sm text-left">{checkMsg}</h2>
         </div>
         <div>
-          <h3>이메일: &lt;{email}&gt;</h3>
+          <h3>이메일: {email}</h3>
           <Button
             tag={isSecondAuth ? "2차인증 비활성화" : "2차인증 활성화"}
             className={"btn-sm text-sm"}
-            onClick={onSecondAuth}
+            onClick={() => {
+              setOpenModal(true);
+            }}
           />
+          {openModal && (
+            <PopupControl
+              mainText="2차인증"
+              onClick={() => {
+                setOpenModal(false);
+              }}
+            >
+              <SecondAuthPopup
+                onSecondAuth={() => {
+                  setOpenModal(false);
+                }}
+                isSecondAuth={isSecondAuth}
+                setIsSecondAuth={setIsSecondAuth}
+              />
+            </PopupControl>
+          )}
         </div>
         <Button
           tag={"수정"}

@@ -41,9 +41,7 @@ export function ChatDetail(): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // @ts-ignore
-  const onSideClick = e => {
-    // @ts-ignore
+  const onSideClick = (e) => {
     if (!ref.current.contains(e.target)) setIsRoomSet(false);
   };
 
@@ -53,9 +51,9 @@ export function ChatDetail(): JSX.Element {
     }
 
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
-      method: "GET"
+      method: "GET",
     })
-      .then(res => {
+      .then((res) => {
         if (res.status !== 200) {
           navigate("/chat");
         }
@@ -63,14 +61,13 @@ export function ChatDetail(): JSX.Element {
       })
       .then((detail: ChatRoomDetailType) => {
         const check = detail.chatParticipant?.filter(
-          part => part.userId === +getCookie("id")
+          (part) => part.userId === +getCookie("id"),
         );
         if (!check) {
           navigate("/chat");
         }
         setParticipants(detail.chatParticipant);
-        // @ts-ignore
-        detail.chatParticipant?.forEach(participant => {
+        detail.chatParticipant?.forEach((participant) => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", String(participant.authority));
             setAuthority(participant.authority);
@@ -113,44 +110,44 @@ export function ChatDetail(): JSX.Element {
     socket.on(
       "chat-room-leave",
       ({ nickname, userId }: { nickname: string; userId: number }) => {
-        setParticipants(curr =>
-          curr.filter(idx => {
+        setParticipants((curr) =>
+          curr.filter((idx) => {
             return idx.userId !== userId;
-          })
+          }),
         );
 
-        setChats(curr => {
+        setChats((curr) => {
           return [
             ...curr,
-            { nickname: "", message: nickname + "(이)가 나갔습니다" }
+            { nickname: "", message: nickname + "(이)가 나갔습니다" },
           ];
         });
-      }
+      },
     );
 
     socket.on("chat-room-message", (chatType: ChatType) => {
-      setChats(curr => [...curr, chatType]);
+      setChats((curr) => [...curr, chatType]);
     });
 
     socket.on("chat-room-join", (participant: ChatParticipantType) => {
-      setParticipants(curr => {
+      setParticipants((curr) => {
         return [
           ...curr,
           {
             nickname: participant.nickname,
             userId: participant.userId,
-            authority: participant.authority
-          }
+            authority: participant.authority,
+          },
         ];
       });
 
-      setChats(curr => {
+      setChats((curr) => {
         return [
           ...curr,
           {
             nickname: "",
-            message: participant.nickname + "(이)가 입장했습니다."
-          }
+            message: participant.nickname + "(이)가 입장했습니다.",
+          },
         ];
       });
     });
@@ -163,22 +160,22 @@ export function ChatDetail(): JSX.Element {
           setAuthority(authority);
         }
 
-        setParticipants(curr => {
-          curr.forEach(participant => {
+        setParticipants((curr) => {
+          curr.forEach((participant) => {
             if (+participant.userId === userId)
               participant.authority = authority;
           });
           curr.sort((a, b) => b.authority - a.authority);
           return [...curr];
         });
-      }
+      },
     );
 
     socket.on("chat-room-kick", ({ targetId }: { targetId: string }) => {
       if (targetId === getCookie("id")) {
         navigate("/chat");
       }
-      setParticipants(curr => curr.filter(c => c.userId !== +targetId));
+      setParticipants((curr) => curr.filter((c) => c.userId !== +targetId));
     });
 
     socket.on("chat-room-setting", ({ title }) => {
@@ -199,7 +196,7 @@ export function ChatDetail(): JSX.Element {
     socket.emit("chat-room-message", {
       chatRoomId,
       userId: getCookie("id"),
-      message
+      message,
     });
     setMessage("");
   };
