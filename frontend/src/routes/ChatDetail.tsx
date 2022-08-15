@@ -57,7 +57,6 @@ export function ChatDetail(): JSX.Element {
           navigate("/chat");
         }
         setParticipants(detail.chatParticipant);
-        // @ts-ignore
         detail.chatParticipant?.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", String(participant.authority));
