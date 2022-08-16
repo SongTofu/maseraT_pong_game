@@ -11,7 +11,7 @@ export function Login() {
   const [profile, setProfile] = useState<File>();
   const [isSecondAuth, setIsSecondAuth] = useState(false);
 
-  const [imgUrl, setImgUrl] = useState();
+  const [imgUrl, setImgUrl] = useState("");
   const [btnEnable, setBtnEnable] = useState(false);
   const [checkMsg, setCheckMsg] = useState("닉네임 중복 체크를 해주세요");
 
@@ -34,15 +34,17 @@ export function Login() {
       });
   }, []);
 
-  const imageInput = useRef(null);
+  const imageInput = useRef<HTMLInputElement>(null);
 
   const onClick = () => {
-    imageInput.current.click();
+    if (imageInput.current) imageInput.current.click();
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImgUrl(URL.createObjectURL(e.target.files[0]));
-    if (e.target.files) setProfile(e.target.files[0]);
+    if (e.target.files) {
+      setImgUrl(URL.createObjectURL(e.target.files[0]));
+      setProfile(e.target.files[0]);
+    }
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +52,6 @@ export function Login() {
   };
 
   const onCheckNickname = () => {
-    // getApi("nickname/" + nickname).then(json => {
     fetch(process.env.REACT_APP_API_URL + "nickname/" + nickname, {
       method: "GET",
       headers: {

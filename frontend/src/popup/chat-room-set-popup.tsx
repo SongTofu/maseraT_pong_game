@@ -4,7 +4,6 @@ import Button from "../component/button/Button";
 
 type Props = {
   chatRoomId: string | undefined;
-  // roomTitle: string;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 

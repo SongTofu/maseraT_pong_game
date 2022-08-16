@@ -120,11 +120,4 @@ export function DM() {
       </TopBar>
     </div>
   );
-
-  // <div>
-  //   <DMProfile targetId={targetId} />
-  //   {messages.map((message, index) => (
-  //     <Chat key={index} nickname={message.nickname} msg={message.message} />
-  //   ))}
-  // </div>
 }

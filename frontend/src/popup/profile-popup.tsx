@@ -14,7 +14,7 @@ import ThirdWin from "../img/thirdWin.svg";
 import Button from "../component/button/Button";
 
 type Props = {
-  userId: number;
+  userId: string;
 };
 
 export function ProfilePopup({ userId }: Props): JSX.Element {
@@ -137,15 +137,6 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            {/* <AchievementImg
-              alt={"첫 로그인"}
-              src={FirstLogin}
-              className="mr-2"
-            /> */}
-            {/* <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
-            <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
-            <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-            <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>
@@ -170,7 +161,7 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
             <Button
               tag={"DM 보내기 "}
               className={"btn-sm mr-2"}
-              onClick={e => onDMClick(userId)}
+              onClick={e => onDMClick(+userId)}
             />
             {isBlock ? (
               <Button

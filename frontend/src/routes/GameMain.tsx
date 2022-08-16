@@ -61,10 +61,6 @@ export function GameMain() {
       }
     );
 
-    // socket.on("match", ({ gameRoomId }) => {
-    //   navigate("/game/" + gameRoomId);
-    // });
-
     return () => {
       socket.off("game-room-create");
       socket.off("game-room-join");

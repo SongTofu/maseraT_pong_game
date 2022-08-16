@@ -19,26 +19,26 @@ export function MyProfilePopup(): JSX.Element {
     firstWin: false,
     firstLose: false,
     thiredWin: false,
-    consecThree: false,
+    consecThree: false
   });
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((json: UserInfoType) => setInfo(json));
 
     fetch(process.env.REACT_APP_API_URL + "achievement/", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((json: AchievementType) => setAchievement(json));
   }, []);
 
@@ -73,11 +73,6 @@ export function MyProfilePopup(): JSX.Element {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            {/* <AchievementImg alt={"첫 로그인"} src={FirstLogin} className="mr-2" />
-          <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
-          <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
-          <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-          <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>

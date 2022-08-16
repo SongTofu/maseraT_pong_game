@@ -62,13 +62,7 @@ export function ChatUser({
             </button>
           ))
         : null}
-      {isOpen ? (
-        <ChatPopup
-          user={up}
-          setIsOpen={setIsOpen}
-          name={participants.nickname}
-        />
-      ) : null}
+      {isOpen ? <ChatPopup user={up} setIsOpen={setIsOpen} /> : null}
     </div>
   );
 }
