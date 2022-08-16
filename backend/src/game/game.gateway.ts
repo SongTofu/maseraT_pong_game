@@ -217,8 +217,20 @@ export class GameGateway {
     );
     //게임 중에 나온 거라면
     if (gameRoom.isStart) {
-      this.escapeGame(gameRoom, user);
-      clearInterval(this.gameData[gameRoom.id].interval);
+      const gameParticipant: GameParticipant =
+        await this.gameParticipantRepository.findOne({ where: { user } });
+      if (gameParticipant.position === GamePosition.leftUser) {
+        this.gameData[gameRoom.id].rightUser.score = 1;
+      } else if (gameParticipant.position === GamePosition.rightUser) {
+        this.gameData[gameRoom.id].leftUser.score = 1;
+      }
+      await this.endGameCheck(gameRoom.id);
+      console.log("end game after");
+      // if (gameRoom.isLadder) {
+      //   return;
+      // }
+      // this.escapeGame(gameRoom, user);
+      // clearInterval(this.gameData[gameRoom.id].interval);
     }
 
     const delUser: GameParticipant =
@@ -402,6 +414,7 @@ export class GameGateway {
       this.resetBall(ball);
       this.endGameCheck(gameRoomId);
     }
+    // this.endGameCheck(gameRoomId);
   }
 
   private collision(ball: BallData, player: UserData) {
@@ -470,7 +483,7 @@ export class GameGateway {
         where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
         relations: ["user"],
       });
-      if (!leftUser || !rightUser) return;
+      // if (!leftUser || !rightUser) return;
 
       this.recordRepository.gameEnd(
         this.gameData[gameRoomId].isLadder,
@@ -512,7 +525,11 @@ export class GameGateway {
         userId: leftUser.user.id,
         state: leftUser.user.state,
       });
+      this.resetBall(this.gameData[gameRoomId].ball);
       this.server.to("game-" + gameRoomId).emit("end-game", endGameInfo);
+      this.server
+        .in("game-" + gameRoomId)
+        .emit("game", this.gameData[gameRoomId]);
     }
   }
 
