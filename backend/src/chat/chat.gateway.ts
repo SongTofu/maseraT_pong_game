@@ -119,6 +119,7 @@ export class ChatGateway {
     this.server.emit("chat-room-setting", {
       chatRoomId: chatSettingDto.chatRoomId,
       title: chatSettingDto.title,
+      isPassword: chatRoom.password ? true : false,
     });
   }
 
