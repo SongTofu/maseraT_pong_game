@@ -110,7 +110,9 @@ export class UserService {
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth !== undefined) {
-      user.secondAuth = updateUserInfoDto.secondAuth;
+      if (updateUserInfoDto.secondAuth) user.secondAuth = true;
+      else user.secondAuth = false;
+      // user.secondAuth = updateUserInfoDto.secondAuth;
     }
     try {
       await user.save();
