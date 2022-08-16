@@ -6,7 +6,6 @@ import { AchievementType } from "../type/achievement-type";
 import { socket } from "../App";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import AchievementImg from "../component/achievementImg/AchievementImg";
-import AchievementIcon from "../img/achievementIcon.svg";
 import ConsecThree from "../img/consecThree.svg";
 import FirstLogin from "../img/firstLogin.svg";
 import FirstLose from "../img/firstLose.svg";
@@ -65,7 +64,7 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
     return () => {
       socket.off("DM");
     };
-  }, [userId]);
+  }, [userId, navigate]);
 
   const onAddFriend = () => {
     setIsFriend(true);

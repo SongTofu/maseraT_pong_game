@@ -41,7 +41,7 @@ export function DM() {
         userId: localStorage.getItem("id")
       });
     };
-  }, []);
+  }, [chatRoomId, targetId]);
 
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;

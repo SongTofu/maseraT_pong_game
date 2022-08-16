@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { getCookie, setCookie } from "../func/cookieFunc";
-import { useNavigate } from "react-router-dom";
 import Button from "../component/button/Button";
 
 export function SecondAuth({
@@ -9,8 +8,8 @@ export function SecondAuth({
 }: {
   setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  // export function SecondAuth() {
   const [code, setCode] = useState("");
-  const navigate = useNavigate();
 
   const onReSend = () => {
     fetch("http://localhost:3000/second-auth/", {
@@ -33,9 +32,7 @@ export function SecondAuth({
         if (matchCode) {
           setCookie("isLogin", "1");
           setLogin(true);
-          console.log("코드 맞음");
         } else {
-          console.log("코드 틀림");
         }
       });
   };

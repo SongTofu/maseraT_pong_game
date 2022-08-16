@@ -6,7 +6,6 @@ import { ProfilePopup } from "../../popup/profile-popup";
 import { MyProfilePopup } from "../../popup/my-profile-popup";
 import { socket } from "../../App";
 import PopupControl from "../../popup/PopupControl";
-import { open } from "fs";
 
 export function AllUser(): JSX.Element {
   const [users, setUsers] = useState<UserType[]>([]);
@@ -29,7 +28,7 @@ export function AllUser(): JSX.Element {
   useEffect(() => {
     socket.on("disconnect-user", ({ userId }) => {
       setUsers((currUsers: UserType[]) =>
-        currUsers.filter((user: UserType) => user.userId != userId)
+        currUsers.filter((user: UserType) => user.userId !== userId)
       );
     });
 

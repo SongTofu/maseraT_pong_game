@@ -11,7 +11,7 @@ type ReqGamePopupType = {
 
 export function RequestGamePopup({
   game,
-  setIsGame,
+  setIsGame
 }: ReqGamePopupType): JSX.Element {
   const portalDiv = document.getElementById("portal") as HTMLElement;
 
@@ -20,7 +20,7 @@ export function RequestGamePopup({
       userId: getCookie("id"),
       targetId: game?.targetId,
       isSpeedMode: game?.isSpeedMode,
-      isAccept,
+      isAccept
     });
     setIsGame(false);
   };
@@ -29,7 +29,7 @@ export function RequestGamePopup({
       userId: getCookie("id"),
       targetId: game?.targetId,
       isSpeedMode: game?.isSpeedMode,
-      isAccept,
+      isAccept
     });
     setIsGame(false);
   };
@@ -60,6 +60,6 @@ export function RequestGamePopup({
         </div>
       </div>
     </>,
-    portalDiv,
+    portalDiv
   );
 }

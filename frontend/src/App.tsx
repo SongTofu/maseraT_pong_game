@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Navigate,
   Route,
-  Routes,
+  Routes
 } from "react-router-dom";
 import { Home } from "./routes/Home";
 import { Login } from "./routes/Login";
@@ -16,7 +16,7 @@ import { GameDetail } from "./routes/GameDetail";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
 import { DM } from "./routes/DM";
-import { connectUser, isToken } from "./func/isLogin";
+import { connectUser } from "./func/isLogin";
 import { getCookie } from "./func/cookieFunc";
 
 export const socket = io(process.env.REACT_APP_API_URL);
@@ -24,8 +24,7 @@ export const socket = io(process.env.REACT_APP_API_URL);
 function App() {
   const [login, setLogin] = useState(true);
   useEffect(() => {
-    if (getCookie("isLogin")) {
-    } else {
+    if (!getCookie("isLogin")) {
       setLogin(false);
     }
     return () => {
@@ -38,7 +37,7 @@ function App() {
       <div className="h-screen min-h-[900px] min-w-[1024px] relative text-center w-full flex flex-col justify-between">
         <Header />
         <Routes>
-          {connectUser() ? (
+          {connectUser() && login ? (
             <>
               <Route path="/login" element={<Login />}></Route>
               <Route path="/chat" element={<ChatMain />}></Route>

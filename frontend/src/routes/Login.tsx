@@ -22,11 +22,11 @@ export function Login() {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         setNickname(json.nickname);
         setImgUrl(process.env.REACT_APP_API_URL + json.profileImg);
         setIsSecondAuth(json.secondAuth);
@@ -54,10 +54,10 @@ export function Login() {
     fetch(process.env.REACT_APP_API_URL + "nickname/" + nickname, {
       method: "GET",
       headers: {
-        Authorization: getCookie("token"),
-      },
+        Authorization: getCookie("token")
+      }
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then(({ isValidNickname }: { isValidNickname: boolean }) => {
         if (isValidNickname) {
           setBtnEnable(false);
@@ -71,14 +71,16 @@ export function Login() {
 
   const onProfileUpdate = () => {
     const data = new FormData();
-    data.append("profile", profile);
+    data.append("profile", profile + "");
     data.append("nickname", nickname);
+    data.append("secondAuth", isSecondAuth + "");
+
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
+        Authorization: "Bearer " + getCookie("token")
       },
-      body: data,
+      body: data
     });
     navigate("/game");
   };

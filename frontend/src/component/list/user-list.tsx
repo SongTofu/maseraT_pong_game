@@ -8,7 +8,6 @@ import Button from "../button/Button";
 import { ChatParticipantType } from "../../type/chat-participant-type";
 import PopupControl from "../../popup/PopupControl";
 import { ChatRoomSetPopup } from "../../popup/chat-room-set-popup";
-import { getCookie } from "../../func/cookieFunc";
 import { Authority } from "../../type/enum/authority.enum";
 
 type UserListType = {
@@ -53,7 +52,7 @@ export function UserList({
     if (auth && +auth >= Authority.ADMIN) setOpenModal(true);
   };
 
-  const pathName = window.location.pathname;
+  // const pathName = window.location.pathname;
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">

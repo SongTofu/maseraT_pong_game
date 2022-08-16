@@ -24,7 +24,7 @@ export function ChatRoomSetPopup({
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId)
       .then(res => res.json())
       .then((roomInfo: chatInfo) => setTitle(roomInfo.title));
-  }, []);
+  }, [chatRoomId]);
 
   // @ts-ignore
   const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
