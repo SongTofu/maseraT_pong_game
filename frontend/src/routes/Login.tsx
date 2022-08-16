@@ -72,7 +72,7 @@ export function Login() {
 
   const onProfileUpdate = () => {
     const data = new FormData();
-    data.append("profile", profile + "");
+    data.append("profile", profile);
     data.append("nickname", nickname);
     data.append("secondAuth", isSecondAuth + "");
 
