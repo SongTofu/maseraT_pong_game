@@ -113,4 +113,12 @@ export class UserGateway {
 
     this.server.in(socketId).emit("friend-all", userListDto);
   }
+
+  async nicknameChange(user: User) {
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+      nickname: user.nickname,
+    });
+  }
 }

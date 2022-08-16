@@ -112,6 +112,7 @@ export class UserService {
     }
     try {
       await user.save();
+      if (updateUserInfoDto.nickname) this.userGateway.nicknameChange(user);
     } catch (error) {
       if (error.code === "23505") return { isSuccess: false };
       else {
