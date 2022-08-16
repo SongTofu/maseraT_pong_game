@@ -21,7 +21,22 @@ export class ChatService {
     private dmRepository: DMRepository,
   ) {}
 
-  async chatRoomDetail(chatRoomId: number): Promise<ChatRoomDetailDto> {
+  async chatRoomDetail(
+    userId: number,
+    chatRoomId: number,
+  ): Promise<ChatRoomDetailDto> {
+    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
+      chatRoomId,
+    );
+    const user: ChatParticipant = await this.chatParticipantRepository.findOne({
+      where: { chatRoom, user: userId },
+      relations: ["user"],
+    });
+
+    if (!chatRoom || !user) {
+      throw new BadRequestException();
+    }
+
     const chatParticipants: ChatParticipant[] =
       await this.chatParticipantRepository.find({
         where: { chatRoom: chatRoomId },
@@ -30,13 +45,6 @@ export class ChatService {
           authority: -1,
         },
       });
-    const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
-      chatRoomId,
-    );
-
-    if (!chatRoom) {
-      throw new BadRequestException();
-    }
 
     const chatParticipantDto: ChatParticipantDto[] = [];
 
