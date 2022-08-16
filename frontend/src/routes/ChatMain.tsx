@@ -8,6 +8,7 @@ import { UserList } from "../component/list/user-list";
 import TopBar from "../component/TopNavBar";
 import Button from "../component/button/Button";
 import PopupControl from "../popup/PopupControl";
+import { getCookie } from "../func/cookieFunc";
 
 export function ChatMain(): JSX.Element {
   const [rooms, setRooms] = useState<ChatRoomInfo[]>([]);
@@ -17,8 +18,11 @@ export function ChatMain(): JSX.Element {
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "chat/room", {
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((room: ChatRoomInfo[]) => {
         setRooms(room);
       });
@@ -33,29 +37,29 @@ export function ChatMain(): JSX.Element {
 
   useEffect(() => {
     socket.on("chat-room-create", (chatRoomInfo: ChatRoomInfo) => {
-      setRooms((curr) => {
+      setRooms(curr => {
         return [...curr, chatRoomInfo];
       });
     });
 
     socket.on("chat-room-destroy", ({ chatRoomId }: { chatRoomId: number }) => {
-      setRooms((curr) =>
-        curr.filter((idx) => {
+      setRooms(curr =>
+        curr.filter(idx => {
           return idx.chatRoomId !== +chatRoomId;
-        }),
+        })
       );
     });
 
     socket.on(
       "chat-room-setting",
       ({ chatRoomId, title }: { chatRoomId: number; title: string }) => {
-        setRooms((currRooms) => {
-          return currRooms.map((currRoom) => {
+        setRooms(currRooms => {
+          return currRooms.map(currRoom => {
             if (currRoom.chatRoomId === +chatRoomId) currRoom.title = title;
             return currRoom;
           });
         });
-      },
+      }
     );
 
     return () => {
@@ -90,7 +94,7 @@ export function ChatMain(): JSX.Element {
               )}
             </div>
             <div className="h-full w-full flex flex-col items-center">
-              {rooms.map((room) => {
+              {rooms.map(room => {
                 return (
                   <ChatRoomList
                     key={room.chatRoomId}

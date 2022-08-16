@@ -41,12 +41,18 @@ export function ChatDetail(): JSX.Element {
     }
 
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
-      method: "GET"
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
       .then(res => {
-        if (res.status !== 200) {
-          navigate("/chat");
-        }
+        if (res.status !== 200) throw new Error();
+
+        socket.emit("chat-room-join", {
+          chatRoomId,
+          userId: getCookie("id")
+        });
         return res.json();
       })
       .then((detail: ChatRoomDetailType) => {
@@ -63,9 +69,10 @@ export function ChatDetail(): JSX.Element {
           }
         });
         setTitle(detail.title);
+      })
+      .catch(() => {
+        navigate("/chat");
       });
-
-    socket.emit("chat-room-join", { chatRoomId, userId: getCookie("id") });
 
     socket.on("request-game", (data: ReqGameType) => {
       setIsGame(true);
