@@ -28,10 +28,6 @@ import { FriendRepository } from "src/friend/friend.repository";
 export class UserGateway {
   constructor(
     private userRepository: UserRepository,
-    private chatParticipantsRepository: ChatParticipantRepository,
-    private chatGateway: ChatGateway,
-    private gameParticipantsRepository: GameParticipantRepository,
-    private gameRoomRepository: GameRoomRepository,
     private friendRepository: FriendRepository,
   ) {}
 
