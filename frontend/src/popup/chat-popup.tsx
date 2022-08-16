@@ -12,9 +12,10 @@ import PopupControl from "./PopupControl";
 type userProps = {
   user: ChatPopupType;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  name: string;
 };
 
-export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
+export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
   // id -> target id
   const { id, authority } = user;
   const chatRoomId = localStorage.getItem("chatRoomId")
@@ -70,8 +71,8 @@ export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
         onClick={() => setIsOpen(false)}
       ></button>
       <div className="fixed top-[50%] left-[55%] translate-x-[-55%] translate-y-[-50%] z-[1000]">
-        <div className="flex flex-col border-2 py-2 px-4 border-main rounded-md bg-white">
-          <h1 className="text-center mb-2 text-lg">유저 이름</h1>
+        <div className="flex flex-col items-center border-2 py-2 px-4 border-main rounded-md bg-white">
+          <h1 className="text-center mb-2 text-lg py-3 px-2">{name}</h1>
           {myAuthority >= Authority.OWNER ? (
             <Button
               className={style}

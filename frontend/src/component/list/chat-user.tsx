@@ -1,5 +1,5 @@
 import { Authority } from "../../type/enum/authority.enum";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { ChatPopup } from "../../popup/chat-popup";
 import { ChatPopupType } from "../../type/chat-popup-type";
 import { ChatParticipantType } from "../../type/chat-participant-type";
@@ -10,7 +10,6 @@ type ChatParticipantPropsType = {
   participants: ChatParticipantType[] | null;
 };
 
-// @ts-ignore
 export function ChatUser({
   participants
 }: ChatParticipantPropsType): JSX.Element {
@@ -20,7 +19,11 @@ export function ChatUser({
   });
   const [isOpen, setIsOpen] = useState(false);
 
-  const onClick = (id: number, authority: Authority) => {
+  const onClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    id: number,
+    authority: Authority
+  ) => {
     setup({ id, authority });
     handleOptionChange(isOpen);
   };
@@ -29,29 +32,43 @@ export function ChatUser({
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col">
       {participants
         ? participants.map((participant: ChatParticipantType) => (
             <button
               className="relative"
               key={participant.userId}
-              onClick={() => {
-                onClick(participant.userId, participant.authority);
+              onClick={e => {
+                onClick(e, participant.userId, participant.authority);
               }}
             >
-              <span className="mr-2">
+              <span className="mr-2 flex flex-row justify-center items-center">
                 {participant.authority === Authority.OWNER ? (
-                  <img src={Owner} alt="owner" />
+                  <img
+                    src={Owner}
+                    alt="owner"
+                    className="w-[15px] h-[13px] mr-1"
+                  />
                 ) : null}
                 {participant.authority === Authority.ADMIN ? (
-                  <img src={Admin} alt="admin" />
+                  <img
+                    src={Admin}
+                    alt="admin"
+                    className="w-[15px] h-[13px] mr-1"
+                  />
                 ) : null}
                 {participant.nickname}
               </span>
             </button>
           ))
         : null}
-      {isOpen ? <ChatPopup user={up} setIsOpen={setIsOpen} /> : null}
+      {isOpen ? (
+        <ChatPopup
+          user={up}
+          setIsOpen={setIsOpen}
+          name={participants.nickname}
+        />
+      ) : null}
     </div>
   );
 }
