@@ -254,7 +254,8 @@ export class ChatGateway {
         },
       });
     // const userAuthority = delUser.authority;
-    await this.chatParticipantsRepository.delete(delUser);
+    if (delUser) await this.chatParticipantsRepository.delete(delUser);
+    else return;
 
     // this.chatParticipantAll(chatLeaveDto.chatRoomId);
     this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
