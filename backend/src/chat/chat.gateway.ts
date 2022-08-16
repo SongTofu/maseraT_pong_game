@@ -44,33 +44,15 @@ export class ChatGateway {
   @WebSocketServer()
   server;
 
-  // //////////////////////
-  // @SubscribeMessage("chat-room-all")
-  // async handleChatRoomAll(@ConnectedSocket() socket: Socket): Promise<void> {
-  //   console.log("chat room all");
-  //   const chatRooms: ChatRoom[] = await this.chatRoomRepository.find({
-  //     order: { id: 1 },
-  //   });
-
-  //   const chatRoomDto: ChatRoomDto[] = [];
-
-  //   chatRooms.forEach((chatRoom) => {
-  //     chatRoomDto.push(new ChatRoomDto(chatRoom));
-  //   });
-  //   this.server.emit("chat-room-all", chatRoomDto);
-  // }
-
   @SubscribeMessage("chat-room-join")
   async handleJoinChatRoom(
     @ConnectedSocket() socket: Socket,
     @MessageBody() chatJoinDto: ChatJoinDto,
   ): Promise<void> {
-    console.log("chat-room-join");
     const user: User = await this.userRepository.findOne(chatJoinDto.userId);
     chatJoinDto.nickname = user.nickname;
     let isCreate: Boolean = false;
 
-    // 방이 생성이면 생성 된 room id, 입장이면 프론트에서 넘어온 room id
     if (!chatJoinDto.chatRoomId) {
       chatJoinDto.chatRoomId = await this.chatRoomRepository.createRoom(
         chatJoinDto,
@@ -84,7 +66,6 @@ export class ChatGateway {
     );
     if (!chatRoom) return;
 
-    //새로고침시 채팅방 입장
     const joinUser: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
         where: {
@@ -97,7 +78,6 @@ export class ChatGateway {
       return;
     }
 
-    // 비번 틀리면 return
     if (!(await this.joinChatRoom(chatJoinDto, user, isCreate))) return;
 
     const chatRoomDto: ChatRoomDto = {
@@ -116,13 +96,11 @@ export class ChatGateway {
       .emit("chat-room-join", chatJoinDto);
   }
 
-  // setting
   @SubscribeMessage("chat-room-setting")
   async handleRoomSetting(
     @ConnectedSocket() socket: Socket,
     @MessageBody() chatSettingDto: ChatSettingDto,
   ) {
-    console.log("chat-room-setting");
     const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
       chatSettingDto.chatRoomId,
     );
@@ -138,13 +116,10 @@ export class ChatGateway {
 
     await chatRoom.save();
 
-    // await this.handleChatRoomAll(socket);
-    this.server
-      // .in("chat-" + chatSettingDto.chatRoomId)
-      .emit("chat-room-setting", {
-        chatRoomId: chatSettingDto.chatRoomId,
-        title: chatSettingDto.title,
-      });
+    this.server.emit("chat-room-setting", {
+      chatRoomId: chatSettingDto.chatRoomId,
+      title: chatSettingDto.title,
+    });
   }
 
   @SubscribeMessage("chat-room-message")
@@ -154,8 +129,6 @@ export class ChatGateway {
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(chatMessageDto.userId);
     chatMessageDto.nickname = user.nickname;
-
-    //채팅 금지 확인
 
     const chatParticipant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({ where: { user } });
@@ -168,18 +141,18 @@ export class ChatGateway {
       });
       return;
     }
-    //채팅 룸 찾고
+
     const chatRoom: ChatRoom = await this.chatRoomRepository.findOne(
       chatMessageDto.chatRoomId,
     );
-    // 나를 차단한 사람들 찾고
+
     const blocks: Block[] = await this.blockRepository.find({
       where: { blockId: user.id },
       relations: ["ownId"],
     });
-    //그냥 채팅방이라면 이쪽으로
+
     let temp = this.server.in("chat-" + chatMessageDto.chatRoomId);
-    //dm이라면 "dm- 어저고저쩌고" 제목의 방으로 보내고, DM내용 저장해주기
+
     if (chatRoom.isDM)
       await this.dmRepository.createDM(chatRoom, user, chatMessageDto);
     blocks.forEach((block) => {
@@ -193,7 +166,6 @@ export class ChatGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() setAdminDto: SetAdminDto,
   ): Promise<void> {
-    console.log("chat-room-set-admin");
     const chatParticipant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
         where: {
@@ -231,8 +203,6 @@ export class ChatGateway {
     this.server.in(target.socketId).socketsLeave("chat-" + chatRoomId);
   }
 
-  ///////////////////////////
-
   @SubscribeMessage("chat-room-leave")
   async handleChatRoomLeave(
     @ConnectedSocket() socket: Socket,
@@ -243,9 +213,6 @@ export class ChatGateway {
 
     const chatTitle = "chat-" + chatLeaveDto.chatRoomId;
 
-    // socket.leave("chat-" + chatLeaveDto.chatRoomId); //방을 떠난다.
-
-    // 참여자 리스트에서 그 룸의 그 참여자 삭제!
     const delUser: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
         where: {
@@ -253,19 +220,17 @@ export class ChatGateway {
           user: user.id,
         },
       });
-    // const userAuthority = delUser.authority;
     if (delUser) await this.chatParticipantsRepository.delete(delUser);
     else return;
 
-    // this.chatParticipantAll(chatLeaveDto.chatRoomId);
     this.server.in(chatTitle).emit("chat-room-leave", chatLeaveDto);
-    socket.leave(chatTitle); //방을 떠난다.
+    socket.leave(chatTitle);
 
     const participant: ChatParticipant =
       await this.chatParticipantsRepository.findOne({
         where: { chatRoom: chatLeaveDto.chatRoomId },
       });
-    // if (!participant || userAuthority == Authority.owner) {
+
     if (!participant) {
       await this.chatParticipantsRepository.deleteAllParticipants(
         chatLeaveDto.chatRoomId,
@@ -324,13 +289,11 @@ export class ChatGateway {
     participants.forEach((participant) => {
       chatParticipantDto.push(new ChatParticipantDto(participant));
     });
-    // this.server.in("chat-" + roomId, chatParticipantDto);
     this.server
       .in("chat-" + roomId)
       .emit("chat-particip-all", chatParticipantDto);
   }
 
-  //채팅금지 30초
   @SubscribeMessage("chat-block")
   async handleChatBlock(
     @ConnectedSocket() socket: Socket,
@@ -341,11 +304,10 @@ export class ChatGateway {
         where: { user: targetId },
       });
     target.chatBlock = String(new Date().getTime());
-    // console.log(new Date().getTime());
     target.save();
   }
 
-  @SubscribeMessage("DM") //채팅방 내용을 보내주는 것을 API로 한다.
+  @SubscribeMessage("DM")
   async handleDM(
     @ConnectedSocket() socket: Socket,
     @MessageBody() { senderId, targetId },

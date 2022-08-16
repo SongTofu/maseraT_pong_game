@@ -17,7 +17,6 @@ import { DMDto } from "./dto/dm.dto";
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
-  //chatRoomId, gameRoomId -> 숫자 아닐때! || 채팅방 못 찾았을 때 처리하기 400 보내주기
   @Get("/room/:chatRoomId")
   async chatRoomDetail(
     @Req() req,

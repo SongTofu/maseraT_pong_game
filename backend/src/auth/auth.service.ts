@@ -46,14 +46,8 @@ export class AuthService {
       userId: user.id,
     };
     return logInDto;
-    // return {
-    //   firstLogin,
-    //   secondAuth: user.secondAuth,
-    //   nickname: user.nickname,
-    //   token: accessToken,
-    //   id: user.id,
-    // };
   }
+
   private autoSetNickName(userDto: UserDto) {
     const authCode: string = Math.random().toString(36).substr(2, 5);
     const autoNickname: string = userDto.nickname + "_" + authCode;

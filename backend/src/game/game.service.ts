@@ -23,11 +23,6 @@ export class GameService {
     userId: number,
     gameRoomId: number,
   ): Promise<GameRoomDetailDto> {
-    // const gameParticipants: GameParticipant[] =
-    //   await this.gameParticipantRepository.find({
-    //     where: { gameRoom: gameRoomId },
-    //     relations: ["user"],
-    //   });
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameRoomId,
     );
@@ -52,12 +47,6 @@ export class GameService {
         relations: ["user"],
       });
 
-    // const gameParticipantDto: GameParticipantDto[] = [];
-
-    // gameParticipants.forEach((gameParticipant) => {
-    //   gameParticipantDto.push(new GameParticipantDto(gameParticipant));
-    // });
-    // const gameParticipantProfile :
     const gameRoomDetailDto: GameRoomDetailDto = {
       gameRoomId: gameRoomId,
       title: gameRoom.title,

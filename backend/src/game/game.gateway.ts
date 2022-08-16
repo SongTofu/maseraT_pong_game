@@ -27,7 +27,6 @@ const cvs = {
   width: 600,
   height: 400,
 };
-//api에서 레더룸 삭제, createroom 레더게임시 안보여주기
 @WebSocketGateway({
   cors: {
     origin: "*",
@@ -66,15 +65,6 @@ export class GameGateway {
       );
       isCreate = true;
     }
-    //createRoom함수 안으로 넣음
-    // if (isCreate) {
-    //   this.gameData[gameRoomId] = {};
-    //   this.gameData[gameRoomId].ball = new BallData();
-    //   this.gameData[gameRoomId].leftUser = new UserData(true);
-    //   this.gameData[gameRoomId].rightUser = new UserData(false);
-    //   this.gameData[gameRoomId].isLadder = isLadder;
-    //   this.gameData[gameRoomId].isSpeedMode = isSpeedMode;
-    // }
 
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameRoomId,
@@ -146,66 +136,6 @@ export class GameGateway {
     return gameParticipantProfile;
   }
 
-  private async escapeGame(gameRoom: GameRoom, user: User) {
-    const gameRoomTitle: string = "game-" + gameRoom.id;
-    const endGameInfo: GameParticipantProfile[] = [];
-    const gameParticipants: GameParticipant[] =
-      await this.gameParticipantRepository.find({
-        where: { gameRoom },
-        relations: ["user"],
-      });
-    let target: User;
-    let gameWin: boolean = false;
-    gameParticipants.forEach((gameParticipant) => {
-      if (gameParticipant.user.id !== user.id) {
-        if (gameParticipant.position === GamePosition.leftUser) {
-          gameWin = true;
-          target = gameParticipant.user;
-          endGameInfo.push(
-            new GameParticipantProfile(target, GamePosition.leftUser),
-          );
-        } else if (gameParticipant.position === GamePosition.rightUser) {
-          target = gameParticipant.user;
-          endGameInfo.push(
-            new GameParticipantProfile(target, GamePosition.rightUser),
-          );
-        }
-      }
-    });
-    gameRoom.isStart = false;
-    await gameRoom.save();
-    user.state = UserState.CONNECT; //게임중에서 접속 중으로 변경
-    await user.save();
-    await target.save();
-    this.server.emit("change-state", {
-      userId: user.id,
-      state: user.state,
-    });
-
-    if (gameWin)
-      this.recordRepository.gameEnd(gameRoom.isLadder, gameWin, target, user);
-    if (gameRoom.isLadder) {
-      const targetParticipant: GameParticipant =
-        await this.gameParticipantRepository.findOne({
-          where: { gameRoom, user: target },
-          relations: ["user"],
-        });
-      await this.gameParticipantRepository.delete(targetParticipant);
-      target.state = UserState.CONNECT;
-      this.server.emit("change-state", {
-        userId: target.id,
-        state: target.state,
-      });
-      this.server.in(gameRoomTitle).emit("game-room-leave", {
-        userId: target.id,
-        gameRoomId: gameRoom.id,
-      }); //괜춘ㄴ?
-      this.server.in(target.socketId).socketsLeave(gameRoomTitle);
-    }
-    this.server.to(gameRoomTitle).emit("end-game", endGameInfo);
-  }
-
-  //게임 안끝났는데 나온 유저 체크
   @SubscribeMessage("game-room-leave")
   async handleGameRoomLeave(
     @ConnectedSocket() socket: Socket,
@@ -216,7 +146,7 @@ export class GameGateway {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameLeaveDto.gameRoomId,
     );
-    //게임 중에 나온 거라면
+
     if (gameRoom.isStart) {
       const gameParticipant: GameParticipant =
         await this.gameParticipantRepository.findOne({ where: { user } });
@@ -226,12 +156,6 @@ export class GameGateway {
         this.gameData[gameRoom.id].leftUser.score = 1;
       }
       await this.endGameCheck(gameRoom.id);
-      console.log("end game after");
-      // if (gameRoom.isLadder) {
-      //   return;
-      // }
-      // this.escapeGame(gameRoom, user);
-      // clearInterval(this.gameData[gameRoom.id].interval);
     }
 
     const delUser: GameParticipant =
@@ -249,7 +173,6 @@ export class GameGateway {
     this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
     socket.leave(leaveGameTitle);
 
-    //게임방 유저 모두 나가면 방 폭파
     const participant: GameParticipant =
       await this.gameParticipantRepository.findOne({
         where: { gameRoom: gameLeaveDto.gameRoomId },
@@ -294,9 +217,6 @@ export class GameGateway {
       gameRoomId,
       isStart: gameRoom.isStart,
     });
-    // 방 생성, 방 수정으로 이동할 예정
-
-    // this.server.in("game-" + gameRoomId).emit("game-start");
 
     this.gameData[gameRoomId].interval = setInterval(() => {
       this.update(gameRoomId);
@@ -308,8 +228,7 @@ export class GameGateway {
 
   @SubscribeMessage("user-paddle")
   handleGame(
-    @ConnectedSocket() socket: Socket,
-    // @MessageBody() data: { gameRoomId: number; position: number; y: number },
+    // @ConnectedSocket() socket: Socket,
     @MessageBody() gameDataDto: GameDataDto,
   ) {
     if (gameDataDto.position === GamePosition.leftUser) {
@@ -324,13 +243,12 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() { userId },
   ) {
-    // 유저 찾고
     const readyUser: User = await this.userRepository.findOne(userId);
-    // 시작 안한 래더 게임방
     const ladderGameRoom: GameRoom = await this.gameRoomRepository.findOne({
       where: { isLadder: true, isStart: false },
     });
     let isCreate: Boolean = false;
+
     const ladderGameJoinDto: GameJoinDto = {
       gameRoomId: null,
       title: "",
@@ -338,7 +256,7 @@ export class GameGateway {
       isSpeedMode: true,
       isLadder: true,
     };
-    // 게임방 없으면 만들고
+
     if (!ladderGameRoom) {
       ladderGameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         ladderGameJoinDto,
@@ -348,20 +266,11 @@ export class GameGateway {
     } else {
       ladderGameJoinDto.gameRoomId = ladderGameRoom.id;
     }
-    // 만들어진 게임방, 기존 게임방
+
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       ladderGameJoinDto.gameRoomId,
     );
 
-    // if (isCreate) {
-    //   this.gameData[gameRoom.id] = {};
-    //   this.gameData[gameRoom.id].ball = new BallData();
-    //   this.gameData[gameRoom.id].leftUser = new UserData(true);
-    //   this.gameData[gameRoom.id].rightUser = new UserData(false);
-    //   this.gameData[gameRoom.id].isLadder = gameRoom.isLadder;
-    //   this.gameData[gameRoom.id].isSpeedMode = gameRoom.isSpeedMode;
-    // }
-    // 게임 참여자
     await this.joinGameRoom(ladderGameJoinDto, readyUser);
     const joinGameTitle = "game-" + ladderGameJoinDto.gameRoomId;
     socket.join(joinGameTitle);
@@ -371,16 +280,13 @@ export class GameGateway {
         .in(joinGameTitle)
         .emit("game-room-join", { gameRoomId: gameRoom.id });
     }
-    // this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
   }
 
-  // ladder 게임과 일반 게임 차이 추가 해야함!
   private update(gameRoomId: number) {
     const { ball, leftUser, rightUser } = this.gameData[gameRoomId];
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
 
-    // 위 아래 벽 충돌 시
     if (ball.y + ball.radius > cvs.height || ball.y - ball.radius < 0) {
       ball.velocityY = -ball.velocityY;
     }
@@ -413,7 +319,6 @@ export class GameGateway {
       this.resetBall(ball);
       this.endGameCheck(gameRoomId);
     }
-    // this.endGameCheck(gameRoomId);
   }
 
   private collision(ball: BallData, player: UserData) {
@@ -455,24 +360,8 @@ export class GameGateway {
 
       if (this.gameData[gameRoomId].leftUser.score >= 1) {
         gameWin = true;
-        // if (this.gameData[gameRoomId].isLadder) {
-        //   leftUser.user.ladderWin++;
-        //   rightUser.user.ladderLose++;
-        // } else {
-        //   leftUser.user.personalWin++;
-        //   rightUser.user.personalLose++;
-        // }
-        // leftUser.user.level = +leftUser.user.level + 0.7;
       } else if (this.gameData[gameRoomId].rightUser.score >= 1) {
         gameWin = false;
-        // if (this.gameData[gameRoomId].isLadder) {
-        //   rightUser.user.ladderWin++;
-        //   leftUser.user.ladderLose++;
-        // } else {
-        //   rightUser.user.personalWin++;
-        //   leftUser.user.personalLose++;
-        // }
-        // rightUser.user.level = +rightUser.user.level + 0.7;
       }
       const leftUser = await this.gameParticipantRepository.findOne({
         where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
@@ -482,7 +371,6 @@ export class GameGateway {
         where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
         relations: ["user"],
       });
-      // if (!leftUser || !rightUser) return;
 
       this.recordRepository.gameEnd(
         this.gameData[gameRoomId].isLadder,
@@ -496,14 +384,11 @@ export class GameGateway {
       );
       gameRoom.isStart = false;
       await gameRoom.save();
-      // await rightUser.user.save();
-      // await leftUser.user.save();
       this.server.emit("change-state-game", {
         gameRoomId,
         isStart: gameRoom.isStart,
       });
 
-      // delete this.gameData[gameRoomId];
       this.gameData[gameRoomId].leftUser.score = 0;
       this.gameData[gameRoomId].rightUser.score = 0;
 
@@ -515,7 +400,6 @@ export class GameGateway {
         new GameParticipantProfile(rightUser.user, GamePosition.rightUser),
       );
 
-      // 게임 끝날 시 보내줄 정보 정하기 (유저 아이디랑, 승패) 왼, 오 순서, 레벨!
       rightUser.user.state = UserState.CONNECT;
       leftUser.user.state = UserState.CONNECT;
       await rightUser.user.save();
@@ -537,14 +421,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage("request-game")
-  async handleRequestGame(
-    // @ConnectedSocket() socket: Socket,
-    @MessageBody() { userId, targetId, isSpeedMode },
-  ) {
+  async handleRequestGame(@MessageBody() { userId, targetId, isSpeedMode }) {
     const user: User = await this.userRepository.findOne(userId);
     const target: User = await this.userRepository.findOne(targetId);
 
-    //유저 닉네임이랑, 스피드 모드인지
     this.server.in(target.socketId).emit("request-game", {
       nickname: user.nickname,
       isSpeedMode,
@@ -558,7 +438,7 @@ export class GameGateway {
     @MessageBody() { userId, targetId, isSpeedMode, isAccept },
   ) {
     if (!isAccept) {
-      this.server.in(socket.id).emit("response-game", isAccept); //거절했다는 걸 알려줌
+      this.server.in(socket.id).emit("response-game", isAccept);
       return;
     }
     const user: User = await this.userRepository.findOne(userId);

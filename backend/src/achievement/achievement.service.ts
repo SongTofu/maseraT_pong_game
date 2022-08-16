@@ -35,7 +35,7 @@ export class AchievementService {
     const achievement: Achievement = await this.achievementRepository.findOne({
       where: { user },
     });
-    // 게임 생기면 조건 추가
+
     if (user.nickname) achievement.firstLogin = true;
     if (achievement.firstWin == false && user.personalWin + user.ladderWin >= 1)
       achievement.firstWin = true;

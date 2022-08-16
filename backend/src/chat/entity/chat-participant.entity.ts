@@ -11,7 +11,6 @@ import { Authority } from "../enum/authority.enum";
 
 @Entity()
 export class ChatParticipant extends BaseEntity {
-  //채팅금지 추가하기
   @PrimaryGeneratedColumn()
   id: number;
 

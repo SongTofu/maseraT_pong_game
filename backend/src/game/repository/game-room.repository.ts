@@ -1,4 +1,3 @@
-import { NotFoundException } from "@nestjs/common";
 import { Repository, EntityRepository } from "typeorm";
 import { GameRoom } from "../entity/game-room.entity";
 import { GameJoinDto } from "../dto/game-room-join.dto";
@@ -23,7 +22,6 @@ export class GameRoomRepository extends Repository<GameRoom> {
     const saveRoom = await gameRoom.save();
     gameJoinDto.gameRoomId = saveRoom.id;
 
-    //옮겼음 잘 되는가? 테스트 필요
     gameData[saveRoom.id] = {};
     gameData[saveRoom.id].ball = new BallData();
     gameData[saveRoom.id].leftUser = new UserData(true);
@@ -35,6 +33,6 @@ export class GameRoomRepository extends Repository<GameRoom> {
   }
 
   async deleteRoom(gameRoomId: number): Promise<void> {
-    const result = await this.delete(gameRoomId);
+    await this.delete(gameRoomId);
   }
 }

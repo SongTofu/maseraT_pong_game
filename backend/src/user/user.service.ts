@@ -29,7 +29,6 @@ export class UserService {
     private chatParticipantRepository: ChatParticipantRepository,
   ) {}
 
-  // test after saved in db
   async getAllUser(): Promise<UserListDto[]> {
     const getAllUserDto: UserListDto[] = [];
     const user: User[] = await this.userRepository.find();
@@ -49,9 +48,7 @@ export class UserService {
 
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
     const user: User = await this.userRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    } //나중에 접속한 사람 확인되면 삭제가능
+
     const myUserInfoDto: MyUserInfoDto = {
       id: user.id,
       email: user.email,
@@ -112,7 +109,6 @@ export class UserService {
     if (updateUserInfoDto.secondAuth !== undefined) {
       if (updateUserInfoDto.secondAuth) user.secondAuth = true;
       else user.secondAuth = false;
-      // user.secondAuth = updateUserInfoDto.secondAuth;
     }
     try {
       await user.save();
@@ -132,7 +128,6 @@ export class UserService {
 
       chatParticipants.forEach((chatParticipant) => {
         this.chatGateWay.chatParticipantAll(chatParticipant.chatRoom.id);
-        // this.chatGateWay.chatRoomMessageAll(chatParticipant.chatRoom.id);
       });
       this.userGateway.userAll();
     }
@@ -174,9 +169,6 @@ export class UserService {
     updateUserInfoDto: UpdateUserInfoDto,
   ): Promise<{ isSuccess: boolean }> {
     const user = await this.userRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    } //나중에 접속한 사람 확인되면 삭제가능
 
     if (updateUserInfoDto.nickname) {
       user.nickname = updateUserInfoDto.nickname;

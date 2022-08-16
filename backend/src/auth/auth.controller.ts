@@ -12,7 +12,7 @@ export class AuthController {
     private secondAuthService: SecondAuthService,
   ) {}
 
-  @Get("/login") //????
+  @Get("/login")
   @UseGuards(ftAuthGuard)
   async logIn(
     @Req() req,

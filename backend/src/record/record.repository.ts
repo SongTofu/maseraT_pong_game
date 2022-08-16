@@ -12,7 +12,6 @@ export class RecordRepository extends Repository<Record> {
   ) {
     const date = this.createDate();
     const record: Record = this.create({
-      //여기서 ladderWin++ 같은거 하기!!!!!!!!!십ㄹㅁㅇㄹㅁㄴㅇㄹ
       date,
       isLadder,
       gameWin,
