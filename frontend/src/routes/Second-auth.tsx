@@ -8,7 +8,6 @@ export function SecondAuth({
 }: {
   setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  // export function SecondAuth() {
   const [code, setCode] = useState("");
 
   const onReSend = () => {
