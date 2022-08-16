@@ -151,9 +151,9 @@ export class GameGateway {
       const gameParticipant: GameParticipant =
         await this.gameParticipantRepository.findOne({ where: { user } });
       if (gameParticipant.position === GamePosition.leftUser) {
-        this.gameData[gameRoom.id].rightUser.score = 1;
+        this.gameData[gameRoom.id].rightUser.score = 3;
       } else if (gameParticipant.position === GamePosition.rightUser) {
-        this.gameData[gameRoom.id].leftUser.score = 1;
+        this.gameData[gameRoom.id].leftUser.score = 3;
       }
       await this.endGameCheck(gameRoom.id);
     }
@@ -353,15 +353,15 @@ export class GameGateway {
 
   private async endGameCheck(gameRoomId: number) {
     if (
-      this.gameData[gameRoomId].leftUser.score >= 1 ||
-      this.gameData[gameRoomId].rightUser.score >= 1
+      this.gameData[gameRoomId].leftUser.score >= 3 ||
+      this.gameData[gameRoomId].rightUser.score >= 3
     ) {
       clearInterval(this.gameData[gameRoomId].interval);
       let gameWin: boolean;
 
-      if (this.gameData[gameRoomId].leftUser.score >= 1) {
+      if (this.gameData[gameRoomId].leftUser.score >= 3) {
         gameWin = true;
-      } else if (this.gameData[gameRoomId].rightUser.score >= 1) {
+      } else if (this.gameData[gameRoomId].rightUser.score >= 3) {
         gameWin = false;
       }
       const leftUser = await this.gameParticipantRepository.findOne({

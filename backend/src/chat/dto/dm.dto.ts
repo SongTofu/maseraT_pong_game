@@ -6,13 +6,13 @@ export class DMDto {
   constructor(chatRoom: ChatRoom, dms: DM[], targetNickname: string) {
     this.chatRoomId = chatRoom.id;
     this.title = chatRoom.title;
-    this.targetNcikname = targetNickname;
+    this.targetNickname = targetNickname;
     dms.forEach((dm) => {
       this.message.push(new DMMessageDto(dm.sender.nickname, dm.message));
     });
   }
   chatRoomId: number;
   title: string;
-  targetNcikname: string;
+  targetNickname: string;
   message: DMMessageDto[] = [];
 }
