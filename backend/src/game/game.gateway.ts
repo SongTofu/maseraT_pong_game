@@ -130,17 +130,18 @@ export class GameGateway {
     gameParticipant = this.gameParticipantRepository.create({
       user,
       gameRoom,
-      position: position ? position : null,
+      // position: position ? position : null,
     });
-    if (!position) {
-      if (!existLeftUser) {
-        gameParticipant.position = GamePosition.leftUser;
-      } else if (!existRightUser) {
-        gameParticipant.position = GamePosition.rightUser;
-      } else {
-        gameParticipant.position = GamePosition.spectator;
-      }
+    // if (!position) {
+    if (position) gameParticipant.position = position;
+    else if (!existLeftUser) {
+      gameParticipant.position = GamePosition.leftUser;
+    } else if (!existRightUser) {
+      gameParticipant.position = GamePosition.rightUser;
+    } else {
+      gameParticipant.position = GamePosition.spectator;
     }
+    // }
     await gameParticipant.save();
 
     const gameParticipantProfile: GameParticipantProfile =
