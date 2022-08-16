@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
+import { getCookie } from "../func/cookieFunc";
 
 type Props = {
   chatRoomId: string | undefined;
@@ -20,7 +21,12 @@ export function ChatRoomSetPopup({
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId)
+    fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
       .then(res => res.json())
       .then((roomInfo: chatInfo) => setTitle(roomInfo.title));
   }, [chatRoomId]);

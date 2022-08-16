@@ -80,7 +80,7 @@ export function DM() {
               </div>
               <div>
                 <span className="font-main text-main-text">
-                  "{title}" 제목의 채팅방
+                  "{title}" 채팅방
                 </span>
               </div>
             </div>

@@ -41,11 +41,12 @@ export function AllUser(): JSX.Element {
       });
     });
 
-    socket.on("change-state", ({ userId, state }) => {
+    socket.on("change-state", ({ userId, state, nickname }) => {
       setUsers(currUsers =>
         currUsers.map(user => {
           if (user.userId === userId) {
             user.state = state;
+            user.nickname = nickname;
             return user;
           }
           return user;

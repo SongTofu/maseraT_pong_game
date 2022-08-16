@@ -89,7 +89,6 @@ export function Login() {
   return (
     <div className="flex justify-center items-center">
       <div className="flex flex-col justify-evenly items-center h-[500px] w-[300px]">
-        <h1 className="text-4xl">Login</h1>
         <div className="flex flex-col items-center w-full">
           <img
             className="h-[200px] w-[200px] border-2 rounded-[50%] mb-2"

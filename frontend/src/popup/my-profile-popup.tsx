@@ -51,7 +51,7 @@ export function MyProfilePopup(): JSX.Element {
             src={process.env.REACT_APP_API_URL + info.profileImg}
             alt=""
           />
-          <p className="text-2xl p-2 mb-2">{"info.nickname"}</p>
+          <p className="text-2xl p-2 mb-2">{info.nickname}</p>
           <p className="text-lg mb-2">level:{Math.floor(info.level)}</p>
           <p className="text-lg mb-2 flex border-2 rounded-md px-2 py-1">
             {achievement.firstLogin ? (
