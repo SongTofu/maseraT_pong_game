@@ -319,7 +319,7 @@ export class ChatGateway {
       "dm- " +
       Math.min(targetId, senderId) +
       " + " +
-      Math.max(targetId, targetId);
+      Math.max(targetId, senderId);
 
     let chatRoom: ChatRoom = await this.chatRoomRepository.findOne({
       where: { title: dmTitle },
