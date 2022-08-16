@@ -132,13 +132,14 @@ export class GameGateway {
       gameRoom,
       position: position ? position : null,
     });
-
-    if (!existLeftUser) {
-      gameParticipant.position = GamePosition.leftUser;
-    } else if (!existRightUser) {
-      gameParticipant.position = GamePosition.rightUser;
-    } else {
-      gameParticipant.position = GamePosition.spectator;
+    if (!position) {
+      if (!existLeftUser) {
+        gameParticipant.position = GamePosition.leftUser;
+      } else if (!existRightUser) {
+        gameParticipant.position = GamePosition.rightUser;
+      } else {
+        gameParticipant.position = GamePosition.spectator;
+      }
     }
     await gameParticipant.save();
 
