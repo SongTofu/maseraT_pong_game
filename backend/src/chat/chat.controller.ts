@@ -31,11 +31,10 @@ export class ChatController {
     return this.chatService.chatRoomList();
   }
 
-  // @UseGuards(JwtAuthGuard)
   @Get("/dm/:chatRoomId")
   async dmLog(
     @Req() req,
-    @Param("chatRoomId") chatRoomId: number,
+    @Param("chatRoomId", ParseIntPipe) chatRoomId: number,
   ): Promise<DMDto> {
     return this.chatService.dmLog(req.user.id, chatRoomId);
   }

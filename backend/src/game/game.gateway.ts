@@ -22,6 +22,7 @@ import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
 import { UserState } from "src/user/user-state.enum";
+import { BadRequestException } from "@nestjs/common";
 
 const cvs = {
   width: 600,
@@ -597,5 +598,18 @@ export class GameGateway {
     this.server
       .in(gameTitle)
       .emit("game-room-join", { gameRoomId: gameRoom.id, gameTarget });
+  }
+
+  @SubscribeMessage("status-change")
+  async handleStatusChange(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() { gameRoomId, isStart },
+  ) {
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomId,
+    );
+    if (!gameRoom) throw new BadRequestException();
+    gameRoom.isStart = isStart;
+    this.server.emit("status-change", { gameRoomId, isStart });
   }
 }
