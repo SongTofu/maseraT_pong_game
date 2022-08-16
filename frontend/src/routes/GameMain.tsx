@@ -47,6 +47,20 @@ export function GameMain() {
       setGameRooms(rooms => rooms.filter(room => room.id !== +gameRoomId));
     });
 
+    socket.on(
+      "change-state-game",
+      ({ gameRoomId, isStart }: { gameRoomId: number; isStart: boolean }) => {
+        setGameRooms(Rooms =>
+          Rooms.map(room => {
+            if (room.id === +gameRoomId) {
+              room.isStart = isStart;
+            }
+            return room;
+          })
+        );
+      }
+    );
+
     // socket.on("match", ({ gameRoomId }) => {
     //   navigate("/game/" + gameRoomId);
     // });
@@ -56,6 +70,7 @@ export function GameMain() {
       socket.off("game-room-join");
       socket.off("game-room-destroy");
       socket.off("match");
+      socket.off("change-state-game");
     };
   }, [gameRooms, navigate]);
 
