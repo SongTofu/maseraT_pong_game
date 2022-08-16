@@ -610,6 +610,8 @@ export class GameGateway {
     );
     if (!gameRoom) throw new BadRequestException();
     gameRoom.isStart = isStart;
+    await gameRoom.save();
+
     this.server.emit("status-change", { gameRoomId, isStart });
   }
 }
