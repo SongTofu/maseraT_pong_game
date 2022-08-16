@@ -295,7 +295,7 @@ export class GameGateway {
 
     gameRoom.isStart = true;
     await gameRoom.save();
-    this.server.emit("change-state-gameroom", {
+    this.server.emit("change-state-game", {
       gameRoomId,
       isStart: gameRoom.isStart,
     });
@@ -503,7 +503,7 @@ export class GameGateway {
       await gameRoom.save();
       // await rightUser.user.save();
       // await leftUser.user.save();
-      this.server.emit("change-state-gameroom", {
+      this.server.emit("change-state-game", {
         gameRoomId,
         isStart: gameRoom.isStart,
       });
