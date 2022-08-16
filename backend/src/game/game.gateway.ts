@@ -22,7 +22,6 @@ import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
 import { UserState } from "src/user/user-state.enum";
-import { BadRequestException } from "@nestjs/common";
 
 const cvs = {
   width: 600,
@@ -91,6 +90,7 @@ export class GameGateway {
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
       gameJoinDto,
       user,
+      42,
     );
 
     if (isCreate && gameJoinDto.isLadder == false) {
@@ -106,6 +106,7 @@ export class GameGateway {
   private async joinGameRoom(
     gameJoinDto: GameJoinDto,
     user: User,
+    position?: GamePosition,
   ): Promise<GameParticipantProfile> {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameJoinDto.gameRoomId,
@@ -129,6 +130,7 @@ export class GameGateway {
     gameParticipant = this.gameParticipantRepository.create({
       user,
       gameRoom,
+      position: position ? position : null,
     });
 
     if (!existLeftUser) {
@@ -241,8 +243,8 @@ export class GameGateway {
           user: user.id,
         },
       });
-
-    await this.gameParticipantRepository.delete(delUser);
+    if (delUser) await this.gameParticipantRepository.delete(delUser);
+    else return;
 
     const leaveGameTitle = "game-" + gameLeaveDto.gameRoomId;
 
@@ -265,11 +267,6 @@ export class GameGateway {
     }
   }
 
-  //// test 게임방 참여, game room join으로 바꿔야함
-  // @SubscribeMessage("test")
-  // handleConnect(@ConnectedSocket() socket: Socket) {
-  //   socket.join("game-1");
-  // }
   @SubscribeMessage("start-game")
   async handleGameStart(@MessageBody() startGameDto: StartGameDto) {
     const { gameRoomId, isLadder } = startGameDto;
@@ -589,10 +586,12 @@ export class GameGateway {
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
       gameRoomJoin,
       user,
+      GamePosition.leftUser,
     );
     const gameTarget: GameParticipantProfile = await this.joinGameRoom(
       gameRoomJoin,
       target,
+      GamePosition.rightUser,
     );
 
     const gameTitle: string = "game-" + gameRoom.id;
