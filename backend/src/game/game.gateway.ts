@@ -586,12 +586,12 @@ export class GameGateway {
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
       gameRoomJoin,
       user,
-      GamePosition.leftUser,
+      GamePosition.rightUser,
     );
     const gameTarget: GameParticipantProfile = await this.joinGameRoom(
       gameRoomJoin,
       target,
-      GamePosition.rightUser,
+      GamePosition.leftUser,
     );
 
     const gameTitle: string = "game-" + gameRoom.id;
