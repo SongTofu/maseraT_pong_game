@@ -90,7 +90,6 @@ export class GameGateway {
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
       gameJoinDto,
       user,
-      42,
     );
 
     if (isCreate && gameJoinDto.isLadder == false) {
@@ -130,18 +129,15 @@ export class GameGateway {
     gameParticipant = this.gameParticipantRepository.create({
       user,
       gameRoom,
-      // position: position ? position : null,
     });
-    // if (!position) {
-    if (position) gameParticipant.position = position;
-    else if (!existLeftUser) {
+    if (!existLeftUser) {
       gameParticipant.position = GamePosition.leftUser;
     } else if (!existRightUser) {
       gameParticipant.position = GamePosition.rightUser;
     } else {
       gameParticipant.position = GamePosition.spectator;
     }
-    // }
+    if (position) gameParticipant.position = position;
     await gameParticipant.save();
 
     const gameParticipantProfile: GameParticipantProfile =
