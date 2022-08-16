@@ -295,7 +295,10 @@ export class GameGateway {
 
     gameRoom.isStart = true;
     await gameRoom.save();
-
+    this.server.emit("change-state-gameroom", {
+      gameRoomId,
+      isStart: gameRoom.isStart,
+    });
     // 방 생성, 방 수정으로 이동할 예정
 
     // this.server.in("game-" + gameRoomId).emit("game-start");
@@ -500,6 +503,10 @@ export class GameGateway {
       await gameRoom.save();
       // await rightUser.user.save();
       // await leftUser.user.save();
+      this.server.emit("change-state-gameroom", {
+        gameRoomId,
+        isStart: gameRoom.isStart,
+      });
 
       // delete this.gameData[gameRoomId];
       this.gameData[gameRoomId].leftUser.score = 0;
@@ -598,20 +605,5 @@ export class GameGateway {
     this.server
       .in(gameTitle)
       .emit("game-room-join", { gameRoomId: gameRoom.id, gameTarget });
-  }
-
-  @SubscribeMessage("status-change")
-  async handleStatusChange(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() { gameRoomId, isStart },
-  ) {
-    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-      gameRoomId,
-    );
-    if (!gameRoom) throw new BadRequestException();
-    gameRoom.isStart = isStart;
-    await gameRoom.save();
-
-    this.server.emit("status-change", { gameRoomId, isStart });
   }
 }
