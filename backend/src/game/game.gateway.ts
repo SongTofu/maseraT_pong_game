@@ -208,6 +208,7 @@ export class GameGateway {
       this.server.emit("change-state", {
         userId: gameUser.user.id,
         state: gameUser.user.state,
+        nickname: gameUser.user.nickname,
       });
     });
 
@@ -407,10 +408,12 @@ export class GameGateway {
       this.server.emit("change-state", {
         userId: rightUser.user.id,
         state: rightUser.user.state,
+        nickname: rightUser.user.nickname,
       });
       this.server.emit("change-state", {
         userId: leftUser.user.id,
         state: leftUser.user.state,
+        nickname: leftUser.user.nickname,
       });
       this.resetBall(this.gameData[gameRoomId].ball);
       this.server.to("game-" + gameRoomId).emit("end-game", endGameInfo);

@@ -48,7 +48,11 @@ export class UserGateway {
     user.state = UserState.CONNECT;
 
     await user.save();
-    this.server.emit("change-state", { userId: user.id, state: user.state });
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+      nickname: user.nickname,
+    });
 
     const userDto: UserListDto = {
       userId: user.id,
@@ -78,7 +82,11 @@ export class UserGateway {
     user.state = UserState.DISCONNECT;
     await user.save();
 
-    this.server.emit("change-state", { userId: user.id, state: user.state });
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+      nickname: user.nickname,
+    });
     this.server.emit("disconnect-user", { userId: user.id });
   }
 
