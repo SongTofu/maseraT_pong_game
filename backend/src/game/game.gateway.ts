@@ -245,13 +245,14 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() { userId },
   ) {
-    const user: User = await this.userRepository.findOne(userId);
-    const gameRoom: GameRoom = await this.gameRoomRepository.findOne({
-      where: { isLadder: true, user },
-    });
-    if (!gameRoom) throw new NotFoundException();
+    const gameUser: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: { user: userId },
+        relations: ["user"],
+      });
+    if (!gameUser) throw new NotFoundException();
     const gameLeaveDto: GameLeaveDto = {
-      gameRoomId: gameRoom.id,
+      gameRoomId: gameUser.gameRoom.id,
       userId,
     };
     this.handleGameRoomLeave(socket, gameLeaveDto);
