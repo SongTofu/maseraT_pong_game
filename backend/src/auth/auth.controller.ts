@@ -26,26 +26,16 @@ export class AuthController {
       res.cookie("id", data.userId);
       if (data.firstLogin) {
         res.cookie("isLogin", "1");
-        res.redirect("http://localhost:3001/login");
+        res.redirect(process.env.FE_URL + "login");
       } else {
         if (data.secondAuth) {
           this.secondAuthService.requestAuth(data.userId);
-          res.redirect("http://localhost:3001/second-auth");
+          res.redirect(process.env.FE_URL + "second-auth");
         } else {
           res.cookie("isLogin", "1");
-          res.redirect("http://localhost:3001/game");
+          res.redirect(process.env.FE_URL + "game");
         }
       }
     });
-    // const accessToken: string = await this.authService.logIn(userDto);
-    // res.cookie("token", accessToken);
-  }
-
-  @Get("/test")
-  @UseGuards(ftAuthGuard)
-  async test(@Req() req): Promise<any> {
-    const userDto: UserDto = req.user;
-
-    return await this.authService.logIn(userDto);
   }
 }

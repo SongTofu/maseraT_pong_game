@@ -8,6 +8,12 @@ import { UserDto } from "./dto/user.dto";
 export class FtStrategy extends PassportStrategy(Strategy, "42") {
   constructor(private readonly configService: ConfigService) {
     super({
+      authorizationURL:
+        "https://api.intra.42.fr/oauth/authorize?client_id=" +
+        configService.get<string>("CLIENT_ID") +
+        "&redirect_uri=" +
+        configService.get<string>("CB_URI") +
+        "&response_type=code",
       tokenURL: configService.get<string>("TOKEN_URI"),
       clientID: configService.get<string>("CLIENT_ID"),
       clientSecret: configService.get<string>("CLIENT_SECRET"),
