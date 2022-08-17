@@ -52,10 +52,21 @@ export function ChatMain(): JSX.Element {
 
     socket.on(
       "chat-room-setting",
-      ({ chatRoomId, title }: { chatRoomId: number; title: string }) => {
+      ({
+        chatRoomId,
+        title,
+        isPassword
+      }: {
+        chatRoomId: number;
+        title: string;
+        isPassword: boolean;
+      }) => {
         setRooms(currRooms => {
           return currRooms.map(currRoom => {
-            if (currRoom.chatRoomId === +chatRoomId) currRoom.title = title;
+            if (currRoom.chatRoomId === +chatRoomId) {
+              currRoom.isPassword = isPassword;
+              currRoom.title = title;
+            }
             return currRoom;
           });
         });
