@@ -248,7 +248,7 @@ export class GameGateway {
     const gameUser: GameParticipant =
       await this.gameParticipantRepository.findOne({
         where: { user: userId },
-        relations: ["user"],
+        relations: ["gameRoom"],
       });
     if (!gameUser) throw new NotFoundException();
     const gameLeaveDto: GameLeaveDto = {
