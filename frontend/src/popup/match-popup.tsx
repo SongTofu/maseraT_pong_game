@@ -21,6 +21,7 @@ export function MatchPopup({ setIsMatching }: Props): JSX.Element {
     socket.emit("match", { userId: getCookie("id") });
 
     return () => {
+      socket.emit("cancel-match", { userId: getCookie("id") });
       clearInterval(interval);
     };
   }, []);
