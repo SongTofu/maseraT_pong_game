@@ -1,4 +1,4 @@
-FROM node:14.16.1
+FROM node:16.17.0
 
 WORKDIR /app
 
@@ -12,4 +12,4 @@ RUN npm i
 
 EXPOSE 5000
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start"]
