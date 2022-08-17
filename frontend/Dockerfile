@@ -1,4 +1,4 @@
-FROM node:18.7.0
+FROM node:16.17.0
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y nodejs 
@@ -11,8 +11,10 @@ COPY . /app/
 COPY package.json /app/
 COPY package-lock.json /app/
 
-RUN npm i
+RUN npm i && \
+    npm run build && \
+    npm install -g serve
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["serve", "-s", "build", "-l", "3000"]
