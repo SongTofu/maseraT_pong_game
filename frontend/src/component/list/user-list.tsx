@@ -6,20 +6,26 @@ import { Friend } from "./freind";
 import { ChatUser } from "./chat-user";
 import Button from "../button/Button";
 import { ChatParticipantType } from "../../type/chat-participant-type";
+import PopupControl from "../../popup/PopupControl";
+import { ChatRoomSetPopup } from "../../popup/chat-room-set-popup";
+import { Authority } from "../../type/enum/authority.enum";
 
 type UserListType = {
   participants: ChatParticipantType[] | null;
   isChatRoom: boolean;
+  chatRoomId?: string | undefined;
 };
 
 export function UserList({
   isChatRoom,
   participants,
+  chatRoomId
 }: UserListType): JSX.Element {
   const [select, setSelect] = useState<Select>(Select.FREIND);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    setSelect((curr) => {
+    setSelect(curr => {
       if (curr === Select.FREIND) {
         if (isChatRoom) {
           return Select.CHAT_USER;
@@ -41,7 +47,12 @@ export function UserList({
     else setSelect(Select.ALL_USER);
   };
 
-  const pathName = window.location.pathname;
+  const onRoomSetClick = () => {
+    const auth = localStorage.getItem("authority");
+    if (auth && +auth >= Authority.ADMIN) setOpenModal(true);
+  };
+
+  // const pathName = window.location.pathname;
   return (
     <div className="content-box w-[300px] flex flex-col justify-start">
       <div className="w-[80%] flex justify-between mt-4 mx-3">
@@ -74,6 +85,7 @@ export function UserList({
           <Button
             tag="방 설정"
             className="btn-sm text-sm font-main pr-6 pl-7 tracking-widest"
+            onClick={() => onRoomSetClick()}
           />
           <Button
             tag="나가기"
@@ -81,6 +93,16 @@ export function UserList({
             navlink="/chat"
           />
         </div>
+      )}
+      {openModal && (
+        <PopupControl mainText={"방 설정"} onClick={() => setOpenModal(false)}>
+          <div>
+            <ChatRoomSetPopup
+              chatRoomId={chatRoomId}
+              setOpenModal={setOpenModal}
+            />
+          </div>
+        </PopupControl>
       )}
     </div>
   );

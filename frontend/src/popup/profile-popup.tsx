@@ -6,7 +6,6 @@ import { AchievementType } from "../type/achievement-type";
 import { socket } from "../App";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import AchievementImg from "../component/achievementImg/AchievementImg";
-import AchievementIcon from "../img/achievementIcon.svg";
 import ConsecThree from "../img/consecThree.svg";
 import FirstLogin from "../img/firstLogin.svg";
 import FirstLose from "../img/firstLose.svg";
@@ -15,7 +14,7 @@ import ThirdWin from "../img/thirdWin.svg";
 import Button from "../component/button/Button";
 
 type Props = {
-  userId: number;
+  userId: string;
 };
 
 export function ProfilePopup({ userId }: Props): JSX.Element {
@@ -65,7 +64,7 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
     return () => {
       socket.off("DM");
     };
-  }, [userId]);
+  }, [userId, navigate]);
 
   const onAddFriend = () => {
     setIsFriend(true);
@@ -138,15 +137,6 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
             {achievement.consecThree ? (
               <AchievementImg alt={"3연승"} src={ConsecThree} />
             ) : null}
-            {/* <AchievementImg
-              alt={"첫 로그인"}
-              src={FirstLogin}
-              className="mr-2"
-            /> */}
-            {/* <AchievementImg alt={"첫승"} src={FirstWin} className="mr-2" />
-            <AchievementImg alt={"3승"} src={ThirdWin} className="mr-2" />
-            <AchievementImg alt={"첫패"} src={FirstLose} className="mr-2" />
-            <AchievementImg alt={"3연승"} src={ConsecThree} /> */}
           </p>
           <p>
             <span className="text-lg">전적: </span>
@@ -171,7 +161,7 @@ export function ProfilePopup({ userId }: Props): JSX.Element {
             <Button
               tag={"DM 보내기 "}
               className={"btn-sm mr-2"}
-              onClick={e => onDMClick(userId)}
+              onClick={e => onDMClick(+userId)}
             />
             {isBlock ? (
               <Button

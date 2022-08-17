@@ -38,9 +38,23 @@ export function GameDetail(): JSX.Element {
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "game/room/" + gameRoomId, {
-      method: "GET"
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 200) throw new Error();
+
+        socket.emit("game-room-join", {
+          gameRoomId,
+          title: "",
+          userId: getCookie("id"),
+          isSpeedMode: false,
+          isLadder: false
+        });
+        return res.json();
+      })
       .then((gameInfo: GameInfoType) => {
         setGameUsers(gameInfo.gameUser);
         setTitle(gameInfo.title);
@@ -50,15 +64,11 @@ export function GameDetail(): JSX.Element {
           }
         });
         setIsLadder(gameInfo.isLadder);
+      })
+      .catch(error => {
+        navigate("/game");
+        return;
       });
-
-    socket.emit("game-room-join", {
-      gameRoomId,
-      title,
-      userId: getCookie("id"),
-      isSpeedMode: false,
-      isLadder: false
-    });
 
     return () => {
       socket.emit("game-room-leave", { gameRoomId, userId: getCookie("id") });

@@ -11,7 +11,7 @@ export function Login() {
   const [profile, setProfile] = useState<File>();
   const [isSecondAuth, setIsSecondAuth] = useState(false);
 
-  const [imgUrl, setImgUrl] = useState();
+  const [imgUrl, setImgUrl] = useState("");
   const [btnEnable, setBtnEnable] = useState(false);
   const [checkMsg, setCheckMsg] = useState("닉네임 중복 체크를 해주세요");
 
@@ -22,11 +22,11 @@ export function Login() {
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
-      },
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         setNickname(json.nickname);
         setImgUrl(process.env.REACT_APP_API_URL + json.profileImg);
         setIsSecondAuth(json.secondAuth);
@@ -34,15 +34,17 @@ export function Login() {
       });
   }, []);
 
-  const imageInput = useRef(null);
+  const imageInput = useRef<HTMLInputElement>(null);
 
   const onClick = () => {
-    imageInput.current.click();
+    if (imageInput.current) imageInput.current.click();
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImgUrl(URL.createObjectURL(e.target.files[0]));
-    if (e.target.files) setProfile(e.target.files[0]);
+    if (e.target.files) {
+      setImgUrl(URL.createObjectURL(e.target.files[0]));
+      setProfile(e.target.files[0]);
+    }
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,14 +52,13 @@ export function Login() {
   };
 
   const onCheckNickname = () => {
-    // getApi("nickname/" + nickname).then(json => {
     fetch(process.env.REACT_APP_API_URL + "nickname/" + nickname, {
       method: "GET",
       headers: {
-        Authorization: getCookie("token"),
-      },
+        Authorization: getCookie("token")
+      }
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then(({ isValidNickname }: { isValidNickname: boolean }) => {
         if (isValidNickname) {
           setBtnEnable(false);
@@ -73,12 +74,14 @@ export function Login() {
     const data = new FormData();
     data.append("profile", profile);
     data.append("nickname", nickname);
+    data.append("secondAuth", isSecondAuth + "");
+
     fetch(process.env.REACT_APP_API_URL + "user/info", {
       method: "PATCH",
       headers: {
-        Authorization: "Bearer " + getCookie("token"),
+        Authorization: "Bearer " + getCookie("token")
       },
-      body: data,
+      body: data
     });
     navigate("/game");
   };
@@ -86,7 +89,6 @@ export function Login() {
   return (
     <div className="flex justify-center items-center">
       <div className="flex flex-col justify-evenly items-center h-[500px] w-[300px]">
-        <h1 className="text-4xl">Login</h1>
         <div className="flex flex-col items-center w-full">
           <img
             className="h-[200px] w-[200px] border-2 rounded-[50%] mb-2"

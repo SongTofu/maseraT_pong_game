@@ -41,7 +41,7 @@ export function DM() {
         userId: localStorage.getItem("id")
       });
     };
-  }, []);
+  }, [chatRoomId, targetId]);
 
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
@@ -80,7 +80,7 @@ export function DM() {
               </div>
               <div>
                 <span className="font-main text-main-text">
-                  "{title}" 제목의 채팅방
+                  "{title}" 채팅방
                 </span>
               </div>
             </div>
@@ -120,11 +120,4 @@ export function DM() {
       </TopBar>
     </div>
   );
-
-  // <div>
-  //   <DMProfile targetId={targetId} />
-  //   {messages.map((message, index) => (
-  //     <Chat key={index} nickname={message.nickname} msg={message.message} />
-  //   ))}
-  // </div>
 }

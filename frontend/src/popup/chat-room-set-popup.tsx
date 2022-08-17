@@ -1,21 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { socket } from "../App";
 import Button from "../component/button/Button";
+import { getCookie } from "../func/cookieFunc";
 
 type Props = {
   chatRoomId: string | undefined;
-  roomTitle: string;
-  setIsRoomSet: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+type chatInfo = {
+  title: string;
 };
 
 // @ts-ignore
 export function ChatRoomSetPopup({
   chatRoomId,
-  roomTitle,
-  setIsRoomSet
+  setOpenModal
 }: Props): JSX.Element {
-  const [title, setTitle] = useState(roomTitle);
+  const [title, setTitle] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
+    })
+      .then(res => res.json())
+      .then((roomInfo: chatInfo) => setTitle(roomInfo.title));
+  }, [chatRoomId]);
 
   // @ts-ignore
   const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +43,7 @@ export function ChatRoomSetPopup({
 
   const onClick = () => {
     socket.emit("chat-room-setting", { chatRoomId, title, password });
-    setIsRoomSet(false);
+    setOpenModal(false);
   };
 
   return (

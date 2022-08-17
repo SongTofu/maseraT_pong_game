@@ -12,18 +12,15 @@ import PopupControl from "./PopupControl";
 type userProps = {
   user: ChatPopupType;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  name: string;
 };
 
-export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
+export function ChatPopup({ user, setIsOpen }: userProps): JSX.Element {
   // id -> target id
   const { id, authority } = user;
   const chatRoomId = localStorage.getItem("chatRoomId")
     ? localStorage.getItem("chatRoomId")
     : 0;
-  const myAuthority = localStorage.getItem("authority")
-    ? localStorage.getItem("authority")
-    : 0;
+  const myAuthority = localStorage.getItem("authority");
   const [openModal, setOpenModal] = useState(false);
   const portalDiv = document.getElementById("portal") as HTMLElement;
 
@@ -36,7 +33,7 @@ export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
     socket.emit("chat-room-set-admin", {
       chatRoomId: chatRoomId,
       isAdmin,
-      userId: id,
+      userId: id
     });
     setIsOpen(false);
   };
@@ -44,7 +41,7 @@ export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
   const onKick = () => {
     socket.emit("chat-room-kick", {
       targetId: id,
-      chatRoomId,
+      chatRoomId
     });
     setIsOpen(false);
   };
@@ -52,14 +49,16 @@ export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
 
   const onChatBlock = () => {
     socket.emit("chat-block", { targetId: id });
+    setIsOpen(false);
   };
 
   const onRequestGame = (isSpeedMode: boolean) => {
     socket.emit("request-game", {
       userId: getCookie("id"),
       targetId: id,
-      isSpeedMode,
+      isSpeedMode
     });
+    setIsOpen(false);
   };
 
   return ReactDOM.createPortal(
@@ -70,8 +69,8 @@ export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
       ></button>
       <div className="fixed top-[50%] left-[55%] translate-x-[-55%] translate-y-[-50%] z-[1000]">
         <div className="flex flex-col items-center border-2 py-2 px-4 border-main rounded-md bg-white">
-          <h1 className="text-center mb-2 text-lg py-3 px-2">{name}</h1>
-          {myAuthority >= Authority.OWNER ? (
+          {/* <h1 className="text-center mb-2 text-lg py-3 px-2">{name}</h1> */}
+          {myAuthority && +myAuthority >= Authority.OWNER ? (
             <Button
               className={style}
               tag={
@@ -80,10 +79,14 @@ export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
               onClick={onSetAdmin}
             />
           ) : null}
-          {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+          {myAuthority &&
+          +myAuthority >= Authority.ADMIN &&
+          +myAuthority >= authority ? (
             <Button className={style} tag={"강퇴"} onClick={onKick} />
           ) : null}
-          {myAuthority >= Authority.ADMIN && myAuthority >= authority ? (
+          {myAuthority &&
+          +myAuthority >= Authority.ADMIN &&
+          +myAuthority >= authority ? (
             <Button className={style} tag={"채팅 금지"} onClick={onChatBlock} />
           ) : null}
           <Button
@@ -105,16 +108,16 @@ export function ChatPopup({ user, setIsOpen, name }: userProps): JSX.Element {
           <Button
             className={style}
             tag={"게임 신청"}
-            onClick={(e) => onRequestGame(true)}
+            onClick={e => onRequestGame(false)}
           />
           <Button
             className={style}
             tag={"스피드 게임 신청"}
-            onClick={(e) => onRequestGame(true)}
+            onClick={e => onRequestGame(true)}
           />
         </div>
       </div>
     </>,
-    portalDiv,
+    portalDiv
   );
 }

@@ -1,5 +1,5 @@
 import { Authority } from "../../type/enum/authority.enum";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { ChatPopup } from "../../popup/chat-popup";
 import { ChatPopupType } from "../../type/chat-popup-type";
 import { ChatParticipantType } from "../../type/chat-participant-type";
@@ -11,18 +11,18 @@ type ChatParticipantPropsType = {
 };
 
 export function ChatUser({
-  participants,
+  participants
 }: ChatParticipantPropsType): JSX.Element {
   const [up, setup] = useState<ChatPopupType>({
     id: 0,
-    authority: 3,
+    authority: 3
   });
   const [isOpen, setIsOpen] = useState(false);
 
   const onClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     id: number,
-    authority: Authority,
+    authority: Authority
   ) => {
     setup({ id, authority });
     handleOptionChange(isOpen);
@@ -38,7 +38,7 @@ export function ChatUser({
             <button
               className="relative"
               key={participant.userId}
-              onClick={(e) => {
+              onClick={e => {
                 onClick(e, participant.userId, participant.authority);
               }}
             >
@@ -62,13 +62,7 @@ export function ChatUser({
             </button>
           ))
         : null}
-      {isOpen ? (
-        <ChatPopup
-          user={up}
-          setIsOpen={setIsOpen}
-          name={participants.nickname}
-        />
-      ) : null}
+      {isOpen ? <ChatPopup user={up} setIsOpen={setIsOpen} /> : null}
     </div>
   );
 }

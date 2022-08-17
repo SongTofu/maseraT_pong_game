@@ -39,6 +39,7 @@ export function ChatCreatePopup(): JSX.Element {
         <label className="py-1">비밀번호</label>
         <input
           className="border-2 rounded-md p-1"
+          type={"password"}
           onChange={onPasswordChagne}
           value={password}
         />

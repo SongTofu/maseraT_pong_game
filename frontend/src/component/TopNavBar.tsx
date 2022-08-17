@@ -59,7 +59,6 @@ function TopBar({ children }: IProp) {
       .then(res => res.json())
       .then((achi: AchievementType) => {
         setAchievement(achi);
-        console.log(achi);
       });
   }, []);
 
@@ -127,11 +126,21 @@ function TopBar({ children }: IProp) {
                         className="w-[150px] h-[30px] bg-white border-black rounded-md border-[1px] absolute top-[-20px] left-[10px] flex justify-evenly items-center"
                         onMouseEnter={handleMouseEnter}
                       >
-                        <AchievementImg alt={"첫 로그인"} src={FirstLogin} />
-                        <AchievementImg alt={"첫승"} src={FirstWin} />
-                        <AchievementImg alt={"3승"} src={ThirdWin} />
-                        <AchievementImg alt={"첫패"} src={FirstLose} />
-                        <AchievementImg alt={"3연승"} src={ConsecThree} />
+                        {achievement.firstLogin ? (
+                          <AchievementImg alt={"첫 로그인"} src={FirstLogin} />
+                        ) : null}
+                        {achievement.firstWin ? (
+                          <AchievementImg alt={"첫승"} src={FirstWin} />
+                        ) : null}
+                        {achievement.thiredWin ? (
+                          <AchievementImg alt={"3승"} src={ThirdWin} />
+                        ) : null}
+                        {achievement.firstLose ? (
+                          <AchievementImg alt={"첫패"} src={FirstLose} />
+                        ) : null}
+                        {achievement.consecThree ? (
+                          <AchievementImg alt={"3연승"} src={ConsecThree} />
+                        ) : null}
                       </div>
                     )}
                   </div>

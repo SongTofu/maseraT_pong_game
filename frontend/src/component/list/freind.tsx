@@ -23,11 +23,12 @@ export function Friend(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    socket.on("change-state", ({ userId, state }) => {
+    socket.on("change-state", ({ userId, state, nickname }) => {
       setFriends(currFriends =>
         currFriends.map(friend => {
           if (friend.userId === userId) {
             friend.state = state;
+            friend.nickname = nickname;
             return friend;
           }
           return friend;

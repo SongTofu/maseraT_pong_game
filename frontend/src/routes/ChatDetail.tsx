@@ -8,11 +8,9 @@ import { socket } from "../App";
 import { getCookie } from "../func/cookieFunc";
 import { UserList } from "../component/list/user-list";
 import { Authority } from "../type/enum/authority.enum";
-import { ChatRoomSetPopup } from "../popup/chat-room-set-popup";
 import TopBar from "../component/TopNavBar";
 import Button from "../component/button/Button";
 import { RequestGamePopup } from "../popup/request-game-popup";
-import PopupControl from "../popup/PopupControl";
 
 export type ReqGameType = {
   nickname: string;
@@ -31,19 +29,11 @@ export function ChatDetail(): JSX.Element {
   const [title, setTitle] = useState("");
   const [chats, setChats] = useState<ChatType[]>([]);
   const [message, setMessage] = useState("");
-  const [authority, setAuthority] = useState(Authority.PARTICIPANT);
-  const [isRoomSet, setIsRoomSet] = useState(false);
   const [reqGame, setReqGame] = useState<ReqGameType>();
   const [isGame, setIsGame] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
-  const ref = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const onSideClick = (e) => {
-    if (!ref.current.contains(e.target)) setIsRoomSet(false);
-  };
 
   useEffect(() => {
     if (chatRoomId) {
@@ -52,33 +42,37 @@ export function ChatDetail(): JSX.Element {
 
     fetch(process.env.REACT_APP_API_URL + "chat/room/" + chatRoomId, {
       method: "GET",
+      headers: {
+        Authorization: "Bearer " + getCookie("token")
+      }
     })
-      .then((res) => {
-        if (res.status !== 200) {
-          navigate("/chat");
-        }
+      .then(res => {
+        if (res.status !== 200) throw new Error();
+
+        socket.emit("chat-room-join", {
+          chatRoomId,
+          userId: getCookie("id")
+        });
         return res.json();
       })
       .then((detail: ChatRoomDetailType) => {
         const check = detail.chatParticipant?.filter(
-          (part) => part.userId === +getCookie("id"),
+          part => part.userId === +getCookie("id")
         );
         if (!check) {
           navigate("/chat");
         }
         setParticipants(detail.chatParticipant);
-        detail.chatParticipant?.forEach((participant) => {
+        detail.chatParticipant?.forEach(participant => {
           if (participant.userId === +getCookie("id")) {
             localStorage.setItem("authority", String(participant.authority));
-            setAuthority(participant.authority);
           }
         });
         setTitle(detail.title);
+      })
+      .catch(() => {
+        navigate("/chat");
       });
-
-    window.addEventListener("click", onSideClick);
-
-    socket.emit("chat-room-join", { chatRoomId, userId: getCookie("id") });
 
     socket.on("request-game", (data: ReqGameType) => {
       setIsGame(true);
@@ -94,7 +88,6 @@ export function ChatDetail(): JSX.Element {
     return () => {
       socket.emit("chat-room-leave", { chatRoomId, userId: getCookie("id") });
       localStorage.removeItem("authority");
-      window.removeEventListener("click", onSideClick);
       socket.off("request-game");
       socket.off("response-game");
       socket.off("game-room-join");
@@ -110,44 +103,44 @@ export function ChatDetail(): JSX.Element {
     socket.on(
       "chat-room-leave",
       ({ nickname, userId }: { nickname: string; userId: number }) => {
-        setParticipants((curr) =>
-          curr.filter((idx) => {
+        setParticipants(curr =>
+          curr.filter(idx => {
             return idx.userId !== userId;
-          }),
+          })
         );
 
-        setChats((curr) => {
+        setChats(curr => {
           return [
             ...curr,
-            { nickname: "", message: nickname + "(이)가 나갔습니다" },
+            { nickname: "", message: nickname + "(이)가 나갔습니다" }
           ];
         });
-      },
+      }
     );
 
     socket.on("chat-room-message", (chatType: ChatType) => {
-      setChats((curr) => [...curr, chatType]);
+      setChats(curr => [...curr, chatType]);
     });
 
     socket.on("chat-room-join", (participant: ChatParticipantType) => {
-      setParticipants((curr) => {
+      setParticipants(curr => {
         return [
           ...curr,
           {
             nickname: participant.nickname,
             userId: participant.userId,
-            authority: participant.authority,
-          },
+            authority: participant.authority
+          }
         ];
       });
 
-      setChats((curr) => {
+      setChats(curr => {
         return [
           ...curr,
           {
             nickname: "",
-            message: participant.nickname + "(이)가 입장했습니다.",
-          },
+            message: participant.nickname + "(이)가 입장했습니다."
+          }
         ];
       });
     });
@@ -157,25 +150,24 @@ export function ChatDetail(): JSX.Element {
       ({ userId, authority }: { userId: number; authority: Authority }) => {
         if (userId === +getCookie("id")) {
           localStorage.setItem("authority", String(authority));
-          setAuthority(authority);
         }
 
-        setParticipants((curr) => {
-          curr.forEach((participant) => {
+        setParticipants(curr => {
+          curr.forEach(participant => {
             if (+participant.userId === userId)
               participant.authority = authority;
           });
           curr.sort((a, b) => b.authority - a.authority);
           return [...curr];
         });
-      },
+      }
     );
 
     socket.on("chat-room-kick", ({ targetId }: { targetId: string }) => {
       if (targetId === getCookie("id")) {
         navigate("/chat");
       }
-      setParticipants((curr) => curr.filter((c) => c.userId !== +targetId));
+      setParticipants(curr => curr.filter(c => c.userId !== +targetId));
     });
 
     socket.on("chat-room-setting", ({ title }) => {
@@ -196,7 +188,7 @@ export function ChatDetail(): JSX.Element {
     socket.emit("chat-room-message", {
       chatRoomId,
       userId: getCookie("id"),
-      message,
+      message
     });
     setMessage("");
   };
@@ -255,24 +247,11 @@ export function ChatDetail(): JSX.Element {
             </div>
           </div>
           <div>
-            <UserList isChatRoom={true} participants={participants} />
-            <div ref={ref}>
-              {authority >= Authority.ADMIN ? (
-                <Button tag={"설정"} onClick={() => setOpenModal(true)} />
-              ) : null}
-              {openModal && (
-                <PopupControl
-                  mainText={"방 설정"}
-                  onClick={() => setOpenModal(false)}
-                >
-                  <ChatRoomSetPopup
-                    chatRoomId={chatRoomId}
-                    roomTitle={title}
-                    setIsRoomSet={() => setOpenModal(false)}
-                  />
-                </PopupControl>
-              )}
-            </div>
+            <UserList
+              isChatRoom={true}
+              participants={participants}
+              chatRoomId={chatRoomId}
+            />
           </div>
           {isGame ? (
             <RequestGamePopup game={reqGame} setIsGame={setIsGame} />

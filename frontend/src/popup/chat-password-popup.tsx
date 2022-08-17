@@ -9,7 +9,6 @@ type Props = {
 
 // @ts-ignore
 export function ChatPasswordPopup({ chatRoomId }: Props): JSX.Element {
-  console.log(chatRoomId);
   const [password, setPassword] = useState("");
 
   // @ts-ignore
@@ -30,7 +29,7 @@ export function ChatPasswordPopup({ chatRoomId }: Props): JSX.Element {
     <div className="p-10 flex items-center">
       <input
         className="border-2 rounded-sm p-1"
-        type="text"
+        type="password"
         onChange={onChange}
         value={password}
       />
