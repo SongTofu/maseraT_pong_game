@@ -56,8 +56,7 @@ export class RecordRepository extends Repository<Record> {
     const date: string =
       currentDate.getFullYear() +
       "." +
-      currentDate.getMonth() +
-      1 +
+      (currentDate.getMonth() + 1) +
       "." +
       currentDate.getDay() +
       " " +

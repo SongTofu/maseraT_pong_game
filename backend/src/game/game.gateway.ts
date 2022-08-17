@@ -22,6 +22,8 @@ import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
 import { UserState } from "src/user/user-state.enum";
+import { ChatParticipant } from "src/chat/entity/chat-participant.entity";
+import { NotFoundException } from "@nestjs/common";
 
 const cvs = {
   width: 600,
@@ -237,6 +239,23 @@ export class GameGateway {
     } else if (gameDataDto.position === GamePosition.rightUser) {
       this.gameData[gameDataDto.gameRoomId].rightUser.y = gameDataDto.y;
     }
+  }
+  @SubscribeMessage("cancel-match")
+  async handleCancelMatch(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() { userId },
+  ) {
+    const gameUser: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: { user: userId },
+        relations: ["gameRoom"],
+      });
+    if (!gameUser) throw new NotFoundException();
+    const gameLeaveDto: GameLeaveDto = {
+      gameRoomId: gameUser.gameRoom.id,
+      userId,
+    };
+    this.handleGameRoomLeave(socket, gameLeaveDto);
   }
 
   @SubscribeMessage("match")
