@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   frontend:
     container_name: front
@@ -12,9 +12,11 @@ services:
       - '3000:3000'
     volumes:
       - ./frontend/src:/app/src
+    networks:
+      - postgres
 
   database:
-    image: postgres
+    image: postgres:14-alpine
     restart: always
     environment:
       - POSTGRES_USER=${DB_USERNAME}
@@ -22,7 +24,9 @@ services:
       - POSTGRES_DB=${DB_NAME}
     container_name: postgres
     volumes:
-      - ./pgdata/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - postgres
 
   backend:
     container_name: back
@@ -48,10 +52,17 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
       - CB_URI=${CB_URI}
+    networks:
+      - postgres
     ports:
       - '5000:5000'
     volumes:
       - ./backend/src:/app/src
+    depends_on:
+      - database
+
 volumes:
-  pgdata:
-  pgadmin-data:
+  postgres:
+
+networks:
+  postgres:
