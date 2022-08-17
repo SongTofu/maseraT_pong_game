@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { GameRoomRepository } from "./repository/game-room.repository";
 import { GameParticipantRepository } from "./repository/game-participant.repository";
 import { GameParticipant } from "./entity/game-participant.entity";
@@ -15,37 +15,38 @@ export class GameService {
   ) {}
 
   async gameRoomList(): Promise<GameRoom[]> {
-    return await this.gameRoomRepository.find();
+    const gameRoom: GameRoom[] = await this.gameRoomRepository.find();
+    return gameRoom.filter((game) => !game.isLadder);
   }
 
-  async gameRoomDetail(gameRoomId: number): Promise<GameRoomDetailDto> {
-    // const gameParticipants: GameParticipant[] =
-    //   await this.gameParticipantRepository.find({
-    //     where: { gameRoom: gameRoomId },
-    //     relations: ["user"],
-    //   });
+  async gameRoomDetail(
+    userId: number,
+    gameRoomId: number,
+  ): Promise<GameRoomDetailDto> {
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomId,
+    );
 
+    const user: GameParticipant = await this.gameParticipantRepository.findOne({
+      where: { gameRoom, user: userId },
+      relations: ["user"],
+    });
+
+    if (!gameRoom || !user) {
+      throw new BadRequestException();
+    }
     const leftgameParticipant: GameParticipant =
       await this.gameParticipantRepository.findOne({
-        where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
+        where: { gameRoom, position: GamePosition.leftUser },
         relations: ["user"],
       });
 
     const rightgameParticipant: GameParticipant =
       await this.gameParticipantRepository.findOne({
-        where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
+        where: { gameRoom, position: GamePosition.rightUser },
         relations: ["user"],
       });
 
-    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-      gameRoomId,
-    );
-    // const gameParticipantDto: GameParticipantDto[] = [];
-
-    // gameParticipants.forEach((gameParticipant) => {
-    //   gameParticipantDto.push(new GameParticipantDto(gameParticipant));
-    // });
-    // const gameParticipantProfile :
     const gameRoomDetailDto: GameRoomDetailDto = {
       gameRoomId: gameRoomId,
       title: gameRoom.title,

@@ -28,10 +28,6 @@ import { FriendRepository } from "src/friend/friend.repository";
 export class UserGateway {
   constructor(
     private userRepository: UserRepository,
-    private chatParticipantsRepository: ChatParticipantRepository,
-    private chatGateway: ChatGateway,
-    private gameParticipantsRepository: GameParticipantRepository,
-    private gameRoomRepository: GameRoomRepository,
     private friendRepository: FriendRepository,
   ) {}
 
@@ -43,16 +39,23 @@ export class UserGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: { userId: number },
   ) {
-    console.log(socket.id);
     const user: User = await this.userRepository.findOne(data.userId);
     user.socketId = socket.id;
     user.state = UserState.CONNECT;
 
     await user.save();
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+      nickname: user.nickname,
+    });
 
-    // this.userAll(); 안쓸거임!
-    // this.handleFriend(socket, { userId: data.userId });
-    // this.chatGateway.handleChatRoomAll(socket);
+    const userDto: UserListDto = {
+      userId: user.id,
+      nickname: user.nickname,
+      state: user.state,
+    };
+    this.server.emit("connect-user", userDto);
   }
 
   @SubscribeMessage("friend-all")
@@ -64,39 +67,23 @@ export class UserGateway {
   }
 
   @SubscribeMessage("disconnect")
-  async handleDisconnectUser(@ConnectedSocket() socket: Socket) {
+  async handleDisconnect(@ConnectedSocket() socket: Socket) {
     const user: User = await this.userRepository.findOne({
       where: {
         socketId: socket.id,
       },
     });
+    if (!user) return;
 
-    //user table에서 비활성화 시키기(이따구로 야매로 해도 괜찮은걸까?)
-    user.state = 0;
-
+    user.state = UserState.DISCONNECT;
     await user.save();
 
-    // 채팅방 떠남
-    const leaveChatRooms: ChatParticipant[] =
-      await this.chatParticipantsRepository.find(user);
-
-    leaveChatRooms.forEach((leaveChatRoom) => {
-      let chatLeaveDto: ChatLeaveDto = {
-        chatRoomId: leaveChatRoom.id,
-        userId: user.id,
-        nickname: user.nickname,
-      };
-      this.chatGateway.handleChatRoomLeave(socket, chatLeaveDto);
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+      nickname: user.nickname,
     });
-
-    //게임방 떠남
-    const leaveGameRooms: GameParticipant[] =
-      await this.gameParticipantsRepository.find(user);
-
-    // leaveGameRooms.forEach((leaveGameRoom) => {
-    // handleGameRoomLeave 생기면 넣으면 될 것 같음,,!
-    // })
-    this.server.emit("disconnect-user", { success: true }); //뭐 보내줄 거 있나,,,?
+    this.server.emit("disconnect-user", { userId: user.id });
   }
 
   async userAll() {
@@ -108,7 +95,6 @@ export class UserGateway {
       userListDto.push(new UserListDto(user));
     });
 
-    console.log("user-all");
     this.server.emit("user-all", userListDto);
   }
 
@@ -125,8 +111,14 @@ export class UserGateway {
       userListDto.push(new UserListDto(friend.friendId));
     });
 
-    const user: User = await this.userRepository.findOne(userId);
     this.server.in(socketId).emit("friend-all", userListDto);
-    console.log("user list dto", userListDto);
+  }
+
+  async nicknameChange(user: User) {
+    this.server.emit("change-state", {
+      userId: user.id,
+      state: user.state,
+      nickname: user.nickname,
+    });
   }
 }

@@ -1,3 +1,5 @@
+import { GamePosition } from "../game-position.enum";
+
 export class GameJoinDto {
   gameRoomId: number;
   title: string;

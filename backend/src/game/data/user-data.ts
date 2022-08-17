@@ -3,10 +3,8 @@ export class UserData {
     if (userPosition) {
       this.x = 0;
     } else {
-      // canvas width - user width
       this.x = 590;
     }
-    // canvas height / 2 - user height / 2
     this.y = 150;
 
     this.width = 10;

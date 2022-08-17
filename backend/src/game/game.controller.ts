@@ -1,7 +1,15 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+  Req,
+} from "@nestjs/common";
 import { GameService } from "./game.service";
 import { GameRoomDetailDto } from "./dto/game-room-detail.dto";
 import { GameRoom } from "./entity/game-room.entity";
+import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
 
 @Controller("game")
 export class GameController {
@@ -13,9 +21,11 @@ export class GameController {
   }
 
   @Get("/room/:gameRoomId")
+  @UseGuards(JwtAuthGuard)
   async gameRoomDetail(
-    @Param("gameRoomId") gameRoomId: number,
+    @Req() req,
+    @Param("gameRoomId", ParseIntPipe) gameRoomId: number,
   ): Promise<GameRoomDetailDto> {
-    return this.gameService.gameRoomDetail(gameRoomId);
+    return this.gameService.gameRoomDetail(req.user.id, gameRoomId);
   }
 }

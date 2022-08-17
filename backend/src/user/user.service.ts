@@ -29,7 +29,6 @@ export class UserService {
     private chatParticipantRepository: ChatParticipantRepository,
   ) {}
 
-  // test after saved in db
   async getAllUser(): Promise<UserListDto[]> {
     const getAllUserDto: UserListDto[] = [];
     const user: User[] = await this.userRepository.find();
@@ -49,9 +48,7 @@ export class UserService {
 
   async getMyInfo(id: number): Promise<MyUserInfoDto> {
     const user: User = await this.userRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    } //나중에 접속한 사람 확인되면 삭제가능
+
     const myUserInfoDto: MyUserInfoDto = {
       id: user.id,
       email: user.email,
@@ -110,10 +107,12 @@ export class UserService {
       user.profileImg = updateUserInfoDto.profileImg;
     }
     if (updateUserInfoDto.secondAuth !== undefined) {
-      user.secondAuth = updateUserInfoDto.secondAuth;
+      if (updateUserInfoDto.secondAuth) user.secondAuth = true;
+      else user.secondAuth = false;
     }
     try {
       await user.save();
+      if (updateUserInfoDto.nickname) this.userGateway.nicknameChange(user);
     } catch (error) {
       if (error.code === "23505") return { isSuccess: false };
       else {
@@ -130,7 +129,6 @@ export class UserService {
 
       chatParticipants.forEach((chatParticipant) => {
         this.chatGateWay.chatParticipantAll(chatParticipant.chatRoom.id);
-        // this.chatGateWay.chatRoomMessageAll(chatParticipant.chatRoom.id);
       });
       this.userGateway.userAll();
     }
@@ -172,9 +170,6 @@ export class UserService {
     updateUserInfoDto: UpdateUserInfoDto,
   ): Promise<{ isSuccess: boolean }> {
     const user = await this.userRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
-    } //나중에 접속한 사람 확인되면 삭제가능
 
     if (updateUserInfoDto.nickname) {
       user.nickname = updateUserInfoDto.nickname;

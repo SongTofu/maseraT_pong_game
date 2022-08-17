@@ -4,7 +4,7 @@ import { User } from "src/user/user.entity";
 
 @EntityRepository(Record)
 export class RecordRepository extends Repository<Record> {
-  gameEnd(
+  async gameEnd(
     isLadder: boolean,
     gameWin: boolean,
     leftUser: User,
@@ -19,7 +19,6 @@ export class RecordRepository extends Repository<Record> {
       enemy: rightUser,
     });
     record.save();
-
     const reverseRecord: Record = this.create({
       date,
       isLadder,
@@ -28,6 +27,28 @@ export class RecordRepository extends Repository<Record> {
       enemy: leftUser,
     });
     reverseRecord.save();
+
+    if (gameWin) {
+      if (isLadder) {
+        leftUser.ladderWin++;
+        rightUser.ladderLose++;
+      } else {
+        leftUser.personalWin++;
+        rightUser.personalLose++;
+      }
+      leftUser.level = +leftUser.level + 0.7;
+    } else {
+      if (isLadder) {
+        leftUser.ladderLose++;
+        rightUser.ladderWin++;
+      } else {
+        leftUser.personalLose++;
+        rightUser.personalWin++;
+      }
+      rightUser.level = +rightUser.level + 0.7;
+    }
+    await rightUser.save();
+    await leftUser.save();
   }
 
   private createDate(): string {

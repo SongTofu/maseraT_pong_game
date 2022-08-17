@@ -1,8 +1,6 @@
 export class BallData {
   constructor() {
-    // canvas width / 2
     this.x = 300;
-    // canvas height / 2
     this.y = 200;
     this.radius = 10;
     this.color = "WHITE";

@@ -21,12 +21,12 @@ import { GameJoinDto } from "./dto/game-room-join.dto";
 import { GameLeaveDto } from "./dto/game-room-leave.dto";
 import { User } from "src/user/user.entity";
 import { GameParticipantProfile } from "./dto/game-participant-profile.dto";
+import { UserState } from "src/user/user-state.enum";
 
 const cvs = {
   width: 600,
   height: 400,
 };
-
 @WebSocketGateway({
   cors: {
     origin: "*",
@@ -56,34 +56,35 @@ export class GameGateway {
     const user: User = await this.userRepository.findOne(userId);
 
     let isCreate: Boolean = false;
+    const joinGameTitle = "game-" + gameRoomId;
 
     if (!gameRoomId) {
-      gameRoomId = await this.gameRoomRepository.createRoom(gameJoinDto);
+      gameRoomId = await this.gameRoomRepository.createRoom(
+        gameJoinDto,
+        this.gameData,
+      );
       isCreate = true;
-    }
-
-    if (isCreate) {
-      this.gameData[gameRoomId] = {};
-      this.gameData[gameRoomId].ball = new BallData();
-      this.gameData[gameRoomId].leftUser = new UserData(true);
-      this.gameData[gameRoomId].rightUser = new UserData(false);
-      this.gameData[gameRoomId].isLadder = isLadder;
-      this.gameData[gameRoomId].isSpeedMode = isSpeedMode;
     }
 
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameRoomId,
     );
-
+    const joinUser: GameParticipant =
+      await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameJoinDto.gameRoomId, user: user.id },
+      });
+    if (joinUser) {
+      socket.join(joinGameTitle);
+      return;
+    }
     const gameUser: GameParticipantProfile = await this.joinGameRoom(
       gameJoinDto,
       user,
     );
 
-    if (isCreate) {
+    if (isCreate && gameJoinDto.isLadder == false) {
       this.server.emit("game-room-create", gameRoom);
     }
-    const joinGameTitle = "game-" + gameRoomId;
 
     socket.join(joinGameTitle);
     this.server
@@ -94,6 +95,7 @@ export class GameGateway {
   private async joinGameRoom(
     gameJoinDto: GameJoinDto,
     user: User,
+    position?: GamePosition,
   ): Promise<GameParticipantProfile> {
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       gameJoinDto.gameRoomId,
@@ -118,7 +120,6 @@ export class GameGateway {
       user,
       gameRoom,
     });
-
     if (!existLeftUser) {
       gameParticipant.position = GamePosition.leftUser;
     } else if (!existRightUser) {
@@ -126,6 +127,7 @@ export class GameGateway {
     } else {
       gameParticipant.position = GamePosition.spectator;
     }
+    if (position) gameParticipant.position = position;
     await gameParticipant.save();
 
     const gameParticipantProfile: GameParticipantProfile =
@@ -141,6 +143,21 @@ export class GameGateway {
   ): Promise<void> {
     const user: User = await this.userRepository.findOne(gameLeaveDto.userId);
 
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameLeaveDto.gameRoomId,
+    );
+
+    if (gameRoom.isStart) {
+      const gameParticipant: GameParticipant =
+        await this.gameParticipantRepository.findOne({ where: { user } });
+      if (gameParticipant.position === GamePosition.leftUser) {
+        this.gameData[gameRoom.id].rightUser.score = 3;
+      } else if (gameParticipant.position === GamePosition.rightUser) {
+        this.gameData[gameRoom.id].leftUser.score = 3;
+      }
+      await this.endGameCheck(gameRoom.id);
+    }
+
     const delUser: GameParticipant =
       await this.gameParticipantRepository.findOne({
         where: {
@@ -148,50 +165,59 @@ export class GameGateway {
           user: user.id,
         },
       });
-
-    await this.gameParticipantRepository.delete(delUser);
+    if (delUser) await this.gameParticipantRepository.delete(delUser);
+    else return;
 
     const leaveGameTitle = "game-" + gameLeaveDto.gameRoomId;
 
     this.server.in(leaveGameTitle).emit("game-room-leave", gameLeaveDto);
     socket.leave(leaveGameTitle);
 
-    //게임방 유저 모두 나가면 방 폭파
     const participant: GameParticipant =
       await this.gameParticipantRepository.findOne({
         where: { gameRoom: gameLeaveDto.gameRoomId },
       });
     if (!participant) {
-      this.server.emit("game-room-destroy", {
-        gameRoomId: gameLeaveDto.gameRoomId,
-      });
       await this.gameParticipantRepository.deleteAllParticipants(
         gameLeaveDto.gameRoomId,
       );
       await this.gameRoomRepository.deleteRoom(gameLeaveDto.gameRoomId);
+      this.server.emit("game-room-destroy", {
+        gameRoomId: gameLeaveDto.gameRoomId,
+      });
     }
-  }
-
-  //// test 게임방 참여, game room join으로 바꿔야함
-  @SubscribeMessage("test")
-  handleConnect(@ConnectedSocket() socket: Socket) {
-    socket.join("game-1");
   }
 
   @SubscribeMessage("start-game")
   async handleGameStart(@MessageBody() startGameDto: StartGameDto) {
     const { gameRoomId, isLadder } = startGameDto;
 
-    // const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
-    //   gameRoomId,
-    // );
+    const gameUsers: GameParticipant[] =
+      await this.gameParticipantRepository.find({
+        where: { gameRoom: gameRoomId },
+        relations: ["user"],
+      });
 
-    // gameRoom.isStart = true;
-    // await gameRoom.save();
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomId,
+    );
 
-    // 방 생성, 방 수정으로 이동할 예정
+    gameUsers.forEach(async (gameUser) => {
+      gameUser.user.state = UserState.IN_GAME;
+      await gameUser.user.save();
+      this.server.emit("change-state", {
+        userId: gameUser.user.id,
+        state: gameUser.user.state,
+        nickname: gameUser.user.nickname,
+      });
+    });
 
-    // this.server.in("game-" + gameRoomId).emit("game-start");
+    gameRoom.isStart = true;
+    await gameRoom.save();
+    this.server.emit("change-state-game", {
+      gameRoomId,
+      isStart: gameRoom.isStart,
+    });
 
     this.gameData[gameRoomId].interval = setInterval(() => {
       this.update(gameRoomId);
@@ -203,8 +229,7 @@ export class GameGateway {
 
   @SubscribeMessage("user-paddle")
   handleGame(
-    @ConnectedSocket() socket: Socket,
-    // @MessageBody() data: { gameRoomId: number; position: number; y: number },
+    // @ConnectedSocket() socket: Socket,
     @MessageBody() gameDataDto: GameDataDto,
   ) {
     if (gameDataDto.position === GamePosition.leftUser) {
@@ -219,13 +244,12 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() { userId },
   ) {
-    // 유저 찾고
     const readyUser: User = await this.userRepository.findOne(userId);
-    // 시작 안한 래더 게임방
     const ladderGameRoom: GameRoom = await this.gameRoomRepository.findOne({
       where: { isLadder: true, isStart: false },
     });
     let isCreate: Boolean = false;
+
     const ladderGameJoinDto: GameJoinDto = {
       gameRoomId: null,
       title: "",
@@ -233,46 +257,37 @@ export class GameGateway {
       isSpeedMode: true,
       isLadder: true,
     };
-    // 게임방 없으면 만들고
+
     if (!ladderGameRoom) {
       ladderGameJoinDto.gameRoomId = await this.gameRoomRepository.createRoom(
         ladderGameJoinDto,
+        this.gameData,
       );
       isCreate = true;
     } else {
       ladderGameJoinDto.gameRoomId = ladderGameRoom.id;
     }
-    // 만들어진 게임방, 기존 게임방
+
     const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
       ladderGameJoinDto.gameRoomId,
     );
 
-    if (isCreate) {
-      this.gameData[gameRoom.id] = {};
-      this.gameData[gameRoom.id].ball = new BallData();
-      this.gameData[gameRoom.id].leftUser = new UserData(true);
-      this.gameData[gameRoom.id].rightUser = new UserData(false);
-      this.gameData[gameRoom.id].isLadder = gameRoom.isLadder;
-      this.gameData[gameRoom.id].isSpeedMode = gameRoom.isSpeedMode;
-    }
-    // 게임 참여자
     await this.joinGameRoom(ladderGameJoinDto, readyUser);
     const joinGameTitle = "game-" + ladderGameJoinDto.gameRoomId;
     socket.join(joinGameTitle);
 
     if (!isCreate) {
-      this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
+      this.server
+        .in(joinGameTitle)
+        .emit("game-room-join", { gameRoomId: gameRoom.id });
     }
-    // this.server.in(joinGameTitle).emit("match", { gameRoomId: gameRoom.id });
   }
 
-  // ladder 게임과 일반 게임 차이 추가 해야함!
   private update(gameRoomId: number) {
     const { ball, leftUser, rightUser } = this.gameData[gameRoomId];
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
 
-    // 위 아래 벽 충돌 시
     if (ball.y + ball.radius > cvs.height || ball.y - ball.radius < 0) {
       ball.velocityY = -ball.velocityY;
     }
@@ -337,43 +352,26 @@ export class GameGateway {
   }
 
   private async endGameCheck(gameRoomId: number) {
-    const leftUser = await this.gameParticipantRepository.findOne({
-      where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
-      relations: ["user"],
-    });
-    const rightUser = await this.gameParticipantRepository.findOne({
-      where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
-      relations: ["user"],
-    });
-
     if (
-      this.gameData[gameRoomId].leftUser.score >= 1 ||
-      this.gameData[gameRoomId].rightUser.score >= 1
+      this.gameData[gameRoomId].leftUser.score >= 3 ||
+      this.gameData[gameRoomId].rightUser.score >= 3
     ) {
       clearInterval(this.gameData[gameRoomId].interval);
       let gameWin: boolean;
 
-      if (this.gameData[gameRoomId].leftUser.score >= 1) {
+      if (this.gameData[gameRoomId].leftUser.score >= 3) {
         gameWin = true;
-        if (this.gameData[gameRoomId].isLadder) {
-          leftUser.user.ladderWin++;
-          rightUser.user.ladderLose++;
-        } else {
-          leftUser.user.personalWin++;
-          rightUser.user.personalLose++;
-        }
-        leftUser.user.level = +leftUser.user.level + 0.7;
-      } else if (this.gameData[gameRoomId].rightUser.score >= 1) {
+      } else if (this.gameData[gameRoomId].rightUser.score >= 3) {
         gameWin = false;
-        if (this.gameData[gameRoomId].isLadder) {
-          rightUser.user.ladderWin++;
-          leftUser.user.ladderLose++;
-        } else {
-          rightUser.user.personalWin++;
-          leftUser.user.personalLose++;
-        }
-        rightUser.user.level = +rightUser.user.level + 0.7;
       }
+      const leftUser = await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameRoomId, position: GamePosition.leftUser },
+        relations: ["user"],
+      });
+      const rightUser = await this.gameParticipantRepository.findOne({
+        where: { gameRoom: gameRoomId, position: GamePosition.rightUser },
+        relations: ["user"],
+      });
 
       this.recordRepository.gameEnd(
         this.gameData[gameRoomId].isLadder,
@@ -386,11 +384,12 @@ export class GameGateway {
         gameRoomId,
       );
       gameRoom.isStart = false;
-      gameRoom.save();
-      rightUser.user.save();
-      leftUser.user.save();
+      await gameRoom.save();
+      this.server.emit("change-state-game", {
+        gameRoomId,
+        isStart: gameRoom.isStart,
+      });
 
-      // delete this.gameData[gameRoomId];
       this.gameData[gameRoomId].leftUser.score = 0;
       this.gameData[gameRoomId].rightUser.score = 0;
 
@@ -402,8 +401,89 @@ export class GameGateway {
         new GameParticipantProfile(rightUser.user, GamePosition.rightUser),
       );
 
-      // 게임 끝날 시 보내줄 정보 정하기 (유저 아이디랑, 승패) 왼, 오 순서, 레벨!
+      rightUser.user.state = UserState.CONNECT;
+      leftUser.user.state = UserState.CONNECT;
+      await rightUser.user.save();
+      await leftUser.user.save();
+      this.server.emit("change-state", {
+        userId: rightUser.user.id,
+        state: rightUser.user.state,
+        nickname: rightUser.user.nickname,
+      });
+      this.server.emit("change-state", {
+        userId: leftUser.user.id,
+        state: leftUser.user.state,
+        nickname: leftUser.user.nickname,
+      });
+      this.resetBall(this.gameData[gameRoomId].ball);
       this.server.to("game-" + gameRoomId).emit("end-game", endGameInfo);
+      this.server
+        .in("game-" + gameRoomId)
+        .emit("game", this.gameData[gameRoomId]);
     }
+  }
+
+  @SubscribeMessage("request-game")
+  async handleRequestGame(@MessageBody() { userId, targetId, isSpeedMode }) {
+    const user: User = await this.userRepository.findOne(userId);
+    const target: User = await this.userRepository.findOne(targetId);
+
+    this.server.in(target.socketId).emit("request-game", {
+      nickname: user.nickname,
+      isSpeedMode,
+      targetId: userId,
+    });
+  }
+
+  @SubscribeMessage("response-game")
+  async handleResponseGame(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() { userId, targetId, isSpeedMode, isAccept },
+  ) {
+    if (!isAccept) {
+      this.server.in(socket.id).emit("response-game", isAccept);
+      return;
+    }
+    const user: User = await this.userRepository.findOne(userId);
+    const target: User = await this.userRepository.findOne(targetId);
+
+    const gameRoomJoin: GameJoinDto = {
+      gameRoomId: null,
+      title: "",
+      userId: user.id,
+      isSpeedMode,
+      isLadder: false,
+    };
+
+    gameRoomJoin.gameRoomId = await this.gameRoomRepository.createRoom(
+      gameRoomJoin,
+      this.gameData,
+    );
+    const gameRoom: GameRoom = await this.gameRoomRepository.findOne(
+      gameRoomJoin.gameRoomId,
+    );
+    this.server.emit("game-room-create", gameRoom);
+
+    const gameUser: GameParticipantProfile = await this.joinGameRoom(
+      gameRoomJoin,
+      user,
+      GamePosition.rightUser,
+    );
+    const gameTarget: GameParticipantProfile = await this.joinGameRoom(
+      gameRoomJoin,
+      target,
+      GamePosition.leftUser,
+    );
+
+    const gameTitle: string = "game-" + gameRoom.id;
+    socket.join(gameTitle);
+    this.server.in(target.socketId).socketsJoin(gameTitle);
+
+    this.server
+      .in(gameTitle)
+      .emit("game-room-join", { gameRoomId: gameRoom.id, gameUser });
+    this.server
+      .in(gameTitle)
+      .emit("game-room-join", { gameRoomId: gameRoom.id, gameTarget });
   }
 }

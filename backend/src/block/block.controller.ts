@@ -10,7 +10,6 @@ import {
 import { GetAllBlockDto } from "./dto/get-all-block.dto";
 import { BlockService } from "./block.service";
 import { JwtAuthGuard } from "src/auth/guard/jwt-auth.guard";
-import { UserDto } from "src/auth/dto/user.dto";
 
 @Controller("block")
 @UseGuards(JwtAuthGuard)
