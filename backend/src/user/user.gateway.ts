@@ -78,11 +78,9 @@ export class UserGateway {
     user.state = UserState.DISCONNECT;
     await user.save();
 
-    //레더매칭 취소
     const readyLadder: GameParticipant =
       await this.gameParticipantRepository.findOne({ where: { user } });
     if (readyLadder) {
-      //test필ㄹ요
       this.gameGateway.handleCancelMatch(socket, { userId: user.id });
     }
 
